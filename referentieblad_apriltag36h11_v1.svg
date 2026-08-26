@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">
+<rect width="210" height="297" fill="white"/>
+<rect x="5" y="5" width="200" height="287" fill="none" stroke="black" stroke-width=".25"/>
+<text x="105" y="12" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700">BOVEN = G</text>
+<text x="105" y="291" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700">ONDER = T</text>
+<text x="8" y="148.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="5.5" font-weight="700" transform="rotate(-90 8 148.5)">LINKS = A</text>
+<text x="202" y="148.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="5.5" font-weight="700" transform="rotate(90 202 148.5)">RECHTS = B</text>
+<line x1="55" y1="44" x2="155" y2="44" stroke="black" stroke-width=".35"/><line x1="55" y1="41.5" x2="55" y2="46.5" stroke="black" stroke-width=".35"/><line x1="155" y1="41.5" x2="155" y2="46.5" stroke="black" stroke-width=".35"/>
+<text x="105" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="3.2" font-weight="700">CONTROLELIJN EXACT 100.0 mm</text>
+<line x1="87" y1="148.5" x2="123" y2="148.5" stroke="black" stroke-width=".25"/><line x1="105" y1="130.5" x2="105" y2="166.5" stroke="black" stroke-width=".25"/>
+<text x="105" y="126" text-anchor="middle" font-family="Arial,sans-serif" font-size="3.5" font-weight="700">ISOCENTRUM</text>
+<g id="tag0" transform="translate(9 9) scale(2.25)"><rect x="-1.333" y="-1.333" width="10.666" height="10.666" fill="white"/><path fill="black" d="M0 0h8v1H0zm0 7h8v1H0zM0 1h1v6H0zm7 1h1v6H7zM1 1h2v1H1zm4 0h2v1H5zM1 2h1v1H1zm2 0h1v1H3zm5 0h0v0zM1 3h3v1H1zm5 0h1v1H6zM1 4h3v1H1zm6 0h0v0zM1 5h1v1H1zm2 0h1v1H3zm3 0h1v1H6zM1 6h1v1H1zm2 0h1v1H3zm4 0h0v0z"/></g>
+<text x="31" y="19.5" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">G / A [ID 0]</text>
+<g id="tag1" transform="translate(183 9) scale(2.25)"><rect x="-1.333" y="-1.333" width="10.666" height="10.666" fill="white"/><path fill="black" d="M0 0h8v1H0zm0 7h8v1H0zM0 1h1v6H0zm7 1h1v6H7zM2 1h2v1H2zm5 0h0v0zM2 2h1v1H2zm4 0h1v1H6zM1 3h3v1H1zm5 0h1v1H6zM1 4h3v1H1zM4 5h1v1H4zm2 0h1v1H6zM1 6h2v1H1zm3 0h1v1H4z"/></g>
+<text x="179" y="19.5" text-anchor="end" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">G / B [ID 1]</text>
+<g id="tag2" transform="translate(183 270) scale(2.25)"><rect x="-1.333" y="-1.333" width="10.666" height="10.666" fill="white"/><path fill="black" d="M0 0h8v1H0zm0 7h8v1H0zM0 1h1v6H0zm7 1h1v6H7zM1 1h1v1H1zm4 0h2v1H5zM1 2h3v1H1zm4 0h2v1H5zM2 3h2v1H2zm4 0h1v1H6zM1 4h5v1H1zM1 5h1v1H1zm3 0h2v1H4zM4 6h1v1H4z"/></g>
+<text x="179" y="280.5" text-anchor="end" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">T / B [ID 2]</text>
+<g id="tag3" transform="translate(9 270) scale(2.25)"><rect x="-1.333" y="-1.333" width="10.666" height="10.666" fill="white"/><path fill="black" d="M0 0h8v1H0zm0 7h8v1H0zM0 1h1v6H0zm7 1h1v6H7zM1 1h3v1H1zm5 0h1v1H6zM1 2h1v1H1zm2 0h2v1H3zM6 2h1v1H6zM2 3h2v1H2zm5 0h0v0zM4 4h2v1H4zM4 5h3v1H4zM1 6h2v1H1z"/></g>
+<text x="31" y="280.5" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">T / A [ID 3]</text>
+<text x="105" y="254" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.7" font-weight="700">VERSIE: APRILTAG36H11-V1</text>
+<text x="105" y="258" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">IDs: 0=G/A, 1=G/B, 2=T/B, 3=T/A</text>
+<text x="105" y="262" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">Print op 100% / werkelijke grootte - niet aanpassen aan pagina.</text>
+<text x="105" y="266" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">Controleer de 100.0 mm lijn na printen met een geschikt meetmiddel.</text>
+</svg>
