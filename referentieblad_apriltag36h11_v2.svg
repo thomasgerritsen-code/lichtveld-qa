@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">
+<rect width="210" height="297" fill="white"/>
+<rect x="5" y="5" width="200" height="287" fill="none" stroke="black" stroke-width=".25"/>
+<text x="105" y="12" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700">BOVEN = G</text>
+<text x="105" y="291" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700">ONDER = T</text>
+<text x="8" y="148.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="5.5" font-weight="700" transform="rotate(-90 8 148.5)">LINKS = A</text>
+<text x="202" y="148.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="5.5" font-weight="700" transform="rotate(90 202 148.5)">RECHTS = B</text>
+<line x1="55" y1="45" x2="155" y2="45" stroke="black" stroke-width=".35"/>
+<line x1="55" y1="42.5" x2="55" y2="47.5" stroke="black" stroke-width=".35"/>
+<line x1="155" y1="42.5" x2="155" y2="47.5" stroke="black" stroke-width=".35"/>
+<text x="105" y="41" text-anchor="middle" font-family="Arial,sans-serif" font-size="3.2" font-weight="700">CONTROLELIJN EXACT 100.0 mm</text>
+<line x1="87" y1="148.5" x2="123" y2="148.5" stroke="black" stroke-width=".25"/>
+<line x1="105" y1="130.5" x2="105" y2="166.5" stroke="black" stroke-width=".25"/>
+<text x="105" y="126" text-anchor="middle" font-family="Arial,sans-serif" font-size="3.5" font-weight="700">ISOCENTRUM</text>
+<rect x="4" y="4" width="28" height="28" fill="white"/>
+<image x="7" y="7" width="22" height="22" image-rendering="pixelated" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAAAAACreq1xAAABl0lEQVRYCa3BsQ0AMQwDsbv9h9ZXSuNH4CKkPCaPyWPy2Dwmj8lj8pg8Jo/JVSjZkatQsiNXoWRHrkLJjlyFkh25CiU7chVKduQqlOzIVSjZkatQsiM/wiQVSib5ESapUDLJjzBJhZJJfoRJKpRM8iNMUqFkkh9hkgolk/wIk1QomeRHmKRCySQ/wiQVSib5ESapUDLJUiipUFKyFEoqlJQshZIKJSVLoaRCSclSKKlQUrIUSiqUlCyFkgolJUuhpEJJyVIoqVBSshRKKpSULIVJJlkKk0yyFCaZZClMMslSmGSSpTDJJEthkkmWwiSTLIVJJlkKk0xyhJIKNzLJEUoq3MgkRyipcCOTHKGkwo1McoSSCjcyyRFKKtzIJEcoqXAjkxyhpMKNTHKEkgo3MskRSircyCRHKKlQUmGSkiOUVCipMEnJEUoqlFSYpOQIJRVKKkxScoSSCiUVJik5QkmFkgqTlByhpEJJhUlKjlBSoaTCJCVHKKlQUmGSkiOUVCipMEnJY/KYPCaPyWPymDwmj8lj8tgHsNBuUZ8HhoQAAAAASUVORK5CYII="/>
+<text x="33" y="20" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">G / A [ID 0]</text>
+<rect x="178" y="4" width="28" height="28" fill="white"/>
+<image x="181" y="7" width="22" height="22" image-rendering="pixelated" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAAAAACreq1xAAABmUlEQVRYCa3BsREDMQDDMHL/oZVKbpTzuXhAPiYfk4/Jx+Rj8jH5mHxMPiYfkyOUrFByI0coWaHkRo5QskLJjRyhZIWSGzlCyQolN3KEkhVKbuQIJSuU3MgRSlYouZEjlKxQciNHKFmh5EaOUFJhSYWSkiOUVFhSoaTkCCUVllQoKTlCSYUlFUpKjlBSYUmFkpIjlFRYUqGk5AglFZZUKCk5QkmFJRVKSo5QUmFJhZKSI5RUWFKhpORRWLLkUViy5FFYsuRRWLLkUViy5FFYsuRRWLLkUViy5FFYsuRRWLLkKryRkqvwRkquwhspuQpvpOQqvJGSq/BGSq7CGym5Cm+k5Cq8kZKr8EZKjnAjFUqWHOFGKpQsOcKNVChZcoQbqVCy5Ag3UqFkyRFupELJkiPcSIWSJUe4kQolS45wIxVKlhzhRiqULPkjLKmwpOSPsKTCkpI/wpIKS0r+CEsqLCn5IyypsKTkj7CkwpKSP8KSCktK/ghLKiwp+SMsqbCk5I+wpMKSko/Jx+Rj8jH5mHxMPiYfk4/Jx35acW5RDa+4FgAAAABJRU5ErkJggg=="/>
+<text x="177" y="20" text-anchor="end" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">G / B [ID 1]</text>
+<rect x="178" y="265" width="28" height="28" fill="white"/>
+<image x="181" y="268" width="22" height="22" image-rendering="pixelated" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAAAAACreq1xAAABdklEQVRYCa3BQQoEMQwDwe7/P1p7Ui4OZmBTJY/JY/KYPCaPyWPymDwmj8ljchE2spGLsJGNXISNbOQibGQjF2EjG7kIG9nIRdjIRi7CRjZyETaykYuwkY2sQsk3sgol38gqlHwjq1DyjaxCyTeyCiXfyCqUfCOrUPKNrELJN7IKJd/IEUqmULKRI5RMoWQjRyiZQslGjlAyhZKNHKFkCiUbOULJFEo2coSSKZRs5AglUyjZyBFKplCykSOUTKFkI38IJSV/CCUlfwglJX8IJSV/CCUlfwglJX8IJSV/CCUlfwglJX8IJSUXoWQKJZNchJIplExyEUqmUDLJRSiZQskkF6FkCiWTXISSKZRMchFKplAyyUUomULJJBehZAolk1yEkimUTHKEjVSYpOQIG6kwSckRNlJhkpIjbKTCJCVH2EiFSUqOsJEKk5QcYSMVJik5wkYqTFJyhI1UmKTkCBupMEnJY/KYPCaPyWPymDwmj8lj8tgPMqVaUbSHfh0AAAAASUVORK5CYII="/>
+<text x="177" y="281" text-anchor="end" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">T / B [ID 2]</text>
+<rect x="4" y="265" width="28" height="28" fill="white"/>
+<image x="7" y="268" width="22" height="22" image-rendering="pixelated" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAAAAACreq1xAAABnElEQVRYCa3BsQ0AMQwDsbv9h9ZXcuNHkCKkPCaPyWPymDwmj8lj8pg8Jo/JpbDJJpfCJptcCptscilsssmlsMkml8Imm1wKm2xyKWyyyaWwySaXwiab/AglW9ik5Eco2cImJT9CyRY2KfkRSrawScmPULKFTUp+hJItbFLyI5RsYZOSH6FkC5uU/AglW9ik5Eco2cImJSOUbKGkQknJCCVbKKlQUjJCyRZKKpSUjFCyhZIKJSUjlGyhpEJJyQglWyipUFIyQskWSiqUlIxQsoWSCiUlI5RsoaRCSckIJVsoqVBSMsKJbKGkZIQT2UJJyQgnsoWSkhFOZAslJSOcyBZKSkY4kS2UlIxwIlsoKRnhRLZQUjLCiWyhpGSEE9lCSckIJ3JHRjiROzLCidyREU7kjoxwIndkhBO5IyOcyB0Z4UTuyAgnckdGOJE7MkLJFk6kZISSLZxIyQglWziRkhFKtnAiJSOUbOFESkYo2cKJlIxQsoUTKRmhZAsnUjJCyRZOpGSEki2cSMlj8pg8Jo/JY/KYPCaPyWPy2AcPJG5RdUK/vgAAAABJRU5ErkJggg=="/>
+<text x="33" y="281" font-family="Arial,sans-serif" font-size="3.6" font-weight="700">T / A [ID 3]</text>
+<text x="105" y="252" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.8" font-weight="700">VERSIE: APRILTAG36H11-V2</text>
+<text x="105" y="256" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">0=G/A, 1=G/B, 2=T/B, 3=T/A</text>
+<text x="105" y="260" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">Print op 100% / werkelijke grootte - niet aanpassen aan pagina.</text>
+<text x="105" y="264" text-anchor="middle" font-family="Arial,sans-serif" font-size="2.5">Controleer de 100.0 mm lijn na printen met een geschikt meetmiddel.</text>
+</svg>
