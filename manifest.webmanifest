@@ -1,0 +1,9 @@
+{
+  "name": "Lichtveld QA 10 x 10 cm",
+  "short_name": "Lichtveld QA",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f2f5f9",
+  "theme_color": "#0b1220",
+  "description": "Lokale mobiele beeldanalyse voor een 100 x 100 mm lichtveld."
+}
