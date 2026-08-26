@@ -20,8 +20,15 @@
   </section>
 
   <section class="card">
+    <h2>Referentieblad</h2>
+    <p>Gebruik uitsluitend het nieuwe blad met vier unieke machineleesbare markers. Richtingen: <b>boven = G</b>, <b>onder = T</b>, <b>links = A</b>, <b>rechts = B</b>.</p>
+    <a class="button" href="referentieblad_auto.svg" target="_blank" rel="noopener">Referentieblad openen / printen</a>
+    <p class="small">Print op 100% / werkelijke grootte en controleer daarna de 100.0 mm referentielijn met een geschikt meetmiddel.</p>
+  </section>
+
+  <section class="card">
     <h2>1. Foto</h2>
-    <p>Gebruik het nieuwe A4-referentieblad. Zorg dat het hele blad, alle vier hoekmarkers en het volledige lichtveld zichtbaar zijn. Oriëntatie: <b>boven = G</b>, <b>onder = T</b>, <b>links = A</b>, <b>rechts = B</b>.</p>
+    <p>Zorg dat het volledige A4-blad, alle vier markers en het volledige lichtveld scherp zichtbaar zijn. De vier markeridentiteiten zijn: <b>G/A</b>, <b>G/B</b>, <b>T/B</b> en <b>T/A</b>.</p>
     <label class="button primary">Foto maken / kiezen
       <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
     </label>
@@ -32,6 +39,7 @@
     <div id="detectStatus" class="instruction">Markers zoeken...</div>
     <div class="canvasWrap"><canvas id="photoCanvas"></canvas></div>
     <button id="retryBtn" class="button">Opnieuw zoeken</button>
+    <p class="small">Als niet alle vier unieke markers betrouwbaar worden herkend, blokkeert de app de meting. Er is geen handmatige vierpuntskalibratie meer.</p>
   </section>
 
   <section class="card" id="resultCard" hidden>
@@ -63,11 +71,10 @@
 
   <section class="card">
     <h2>Meetprincipe</h2>
-    <p>De app zoekt automatisch de vier hoekmarkers van het referentieblad en gebruikt hun positie voor de perspectiefcorrectie. De vaste oriëntatie is: linksboven <b>G / A</b>, rechtsboven <b>G / B</b>, rechtsonder <b>T / B</b> en linksonder <b>T / A</b>.</p>
+    <p>Elke hoekmarker heeft een eigen gecodeerde identiteit. De app bepaalt daarmee automatisch welke hoek G/A, G/B, T/B en T/A is, corrigeert het cameraperspectief en start daarna pas de lichtveldanalyse.</p>
   </section>
 </main>
 <footer>Alle beeldverwerking gebeurt lokaal in de browser; er is geen serverupload.</footer>
-<script src="directions.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
