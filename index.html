@@ -21,14 +21,14 @@
 
   <section class="card">
     <h2>Referentieblad</h2>
-    <p>Gebruik uitsluitend het nieuwe blad met vier unieke machineleesbare markers. Richtingen: <b>boven = G</b>, <b>onder = T</b>, <b>links = A</b>, <b>rechts = B</b>.</p>
-    <a class="button" href="referentieblad_auto.svg" target="_blank" rel="noopener">Referentieblad openen / printen</a>
-    <p class="small">Print op 100% / werkelijke grootte en controleer daarna de 100.0 mm referentielijn met een geschikt meetmiddel.</p>
+    <p>Gebruik uitsluitend het meest recente referentieblad met vier <b>AprilTag tag36h11</b>-markers. Richtingen: <b>boven = G</b>, <b>onder = T</b>, <b>links = A</b>, <b>rechts = B</b>.</p>
+    <a class="button" href="referentieblad_auto.svg" target="_blank" rel="noopener">Meest recente referentieblad openen / printen</a>
+    <p class="small">AprilTag IDs: 0 = G/A, 1 = G/B, 2 = T/B, 3 = T/A. Print op 100% / werkelijke grootte en controleer daarna de 100.0 mm referentielijn met een geschikt meetmiddel.</p>
   </section>
 
   <section class="card">
     <h2>1. Foto</h2>
-    <p>Zorg dat het volledige A4-blad, alle vier markers en het volledige lichtveld scherp zichtbaar zijn. De vier markeridentiteiten zijn: <b>G/A</b>, <b>G/B</b>, <b>T/B</b> en <b>T/A</b>.</p>
+    <p>Zorg dat het volledige A4-blad, alle vier AprilTags en het volledige lichtveld scherp zichtbaar zijn.</p>
     <label class="button primary">Foto maken / kiezen
       <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
     </label>
@@ -36,10 +36,10 @@
 
   <section class="card" id="detectionCard" hidden>
     <h2>2. Automatische herkenning</h2>
-    <div id="detectStatus" class="instruction">Markers zoeken...</div>
+    <div id="detectStatus" class="instruction">AprilTags zoeken...</div>
     <div class="canvasWrap"><canvas id="photoCanvas"></canvas></div>
     <button id="retryBtn" class="button">Opnieuw zoeken</button>
-    <p class="small">Als niet alle vier unieke markers betrouwbaar worden herkend, blokkeert de app de meting. Er is geen handmatige vierpuntskalibratie meer.</p>
+    <p class="small">Als niet alle vier AprilTags betrouwbaar worden herkend, blokkeert de app de meting.</p>
   </section>
 
   <section class="card" id="resultCard" hidden>
@@ -71,7 +71,7 @@
 
   <section class="card">
     <h2>Meetprincipe</h2>
-    <p>Elke hoekmarker heeft een eigen gecodeerde identiteit. De app bepaalt daarmee automatisch welke hoek G/A, G/B, T/B en T/A is, corrigeert het cameraperspectief en start daarna pas de lichtveldanalyse.</p>
+    <p>De app gebruikt vier verschillende AprilTags uit de familie tag36h11 om automatisch G/A, G/B, T/B en T/A te herkennen, corrigeert daarna het cameraperspectief en start pas vervolgens de lichtveldanalyse.</p>
   </section>
 </main>
 <footer>Alle beeldverwerking gebeurt lokaal in de browser; er is geen serverupload.</footer>
