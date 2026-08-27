@@ -23,9 +23,8 @@
         <p>Plaats het referentieblad vlak en goed verlicht.</p>
         <p>Zorg dat alle vier de AprilTags volledig zichtbaar zijn.</p>
       </div>
-      <label class="primaryAction">Foto maken
-        <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
-      </label>
+      <label class="primaryAction" for="photoInput">Foto maken</label>
+      <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
     </div>
   </section>
 
@@ -80,9 +79,7 @@
     <section class="qaCard actionsCard">
       <div class="sectionTitle"><span class="lineIcon small">⚙</span><h2>Acties</h2></div>
       <div class="actionGrid">
-        <label class="actionButton">Nieuwe foto
-          <input type="file" accept="image/*" capture="environment" hidden onchange="document.getElementById('photoInput').files=this.files;document.getElementById('photoInput').dispatchEvent(new Event('change'))">
-        </label>
+        <label class="actionButton" for="photoInput">Nieuwe foto</label>
         <button class="actionButton" type="button" onclick="document.getElementById('retryBtn').click()">Opnieuw analyseren</button>
         <button id="saveImageBtn" class="actionButton" type="button">Analysebeeld</button>
         <button id="saveCsvBtn" class="actionButton" type="button">CSV exporteren</button>
