@@ -5,100 +5,184 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1961ab">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Lichtveld QA · UMC Utrecht</title>
-  <link rel="manifest" href="manifest.webmanifest?v=11">
-  <link rel="stylesheet" href="style.css?v=11">
+  <title>Linac Wekelijkse QA · UMC Utrecht</title>
+  <link rel="manifest" href="manifest.webmanifest?v=12">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <header class="brandHeader">
-  <div class="brandInner"><img src="umc-utrecht-banner.svg?v=1" alt="UMC Utrecht" class="brandLogo"></div>
+  <div class="brandInner">
+    <img src="umc-utrecht-banner.svg?v=1" alt="UMC Utrecht" class="brandLogo">
+    <div class="appTitleBlock">
+      <h1>Linac technische controle wekelijks</h1>
+      <p>RT-VTech · Kwaliteitssysteem Radiotherapie</p>
+    </div>
+  </div>
 </header>
 
 <main class="appShell">
-  <section class="qaCard photoCard">
-    <div class="cardLead">
-      <div class="lineIcon">⌾</div>
-      <div class="cardCopy">
-        <h2>1. Maak foto van referentieblad</h2>
-        <p>Plaats het referentieblad vlak en goed verlicht.</p>
-        <p>Zorg dat alle vier de AprilTags volledig zichtbaar zijn.</p>
-      </div>
-      <label class="primaryAction" for="photoInput">Foto maken</label>
-      <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+  <section class="qaCard progressCard" id="top">
+    <div class="progressHeader">
+      <div><div class="eyebrow">Wekelijkse QA</div><h2>Voortgang</h2></div>
+      <div id="overallState" class="overallBadge neutral">NOG NIET GESTART</div>
+    </div>
+    <div class="progressTrack"><div id="progressBar" class="progressBar"></div></div>
+    <div class="progressMeta"><strong id="progressText">0 van 0 controles afgerond</strong><span id="saveState">Lokaal opgeslagen op deze tablet</span></div>
+  </section>
+
+  <section class="qaCard">
+    <div class="sectionTitle"><span class="sectionNo">A</span><div><h2>Algemene administratie</h2><p class="sectionHint">Systeem, datum en initialen van beide uitvoerders</p></div></div>
+    <div class="formGrid adminGrid">
+      <label>Systeem<input class="persist requiredField" id="systemName" data-label="Systeem" type="text" autocomplete="off" placeholder="bijv. U7 / U15"></label>
+      <label>Datum<input class="persist requiredField" id="qaDate" data-label="Datum" type="date"></label>
+      <label>Initialen 1<input class="persist requiredField" id="initials1" data-label="Initialen 1" type="text" autocomplete="off" maxlength="12"></label>
+      <label>Initialen 2<input class="persist requiredField" id="initials2" data-label="Initialen 2" type="text" autocomplete="off" maxlength="12"></label>
     </div>
   </section>
 
-  <section class="qaCard referenceCard">
-    <div class="sectionTitle"><span class="lineIcon small">▤</span><h2>Referentieblad</h2></div>
-    <a class="referenceLink" href="referentieblad_apriltag36h11_v3.svg?v=3" target="_blank" rel="noopener">
-      <span class="pdfMark">PDF</span>
-      <span>Referentieblad APRILTAG36H11-V3 openen / printen</span>
-      <span class="openMark">↗</span>
-    </a>
-    <p class="microcopy">IDs: 0 = G/A · 1 = G/B · 2 = T/B · 3 = T/A. Print op 100% / werkelijke grootte en controleer de 100.0 mm lijn.</p>
+  <nav class="moduleGrid" aria-label="QA onderdelen">
+    <a href="#geometrie" class="moduleTile"><span class="tileIcon">⌖</span><span><strong>Geometrie</strong><small id="tileGeometry">0 / 4</small></span></a>
+    <a href="#veiligheid" class="moduleTile"><span class="tileIcon">✓</span><span><strong>Veiligheid</strong><small id="tileSafety">0 / 11</small></span></a>
+    <a href="#techniek" class="moduleTile"><span class="tileIcon">◫</span><span><strong>Technische waarden</strong><small id="tileTechnical">0 / 4</small></span></a>
+    <a href="#xvi" class="moduleTile"><span class="tileIcon">◎</span><span><strong>XVI / HexaPOD</strong><small id="tileXvi">0 / 5</small></span></a>
+    <a href="#periodiek" class="moduleTile"><span class="tileIcon">↻</span><span><strong>Periodiek</strong><small id="tilePeriodic">optioneel</small></span></a>
+    <a href="#afronden" class="moduleTile"><span class="tileIcon">▣</span><span><strong>Afronden</strong><small>overzicht & export</small></span></a>
+  </nav>
+
+  <section class="qaSection" id="geometrie">
+    <div class="sectionBanner"><span class="sectionNo">1</span><div><h2>Geometrie</h2><p>Controles op isocentrum, lichtveld, tafelhoogte en lasers</p></div></div>
+
+    <section class="qaCard taskCard">
+      <div class="taskHeader"><div><h3>Kruisdraadrotatie</h3><p>G0, C-90 & C90 en tafel hoogte op ISOC · 1.4.1</p></div><span class="taskState" data-task-state="crosshair">Open</span></div>
+      <div class="inlineMeasure"><label>Isocentrum [mm]<input class="persist taskInput" data-task="crosshair" id="crosshairIso" type="number" step="0.1" inputmode="decimal"></label></div>
+    </section>
+
+    <section class="qaCard lightfieldCard">
+      <div class="taskHeader"><div><h3>Lichtveld 10 × 10</h3><p>G0, C90 en tafel hoogte op ISOC · 1.4.5 · automatische AprilTag-meting</p></div><span id="lightfieldTaskState" class="taskState">Open</span></div>
+      <div class="lightfieldIntro">
+        <div>
+          <p>Gebruik referentieblad <strong>APRILTAG36H11-V3</strong>. De bestaande meetmethode herkent automatisch G/A, G/B, T/B en T/A, corrigeert perspectief en bepaalt de veldranden.</p>
+          <a class="referenceLink compact" href="referentieblad_apriltag36h11_v3.svg?v=3" target="_blank" rel="noopener"><span class="pdfMark">PDF</span><span>Referentieblad openen / printen</span><span class="openMark">↗</span></a>
+        </div>
+        <label class="primaryAction" for="photoInput">Foto maken</label><input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+      </div>
+      <div id="detectionCard" class="embeddedAnalysis" hidden>
+        <div class="analysisHeader"><div><strong>Automatische herkenning</strong><div id="detectStatus" class="instruction">AprilTags zoeken...</div></div><button id="retryBtn" class="secondaryAction" type="button">Opnieuw analyseren</button></div>
+        <div class="canvasWrap sourcePreview"><canvas id="photoCanvas"></canvas></div>
+      </div>
+      <div id="resultCard" hidden>
+        <div class="lightfieldResultGrid">
+          <div class="resultTable">
+            <div class="resultRow statusRow"><span>Status</span><strong id="statusBadge" class="badge neutral">MEETRESULTAAT</strong></div>
+            <div class="resultRow"><span>Veldbreedte A–B</span><strong id="widthOut">-</strong></div>
+            <div class="resultRow"><span>Veldhoogte G–T</span><strong id="heightOut">-</strong></div>
+            <div class="resultRow"><span>Links A (x1)</span><strong id="leftOut">-</strong></div>
+            <div class="resultRow"><span>Rechts B (x2)</span><strong id="rightOut">-</strong></div>
+            <div class="resultRow"><span>Boven G (y1)</span><strong id="topOut">-</strong></div>
+            <div class="resultRow"><span>Onder T (y2)</span><strong id="bottomOut">-</strong></div>
+            <div class="resultRow"><span>Isocentrum X</span><strong id="cxOut">-</strong></div>
+            <div class="resultRow"><span>Isocentrum Y</span><strong id="cyOut">-</strong></div>
+          </div>
+          <div class="analysisImagePanel"><div class="miniHeading">Geanalyseerde foto</div><div class="canvasWrap analyzedPreview"><canvas id="resultCanvas"></canvas></div></div>
+        </div>
+        <details class="tolerancePanel"><summary>Optionele tolerantieweergave lichtveld</summary><label>Tolerantie per zijde (mm)<input id="tolerance" type="number" inputmode="decimal" min="0.1" max="20" step="0.1" value="2.0"></label><p class="microcopy">Deze waarde behoort uitsluitend volgens het lokaal goedgekeurde QA-protocol te worden ingesteld.</p></details>
+        <div class="actionGrid lightActions"><label class="actionButton" for="photoInput">Nieuwe foto</label><button class="actionButton" type="button" onclick="document.getElementById('retryBtn').click()">Opnieuw analyseren</button><button id="saveImageBtn" class="actionButton" type="button">Analysebeeld</button><button id="saveCsvBtn" class="actionButton" type="button">Lichtveld CSV</button></div>
+      </div>
+    </section>
+
+    <section class="qaCard taskCard">
+      <div class="taskHeader"><div><h3>Uitlezing tafelhoogte</h3><p>ISOC · Integrity i146 en licht liniaal</p></div><span class="taskState" data-task-state="tableheight">Open</span></div>
+      <div class="formGrid twoCol"><label>Integrity i146 [cm]<input class="persist taskInput" data-task="tableheight" id="tableIntegrity" type="number" step="0.1" inputmode="decimal"></label><label>Licht liniaal [cm]<input class="persist taskInput" data-task="tableheight" id="tableRuler" type="number" step="0.1" inputmode="decimal"></label></div>
+    </section>
+
+    <section class="qaCard taskCard">
+      <div class="taskHeader"><div><h3>Lasers overeenkomst</h3><p>Uitlijning · 1.6.3</p></div><span class="taskState" data-task-state="lasers">Open</span></div>
+      <div class="statusChoice persistChoice" data-choice="lasers"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button><button type="button" data-value="nvt">N.v.t.</button></div>
+    </section>
   </section>
 
-  <section class="qaCard" id="detectionCard" hidden>
-    <div class="analysisHeader">
-      <div class="sectionTitle"><span class="lineIcon small">≋</span><h2>2. Analyseer foto</h2></div>
-      <button id="retryBtn" class="secondaryAction" type="button">Analyseer foto</button>
+  <section class="qaSection" id="veiligheid">
+    <div class="sectionBanner"><span class="sectionNo">2</span><div><h2>Veiligheid & interlocks</h2><p>Touchguards, stopknoppen, roomdoors en deur-/lampfuncties</p></div></div>
+    <div class="checkGrid">
+      <section class="qaCard checkCard"><h3>Touchguard interlocks</h3><div class="checkList">
+        <div class="checkItem"><span>Gantry</span><div class="statusChoice persistChoice" data-choice="touchGantry"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>XVI source</span><div class="statusChoice persistChoice" data-choice="touchXviSource"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>iView panel</span><div class="statusChoice persistChoice" data-choice="touchIview"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>XVI panel</span><div class="statusChoice persistChoice" data-choice="touchXviPanel"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+      </div></section>
+      <section class="qaCard checkCard"><h3>Stopknoppen</h3><div class="checkList">
+        <div class="checkItem"><span>Tafel (2x)</span><div class="statusChoice persistChoice" data-choice="stopTable"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>HHC (3x)</span><div class="statusChoice persistChoice" data-choice="stopHhc"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+      </div></section>
+      <section class="qaCard checkCard"><h3>Roomdoors 2</h3><div class="checkList"><div class="checkItem"><span>Zoemer</span><div class="statusChoice persistChoice" data-choice="roomdoorBuzzer"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div></div></section>
+      <section class="qaCard checkCard"><h3>KeyPad, deur en lampen</h3><div class="checkList">
+        <div class="checkItem"><span>Oranje lamp bunker</span><div class="statusChoice persistChoice" data-choice="orangeLamp"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Deur lamp · Interrupt</span><div class="statusChoice persistChoice" data-choice="doorInterrupt"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Zoemer · Deur cont.</span><div class="statusChoice persistChoice" data-choice="doorContBuzzer"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Rode lamp · Terminate</span><div class="statusChoice persistChoice" data-choice="redTerminate"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+      </div></section>
     </div>
-    <div id="detectStatus" class="instruction">AprilTags zoeken...</div>
-    <div class="canvasWrap sourcePreview"><canvas id="photoCanvas"></canvas></div>
-    <p class="microcopy">De meting start alleen wanneer G/A, G/B, T/B en T/A alle vier automatisch zijn herkend.</p>
   </section>
 
-  <section id="resultCard" hidden>
-    <section class="qaCard resultsCard">
-      <div class="sectionTitle"><span class="lineIcon small">▣</span><h2>Resultaten</h2></div>
-      <div class="resultTable">
-        <div class="resultRow statusRow"><span>Status</span><strong id="statusBadge" class="badge neutral">MEETRESULTAAT</strong></div>
-        <div class="resultRow"><span>Veldbreedte A–B</span><strong id="widthOut">-</strong></div>
-        <div class="resultRow"><span>Veldhoogte G–T</span><strong id="heightOut">-</strong></div>
-        <div class="resultRow"><span>Links (A)</span><strong id="leftOut">-</strong></div>
-        <div class="resultRow"><span>Rechts (B)</span><strong id="rightOut">-</strong></div>
-        <div class="resultRow"><span>Boven (G)</span><strong id="topOut">-</strong></div>
-        <div class="resultRow"><span>Onder (T)</span><strong id="bottomOut">-</strong></div>
-        <div class="resultRow"><span>Isocentrum X</span><strong id="cxOut">-</strong></div>
-        <div class="resultRow"><span>Isocentrum Y</span><strong id="cyOut">-</strong></div>
-      </div>
-      <details class="tolerancePanel">
-        <summary>Optionele tolerantieweergave</summary>
-        <label>Tolerantie per zijde (mm)
-          <input id="tolerance" type="number" inputmode="decimal" min="0.1" max="20" step="0.1" value="2.0">
-        </label>
-        <p class="microcopy">Stel deze waarde uitsluitend in volgens jullie lokaal goedgekeurde QA-protocol.</p>
-      </details>
-    </section>
-
-    <section class="qaCard imageCard">
-      <div class="sectionTitle"><span class="lineIcon small">▧</span><h2>Geanalyseerde foto</h2></div>
-      <div class="canvasWrap analyzedPreview"><canvas id="resultCanvas"></canvas></div>
-    </section>
-
-    <section class="qaCard actionsCard">
-      <div class="sectionTitle"><span class="lineIcon small">⚙</span><h2>Acties</h2></div>
-      <div class="actionGrid">
-        <label class="actionButton" for="photoInput">Nieuwe foto</label>
-        <button class="actionButton" type="button" onclick="document.getElementById('retryBtn').click()">Opnieuw analyseren</button>
-        <button id="saveImageBtn" class="actionButton" type="button">Analysebeeld</button>
-        <button id="saveCsvBtn" class="actionButton" type="button">CSV exporteren</button>
-      </div>
-    </section>
+  <section class="qaSection" id="techniek">
+    <div class="sectionBanner"><span class="sectionNo">3</span><div><h2>Technische waarden</h2><p>Waarden uit het wekelijkse formulier; geen extra grenswaarden toegevoegd</p></div></div>
+    <section class="qaCard"><div class="formGrid fourCol">
+      <label>SF₆ druk [bar] <small>A.1.1.1</small><input class="persist requiredMeasure" id="sf6Pressure" type="number" step="0.01" inputmode="decimal"></label>
+      <label>Water druk [psi] <small>A.1.1.2</small><input class="persist requiredMeasure" id="waterPressure" type="number" step="0.1" inputmode="decimal"></label>
+      <label>Vacuüm Gun [i227] <small>A.1.1.5</small><input class="persist requiredMeasure" id="vacuumGun" type="number" step="any" inputmode="decimal"></label>
+      <label>Vacuüm Target [i228] <small>A.1.1.5</small><input class="persist requiredMeasure" id="vacuumTarget" type="number" step="any" inputmode="decimal"></label>
+    </div></section>
+    <section class="qaCard" id="pfnCard"><div class="taskHeader"><div><h3>PFN · 1e week van de maand</h3><p>Lekkage</p></div><label class="switchLabel"><input class="persist" id="pfnApplicable" type="checkbox"> Van toepassing</label></div><div id="pfnControls" class="statusChoice persistChoice" data-choice="pfnLeak" hidden><button type="button" data-value="akkoord">Geen lekkage / akkoord</button><button type="button" data-value="niet-akkoord">Afwijking</button></div></section>
   </section>
 
-  <details class="qaCard safetyCard">
-    <summary>Info & gebruiksvoorwaarden</summary>
-    <p><strong>Prototype / onderzoekshulpmiddel.</strong> Niet gebruiken als zelfstandig klinisch QA-instrument zonder lokale validatie, risicoanalyse en goedkeuring door de verantwoordelijke klinisch fysicus/QMP.</p>
-    <p class="microcopy">Alle beeldverwerking gebeurt lokaal in de browser; er is geen serverupload.</p>
-  </details>
+  <section class="qaSection" id="xvi">
+    <div class="sectionBanner"><span class="sectionNo">4</span><div><h2>XVI / HexaPOD</h2><p>Functiecontroles volgens het wekelijkse formulier</p></div></div>
+    <div class="checkGrid">
+      <section class="qaCard checkCard"><h3>XVI</h3><div class="checkList">
+        <div class="checkItem"><span>KV arm</span><div class="statusChoice persistChoice" data-choice="xviKvArm"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Rode lamp</span><div class="statusChoice persistChoice" data-choice="xviRedLamp"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+      </div></section>
+      <section class="qaCard checkCard"><h3>HexaPOD (U7 & U15)</h3><div class="checkList">
+        <div class="checkItem"><span>Bew. intl.</span><div class="statusChoice persistChoice" data-choice="hexaMovement"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Frame</span><div class="statusChoice persistChoice" data-choice="hexaFrame"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+        <div class="checkItem"><span>Lasers</span><div class="statusChoice persistChoice" data-choice="hexaLasers"><button type="button" data-value="akkoord">Akkoord</button><button type="button" data-value="niet-akkoord">Niet akkoord</button></div></div>
+      </div></section>
+    </div>
+  </section>
+
+  <section class="qaSection" id="periodiek">
+    <div class="sectionBanner"><span class="sectionNo">5</span><div><h2>Periodieke controles</h2><p>Alleen activeren wanneer deze controle volgens planning van toepassing is</p></div></div>
+    <section class="qaCard periodicCard">
+      <div class="taskHeader"><div><h3>Servo instellingen bundel · voorafgaand aan fysisch 6-wekelijks</h3><p>Gun aim [i381] en Dose rate [i44] · A.1.1.3</p></div><label class="switchLabel"><input class="persist" id="sixWeeklyApplicable" type="checkbox"> Van toepassing</label></div>
+      <div id="sixWeeklyPanel" hidden>
+        <p class="noticeText">Let vooraf op de servo-instellingen. Regel vervolgens zo nodig de gun aim waarde bij met de lopende servo-gecontroleerde Gun I ctrl (i327). Het formulier vermeldt dat normaal een afname van 30 mA per 6 weken optreedt.</p>
+        <div class="tableScroll"><table class="dataTable"><thead><tr><th>Energie</th><th>Gun aim oud</th><th>Gun aim nieuw</th><th>Dose rate oud</th><th>Dose rate nieuw</th><th>Nominaal</th></tr></thead><tbody>
+          <tr><td>X6 MV</td><td><input class="persist periodicInput" data-periodic="six" id="x6GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6DoseNew" type="number" step="any"></td><td>500 ± 25</td></tr>
+          <tr><td>X10 MV</td><td><input class="persist periodicInput" data-periodic="six" id="x10GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x10GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x10DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x10DoseNew" type="number" step="any"></td><td>550 ± 25</td></tr>
+          <tr><td>X6 MV FFF</td><td><input class="persist periodicInput" data-periodic="six" id="x6fffGunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6fffGunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6fffDoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="x6fffDoseNew" type="number" step="any"></td><td>1500 ± 75</td></tr>
+          <tr><td>E6 MeV</td><td><input class="persist periodicInput" data-periodic="six" id="e6GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e6GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e6DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e6DoseNew" type="number" step="any"></td><td>600 ± 25</td></tr>
+          <tr><td>E8 MeV</td><td><input class="persist periodicInput" data-periodic="six" id="e8GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e8GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e8DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e8DoseNew" type="number" step="any"></td><td>600 ± 25</td></tr>
+          <tr><td>E10 MeV</td><td><input class="persist periodicInput" data-periodic="six" id="e10GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e10GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e10DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e10DoseNew" type="number" step="any"></td><td>600 ± 25</td></tr>
+          <tr><td>E12 MeV</td><td><input class="persist periodicInput" data-periodic="six" id="e12GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e12GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e12DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e12DoseNew" type="number" step="any"></td><td>600 ± 25</td></tr>
+          <tr><td>E15 MeV</td><td><input class="persist periodicInput" data-periodic="six" id="e15GunOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e15GunNew" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e15DoseOld" type="number" step="any"></td><td><input class="persist periodicInput" data-periodic="six" id="e15DoseNew" type="number" step="any"></td><td>600 ± 25</td></tr>
+        </tbody></table></div>
+        <p class="microcopy">N.B. volgens het formulier: afregelen 2R en 2T gebeurt op halve nominale waarden. Opslaan tijdens stralen. Zet GunStandbyI [i380p1] weer terug op de originele waarde: 5.25 A voor fotonen, 4.5 A voor elektronen.</p>
+      </div>
+    </section>
+    <section class="qaCard periodicCard"><div class="taskHeader"><div><h3>Gantrymovie met KFM · fysisch 3-maandelijks</h3><p>Controle LUT & vacuüm · Energie VT akkoord (initialen)</p></div><label class="switchLabel"><input class="persist" id="threeMonthlyApplicable" type="checkbox"> Van toepassing</label></div><div id="threeMonthlyPanel" hidden class="formGrid threeCol"><label>X6 MV<input class="persist periodicInput" data-periodic="three" id="vtX6" type="text" maxlength="12"></label><label>X10 MV<input class="persist periodicInput" data-periodic="three" id="vtX10" type="text" maxlength="12"></label><label>X6 MV FFF<input class="persist periodicInput" data-periodic="three" id="vtX6fff" type="text" maxlength="12"></label></div></section>
+  </section>
+
+  <section class="qaSection" id="afronden">
+    <div class="sectionBanner"><span class="sectionNo">6</span><div><h2>Opmerkingen & afronden</h2><p>Controleer openstaande onderdelen en exporteer het wekelijkse verslag</p></div></div>
+    <section class="qaCard"><label>Opmerkingen / Extra<textarea class="persist" id="comments" rows="6" placeholder="Opmerkingen, afwijkingen of extra informatie"></textarea></label></section>
+    <section class="qaCard summaryCard"><div class="summaryHead"><div><h3>Eindoverzicht</h3><p id="summaryText">Nog niet alle verplichte controles zijn afgerond.</p></div><div id="summaryBadge" class="overallBadge neutral">ONVOLLEDIG</div></div><div id="openItems" class="openItems"></div><div class="finishActions"><button id="exportWeeklyCsv" type="button" class="primaryAction">Wekelijkse CSV exporteren</button><button id="printReport" type="button" class="secondaryAction">Rapport printen / PDF</button><button id="newWeeklyCheck" type="button" class="dangerGhost">Nieuwe wekelijkse controle</button></div></section>
+  </section>
+
+  <details class="qaCard safetyCard"><summary>Info & gebruiksvoorwaarden</summary><p><strong>Prototype / onderzoekshulpmiddel.</strong> Deze webapp digitaliseert het aangeleverde formulier en bevat de bestaande optische lichtveldmeting. Klinische acceptatiecriteria, validatie en vrijgave blijven onderdeel van het lokale QA-proces.</p><p class="microcopy">Alle formuliergegevens en beelden worden lokaal in de browser verwerkt. De formuliergegevens worden via localStorage op deze tablet bewaard totdat een nieuwe wekelijkse controle wordt gestart of browsergegevens worden verwijderd.</p></details>
 </main>
 
-<footer class="appFooter">
-  <div>Lichtveld QA <span>•</span> Software v11 <span>•</span> Referentieblad APRILTAG36H11-V3</div>
-  <div class="footerInfo">UMC Utrecht</div>
-</footer>
-
-<script src="app_v7.js?v=11"></script>
+<footer class="appFooter"><div>Linac wekelijkse QA <span>•</span> Software v12 <span>•</span> Referentieblad APRILTAG36H11-V3</div><div class="footerInfo">UMC Utrecht</div></footer>
+<script src="app_v7.js?v=12"></script>
+<script src="weekly.js?v=12"></script>
 </body>
 </html>
