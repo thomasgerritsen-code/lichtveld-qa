@@ -1,9 +1,9 @@
 {
-  "name": "Linac technische controle wekelijks",
-  "short_name": "Linac QA",
-  "start_url": "./index.html?v=12",
+  "name": "Linac Techniek Dashboard",
+  "short_name": "Linac Dashboard",
+  "start_url": "./index.html?v=13",
   "display": "standalone",
   "background_color": "#f4f7fb",
   "theme_color": "#1961ab",
-  "description": "Tabletwebapp voor de wekelijkse technische Linac QA met geïntegreerde 10 x 10 cm lichtveldmeting."
+  "description": "Tablet-dashboard voor Linac techniek met periodieke controles, documentatie, diagrammen, telefoonlijst en VT meetdata."
 }
