@@ -14,12 +14,14 @@
     if(/Vac\s*Gun/i.test(s)&&/Vac\s*Targ/i.test(s)){segment=s;break}
   }
   if(!segment){alert('Voor '+wanted+' kon geen zichtbaar blok met Vac Gun en Vac Targ worden gevonden. Zorg dat de waarden in Meetdata VT zichtbaar zijn.');return}
-  const num='([-+]?\\d+(?:[.,]\\d+)?(?:e[-+]?\\d+)?)';
-  const gm=segment.match(new RegExp('Vac\\s*Gun[^\\d+\\-]*'+num,'i'));
-  const tm=segment.match(new RegExp('Vac\\s*Targ[^\\d+\\-]*'+num,'i'));
+  const value='([-+]?\\d+[.,]\\d+(?:e[-+]?\\d+)?|[-+]?\\d+(?:e[-+]?\\d+))';
+  const gm=segment.match(new RegExp('Vac\\s*Gun[\\s\\S]{0,180}?'+value,'i'));
+  const tm=segment.match(new RegExp('Vac\\s*Targ[\\s\\S]{0,180}?'+value,'i'));
   if(!gm||!tm){alert('De zichtbare Vac Gun- of Vac Targ-waarde kon niet betrouwbaar worden gelezen voor '+wanted+'.');return}
   const gun=Number(gm[1].replace(',','.')),target=Number(tm[1].replace(',','.'));
   if(!Number.isFinite(gun)||!Number.isFinite(target)){alert('De gevonden vacuümwaarden zijn niet numeriek.');return}
+  const check=confirm(wanted+' gevonden:\nVac Gun: '+gun+'\nVac Targ: '+target+'\n\nDeze twee waarden naar het klembord kopiëren?');
+  if(!check)return;
   const payload=JSON.stringify({source:'MeetdataVT',system:wanted,gun,target,capturedAt:new Date().toISOString()});
-  navigator.clipboard.writeText(payload).then(()=>alert(wanted+' gekopieerd: Vac Gun '+gun+' · Vac Targ '+target+'. Open nu de wekelijkse QA en kies “Importeer Meetdata uit klembord”.')).catch(()=>prompt('Kopieer deze Meetdata handmatig:',payload));
+  navigator.clipboard.writeText(payload).then(()=>alert('Meetdata gekopieerd. Open nu de wekelijkse QA en kies “Importeer Meetdata uit klembord”.')).catch(()=>prompt('Kopieer deze Meetdata handmatig:',payload));
 })();
