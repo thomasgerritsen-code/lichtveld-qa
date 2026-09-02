@@ -14,7 +14,7 @@
     if(/Vac\s*Gun/i.test(s)&&/Vac\s*Targ/i.test(s)){segment=s;break}
   }
   if(!segment){alert('Voor '+wanted+' kon geen zichtbaar blok met Vac Gun en Vac Targ worden gevonden. Zorg dat de waarden in Meetdata VT zichtbaar zijn.');return}
-  const value='([-+]?\\d+[.,]\\d+(?:e[-+]?\\d+)?|[-+]?\\d+(?:e[-+]?\\d+))';
+  const value='([-+]?\\d+[.,]\\d+(?:e[-+]?\\d+)?|[-+]?\\d+(?:e[-+]?\\d+)|[-+]\\d+)';
   const gm=segment.match(new RegExp('Vac\\s*Gun[\\s\\S]{0,180}?'+value,'i'));
   const tm=segment.match(new RegExp('Vac\\s*Targ[\\s\\S]{0,180}?'+value,'i'));
   if(!gm||!tm){alert('De zichtbare Vac Gun- of Vac Targ-waarde kon niet betrouwbaar worden gelezen voor '+wanted+'.');return}
