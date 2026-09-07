@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1961ab">
+  <title>LINAC bundeltransport · RT-VTech</title>
+  <link rel="stylesheet" href="../dashboard.css?v=4">
+  <link rel="stylesheet" href="./simulator.css?v=1">
+</head>
+<body>
+<header class="brandHeader"><div class="brandInner">
+  <img src="../umc-utrecht-banner.svg?v=1" alt="UMC Utrecht" class="brandLogo">
+  <div class="brandText"><h1>LINAC bundeltransport</h1><p>RT-VTech · interactieve uitleg</p></div>
+</div></header>
+
+<main class="simShell">
+  <div class="simToolbar">
+    <a class="backLink" href="../index.html?v=19">← Dashboard</a>
+    <div class="toolbarActions">
+      <button id="resetBtn" type="button">Reset</button>
+      <button id="faultBtn" type="button">Voorbeeld afwijking</button>
+      <button id="pauseBtn" type="button">Pauzeer</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
+      <p>Modulaire GitHub Pages-versie met een paraxiaal transfer-matrixmodel voor focus/steering en een genormaliseerd dispersiemodel voor de slalom-bendingsectie. Instellingen zijn dimensieloos.</p>
+    </div>
+    <div class="heroBadges"><span>Mobiel</span><span>Desktop</span><span>Modulaire JS</span></div>
+  </section>
+
+  <div class="layout">
+    <aside class="controls">
+      <details open><summary>Electron optics</summary><div class="controlBody">
+        <label>Focus 1 <output id="f1v">1.00</output><input id="f1" type="range" min="0" max="100" value="60"></label>
+        <label>1R – radial <output id="r1v">0.00</output><input id="r1" type="range" min="-100" max="100" value="0"></label>
+        <label>1T – transverse <output id="t1v">0.00</output><input id="t1" type="range" min="-100" max="100" value="0"></label>
+        <label>Focus 2 <output id="f2v">1.00</output><input id="f2" type="range" min="0" max="100" value="62"></label>
+        <label>2R – radial <output id="r2v">0.00</output><input id="r2" type="range" min="-100" max="100" value="0"></label>
+        <label>2T – transverse <output id="t2v">0.00</output><input id="t2" type="range" min="-100" max="100" value="0"></label>
+      </div></details>
+
+      <details open><summary>Bending assembly</summary><div class="controlBody">
+        <label>Relatieve energie <output id="energyv">1.00</output><input id="energy" type="range" min="0" max="100" value="55"></label>
+        <label>Energiespreiding <output id="spreadv">0.25</output><input id="spread" type="range" min="0" max="100" value="25"></label>
+        <label>Bending coarse <output id="coarsev">0.00</output><input id="coarse" type="range" min="-100" max="100" value="0"></label>
+        <label>Bending fine (M3) <output id="finev">0.00</output><input id="fine" type="range" min="-100" max="100" value="0"></label>
+      </div></details>
+
+      <details><summary>Behandelkop</summary><div class="controlBody">
+        <div class="segmented"><button id="photonBtn" class="selected" type="button">Photon</button><button id="electronBtn" type="button">Electron</button></div>
+        <div id="ffWrap" class="segmented"><button id="ffBtn" class="selected" type="button">FF</button><button id="fffBtn" type="button">FFF</button></div>
+        <label>Veld X <output id="fxv">60%</output><input id="fx" type="range" min="15" max="100" value="60"></label>
+        <label>Veld Y <output id="fyv">60%</output><input id="fy" type="range" min="15" max="100" value="60"></label>
+      </div></details>
+
+      <details><summary>Overlays</summary><div class="controlBody">
+        <label class="check"><input id="dispToggle" type="checkbox" checked> Energiedispersie</label>
+        <label class="check"><input id="labelsToggle" type="checkbox" checked> Labels</label>
+        <label class="check"><input id="badToggle" type="checkbox"> Mismatchpad</label>
+        <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
+      </div></details>
+
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Exacte Elekta currents, poolprofielen, veldkaarten en servicekalibraties zijn bewust niet gemodelleerd.</p></div>
+    </aside>
+
+    <section>
+      <article class="panelCard">
+        <div class="viewerHead"><div><strong>Complete machine</strong><span>Begin tot eind van de bundel in één beeld</span></div><button id="fitBtn" type="button">Pas in beeld</button></div>
+        <div id="machineViewport" class="machineViewport">
+          <svg id="machineSvg" viewBox="0 0 1800 1120" role="img" aria-label="Volledige medische lineaire versneller">
+            <defs>
+              <filter id="beamGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="waveguideFill" x1="0" x2="1"><stop offset="0%" stop-color="#11263c"/><stop offset="55%" stop-color="#1b3855"/><stop offset="100%" stop-color="#0d1b2b"/></linearGradient>
+              <linearGradient id="photonCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ffd66b" stop-opacity=".46"/><stop offset="100%" stop-color="#ffd66b" stop-opacity=".05"/></linearGradient>
+              <linearGradient id="electronCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#63ddff" stop-opacity=".42"/><stop offset="100%" stop-color="#63ddff" stop-opacity=".05"/></linearGradient>
+            </defs>
+            <rect width="1800" height="1120" fill="#06101a"/>
+
+            <g id="machineHardware">
+              <path class="gantryShell" d="M48 825 Q42 690 115 610 L690 370 Q790 326 878 342 L1304 362 Q1425 370 1515 444 L1614 540 L1590 916 Q1570 968 1518 982 L1292 982 L1266 758 L1154 675 L826 614 L622 690 L160 892 Z"/>
+              <path class="innerShell" d="M98 794 Q94 707 153 649 L707 421 Q782 391 850 404 L1280 419 Q1364 425 1437 484 L1535 566 L1516 899 L1288 899 L1260 727 L1134 633 L822 575 L603 649 L154 837 Z"/>
+
+              <g data-part="gun" class="component"><g transform="translate(92 794) rotate(-22.5)"><rect class="hit hardwareBlock" x="0" y="-40" width="96" height="80" rx="14"/><circle cx="58" cy="0" r="15" class="gunCathode"/></g></g>
+              <g data-part="waveguide" class="component"><g transform="translate(183 758) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-40" width="640" height="80" rx="18"/><line x1="20" y1="0" x2="620" y2="0" class="waveguideAxis"/><g id="rfCells"></g></g></g>
+              <g data-part="focus1" class="component"><g transform="translate(363 683) rotate(-22.5)"><rect class="hit focusBlock" x="-32" y="-50" width="64" height="100" rx="11"/><ellipse cx="0" cy="0" rx="14" ry="28" class="focusAperture"/></g></g>
+              <g data-part="steer1" class="component"><g transform="translate(470 639) rotate(-22.5)"><rect class="hit steerBlock" x="-28" y="-49" width="56" height="98" rx="9"/><rect x="-14" y="-30" width="28" height="60" rx="7" class="steerAperture"/></g></g>
+              <g data-part="focus2" class="component"><g transform="translate(575 595) rotate(-22.5)"><rect class="hit focusBlock" x="-32" y="-50" width="64" height="100" rx="11"/><ellipse cx="0" cy="0" rx="14" ry="28" class="focusAperture"/></g></g>
+              <g data-part="steer2" class="component"><g transform="translate(682 551) rotate(-22.5)"><rect class="hit steerBlock" x="-28" y="-49" width="56" height="98" rx="9"/><rect x="-14" y="-30" width="28" height="60" rx="7" class="steerAperture"/></g></g>
+              <g data-part="bellows" class="component"><g id="bellowsLines"></g></g>
+
+              <g data-part="slalom" class="component">
+                <path class="hit bendHousing" d="M820 268 L1255 268 L1360 452 L1338 711 L1030 711 L825 533 Z"/>
+                <path class="magnetPole" d="M862 318 L1029 318 L1008 526 L938 526 Z"/>
+                <path class="magnetPole" d="M1026 374 L1137 374 L1192 599 L991 599 Z"/>
+                <path class="magnetPole" d="M1170 294 L1450 418 L1260 600 L1161 555 Z"/>
+              </g>
+              <g data-part="flightTube" class="component"><path id="flightOuter" class="hit flightOuter" d=""/><path id="flightInner" class="flightInner" d=""/></g>
+
+              <g data-part="head" class="component"><path class="hit headShell" d="M1295 717 L1590 717 L1612 972 L1272 972 Z"/><path class="headInner" d="M1325 750 L1562 750 L1576 945 L1309 945 Z"/></g>
+              <g id="photonTarget" data-part="target" class="component"><rect class="hit target" x="1410" y="760" width="78" height="14" rx="3"/></g>
+              <g id="electronWindow" data-part="window" class="component" hidden><line class="hit electronWindow" x1="1412" y1="768" x2="1488" y2="768"/></g>
+
+              <g id="photonHead">
+                <path class="primaryColl" d="M1364 792 H1408 L1422 835 H1352 Z"/><path class="primaryColl" d="M1490 792 H1534 L1546 835 H1477 Z"/>
+                <g id="flatteningFilter" data-part="filter" class="component"><path class="hit filterShape" d="M1415 852 L1485 852 L1469 893 L1431 893 Z"/></g>
+              </g>
+              <g id="electronHead" hidden><line class="foil" x1="1416" y1="852" x2="1485" y2="852"/><ellipse class="foil2" cx="1450" cy="889" rx="31" ry="8"/></g>
+              <g data-part="monitor" class="component"><rect class="hit monitor" x="1366" y="906" width="168" height="22" rx="7"/></g>
+              <g data-part="mirror" class="component"><line class="hit mirror" x1="1396" y1="944" x2="1490" y2="961"/></g>
+              <g id="mlcGroup" data-part="mlc" class="component"><g id="mlcLeft"></g><g id="mlcRight"></g></g>
+              <g id="jawsGroup" data-part="jaws" class="component"><rect id="jawL" class="hit jaw" x="1360" y="1009" width="78" height="28" rx="5"/><rect id="jawR" class="hit jaw" x="1485" y="1009" width="78" height="28" rx="5"/></g>
+              <g id="electronApplicator" data-part="applicator" class="component" hidden><path class="hit applicator" d="M1376 970 L1425 970 L1402 1072 L1354 1072 Z"/><path class="hit applicator" d="M1477 970 L1526 970 L1549 1072 L1501 1072 Z"/></g>
+              <g data-part="patient" class="component"><rect class="hit patientPlane" x="1244" y="1080" width="410" height="22" rx="11"/><ellipse class="patientBody" cx="1450" cy="1080" rx="80" ry="18"/></g>
+            </g>
+
+            <g id="beamLayer">
+              <path id="dispLow" class="dispLow" d=""/><path id="dispHigh" class="dispHigh" d=""/><path id="mismatchPath" class="mismatchPath" d="" hidden/>
+              <path id="beamPath" class="beamPath" d=""/><path id="beamCore" class="beamCore" d=""/><g id="particles"></g><g id="vectorLayer"></g>
+              <path id="treatmentCone" d="M1446 774 L1454 774 L1558 1080 L1342 1080 Z" fill="url(#photonCone)"/>
+              <path id="centralRay" d="M1450 774 L1450 1080" class="centralRay"/>
+            </g>
+
+            <g id="labels">
+              <text x="48" y="872">Electron gun</text><text x="220" y="585" transform="rotate(-22.5 220 585)">Accelerating waveguide</text>
+              <text x="325" y="611">Focus 1</text><text x="429" y="570">1R / 1T</text><text x="536" y="525">Focus 2</text><text x="643" y="482">2R / 2T</text>
+              <text x="906" y="548">M1</text><text x="1050" y="626">M2</text><text x="1287" y="347">M3</text><text x="1340" y="742">Treatment head</text><text x="1518" y="1097">Patiëntvlak</text>
+            </g>
+          </svg>
+        </div>
+      </article>
+
+      <article class="panelCard" style="margin-top:12px">
+        <div class="statusGrid">
+          <div class="stat"><small>Target impact</small><strong id="impactOut">Nominaal</strong></div>
+          <div class="stat"><small>Achromatie</small><strong id="achOut">100%</strong></div>
+          <div class="stat"><small>Spot / focus</small><strong id="spotOut">1.00</strong></div>
+          <div class="stat"><small>Modus</small><strong id="modeOut">Photon FF</strong></div>
+          <div class="stat"><small>Radial drift</small><strong id="radOut">0.00</strong></div>
+          <div class="stat"><small>Transverse drift</small><strong id="traOut">0.00</strong></div>
+        </div>
+        <div class="info"><h3 id="partTitle">Volledige bundellijn</h3><p id="partText">Klik op een onderdeel in het overzicht voor uitleg.</p><span id="partPill" class="pill">interactief schema</span></div>
+      </article>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
+<script type="module" src="./js/main.js?v=1"></script>
+</body>
+</html>
