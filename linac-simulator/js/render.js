@@ -40,8 +40,9 @@ function offsetPath(mech,params,sim,sign=0,bad=false){
     ds=Math.max(0,ds);
     const steer=sim.radialOffset*(.12+.88*f);
     const residual=sign*dispersionAmp*sim.mismatch*f*f*.48;
+    const bendBias=(params.coarse*.70+params.fine*.30)*28*f*f;
     const mismatchKick=bad?(12+18*Math.sin(f*5))*sim.mismatch*(.25+.75*f):0;
-    const off=steer+sign*dispersionAmp*ds+residual+mismatchKick;
+    const off=steer+sign*dispersionAmp*ds+residual+bendBias+mismatchKick;
     return {x:p.x+nx*off,y:p.y+ny*off};
   });
 }
@@ -54,15 +55,24 @@ export function initHardware(){
   for(let i=0;i<7;i++){const t=(i+1)/8,x=774+Math.cos(a)*48*t,y=514+Math.sin(a)*48*t,nx=-Math.sin(a),ny=Math.cos(a),l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x-nx*20);l.setAttribute('y1',y-ny*20);l.setAttribute('x2',x+nx*20);l.setAttribute('y2',y+ny*20);l.setAttribute('stroke','#a9b9c8');l.setAttribute('stroke-width','2');bellows.appendChild(l);}
   const left=document.querySelector('#mlcLeft'),right=document.querySelector('#mlcRight');
   for(let i=0;i<14;i++){for(const [g,x] of [[left,1327],[right,1475]]){const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',x);r.setAttribute('y',971+i*3.3);r.setAttribute('width',98);r.setAttribute('height',2.7);r.setAttribute('rx',1);r.setAttribute('fill','#586674');g.appendChild(r);}}
+  const shift='translate(-59 0)';
+  for(const sel of ['[data-part="head"]','#photonTarget','#electronWindow','#photonHead','#electronHead','[data-part="monitor"]','[data-part="mirror"]','#mlcGroup','#jawsGroup','#electronApplicator','[data-part="patient"]','#treatmentCone','#centralRay']){
+    const el=document.querySelector(sel); if(el) el.setAttribute('transform',shift);
+  }
 }
 
 export function render(params,sim,overlays){
   const mech=buildMechanicalPath();
   const nominal=offsetPath(mech,params,sim,0,false),low=offsetPath(mech,params,sim,1,false),high=offsetPath(mech,params,sim,-1,false),bad=offsetPath(mech,params,sim,0,true);
+  const incoming=[];
+  const x0=135,y0=778,x1=mech[0].x,y1=mech[0].y,dx=x1-x0,dy=y1-y0,m=Math.hypot(dx,dy)||1,nx=-dy/m,ny=dx/m;
+  for(let i=0;i<=28;i++){const t=i/28,off=sim.radialOffset*.78*t*t;incoming.push({x:x0+dx*t+nx*off,y:y0+dy*t+ny*off});}
+  const last=nominal[nominal.length-1];
+  const fullNominal=[...incoming,...nominal.slice(1),{x:last.x,y:760}];
   document.querySelector('#flightOuter').setAttribute('d',pathD(mech));
   document.querySelector('#flightInner').setAttribute('d',pathD(mech));
-  document.querySelector('#beamPath').setAttribute('d',pathD(nominal));
-  document.querySelector('#beamCore').setAttribute('d',pathD(nominal));
+  document.querySelector('#beamPath').setAttribute('d',pathD(fullNominal));
+  document.querySelector('#beamCore').setAttribute('d',pathD(fullNominal));
   document.querySelector('#dispLow').setAttribute('d',pathD(low));
   document.querySelector('#dispHigh').setAttribute('d',pathD(high));
   document.querySelector('#mismatchPath').setAttribute('d',pathD(bad));
@@ -88,5 +98,5 @@ export function render(params,sim,overlays){
   const gap=22+76*params.fy;
   document.querySelector('#jawL').setAttribute('x',center-gap-78);
   document.querySelector('#jawR').setAttribute('x',center+gap);
-  return nominal;
+  return fullNominal;
 }
