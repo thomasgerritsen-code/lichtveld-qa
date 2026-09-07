@@ -1,13 +1,13 @@
-const CACHE='linac-dashboard-v29-linac-simulator';
+const CACHE='linac-dashboard-v30-linac-training';
 const CORE=[
-  './','./index.html?v=19','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
+  './','./index.html?v=20','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',
   './e3m1.html?v=1','./e3m2.html?v=1','./e3m3.html?v=1','./e3m4.html?v=1',
   './wekelijkse-linac.html?v=3','./crosshair_v1.js?v=1','./crosshair_guard_v1.js?v=1','./meetdata_weekly_v1.js?v=3',
   './meetdata-helper.html?v=3','./meetdata-clipboard-helper-v1.js?v=3','./referentieblad_apriltag36h11_v4.svg?v=1',
   './periodieke-controles.html?v=13','./style.css?v=13','./app_v7.js?v=13','./weekly.js?v=13',
   './manuals.html?v=1','./all-diagrams.html?v=2',
-  './linac-simulator/index.html?v=1','./linac-simulator/simulator.css?v=1','./linac-simulator/js/config.js','./linac-simulator/js/beam-model.js','./linac-simulator/js/render.js','./linac-simulator/js/main.js'
+  './linac-simulator/index.html?v=2','./linac-simulator/simulator.css?v=2','./linac-simulator/js/config.js','./linac-simulator/js/beam-model.js','./linac-simulator/js/render.js','./linac-simulator/js/training.js','./linac-simulator/js/metrics.js','./linac-simulator/js/main.js'
 ];
 const REFERENCES=['referentieblad_apriltag36h11_v3.svg','referentieblad_apriltag36h11_v4.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});

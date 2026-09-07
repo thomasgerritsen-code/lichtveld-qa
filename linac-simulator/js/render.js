@@ -40,7 +40,7 @@ function offsetPath(mech,params,sim,sign=0,bad=false){
     ds=Math.max(0,ds);
     const steer=sim.radialOffset*(.12+.88*f);
     const residual=sign*dispersionAmp*sim.mismatch*f*f*.48;
-    const bendBias=(params.coarse*.70+params.fine*.30)*28*f*f;
+    const bendBias=((sim.effectiveBend?.coarse??params.coarse)*.70+(sim.effectiveBend?.fine??params.fine)*.30)*28*f*f;
     const mismatchKick=bad?(12+18*Math.sin(f*5))*sim.mismatch*(.25+.75*f):0;
     const off=steer+sign*dispersionAmp*ds+residual+bendBias+mismatchKick;
     return {x:p.x+nx*off,y:p.y+ny*off};

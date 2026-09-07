@@ -1,6 +1,8 @@
 import {UI_DEFAULTS,PART_INFO} from './config.js';
 import {decodeControls,simulate} from './beam-model.js';
 import {initHardware,render} from './render.js';
+import {initTraining} from './training.js';
+import {initMetrics} from './metrics.js';
 
 const $=s=>document.querySelector(s);
 const ids=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy'];
@@ -9,7 +11,7 @@ const outputs=Object.fromEntries(ids.map(id=>[id,$('#'+id+'v')]));
 
 let mode='photon',filter='ff',paused=false;
 const overlays={disp:true,labels:true,bad:false,vectors:false};
-let lastPath=[],t0=performance.now();
+let lastPath=[],t0=performance.now(),trainer=null,metrics=null;
 
 function rawValues(){return Object.fromEntries(ids.map(id=>[id,+controls[id].value]));}
 function syncOutputs(raw,p){
@@ -29,24 +31,24 @@ function setModeUI(){
   $('#modeOut').textContent=mode==='photon'?'Photon '+filter.toUpperCase():'Electron';
 }
 function update(){
-  const raw=rawValues(),params=decodeControls(raw),sim=simulate(params);
+  const raw=rawValues(),params=decodeControls(raw),disturbance=trainer?.getDisturbance()||{},sim=simulate(params,disturbance);
   syncOutputs(raw,params);setModeUI();
   lastPath=render(params,sim,overlays);
   $('#achOut').textContent=Math.round(sim.achromacy*100)+'%';
   $('#spotOut').textContent=sim.spot.toFixed(2);
   $('#radOut').textContent=(sim.radialOffset/24).toFixed(2);
   $('#traOut').textContent=(sim.transverseOffset/24).toFixed(2);
-  $('#impactOut').textContent=sim.mismatch<.18?'Nominaal':sim.mismatch<.42?'Kleine offset':'Target mismatch';
-  window.linacSimulator={params,sim};
+  $('#impactOut').textContent=sim.error<.035?'Nominaal':sim.error<.10?'Kleine offset':'Target mismatch';
+  trainer?.update(sim);metrics?.update(sim.stages);
+  window.linacSimulator={params,sim,disturbance};
 }
 function reset(){
   for(const [id,v] of Object.entries(UI_DEFAULTS))controls[id].value=v;
   mode='photon';filter='ff';overlays.disp=true;overlays.labels=true;overlays.bad=false;overlays.vectors=false;
   $('#dispToggle').checked=true;$('#labelsToggle').checked=true;$('#badToggle').checked=false;$('#vectorsToggle').checked=false;
-  update();
+  trainer?.reset();update();
 }
 function exampleFault(){
-  Object.assign(UI_DEFAULTS);
   const vals={f1:43,r1:18,t1:-12,f2:50,r2:28,t2:16,energy:42,spread:70,coarse:36,fine:-22,fx:72,fy:44};
   for(const [id,v] of Object.entries(vals))controls[id].value=v;
   overlays.bad=true;$('#badToggle').checked=true;update();
@@ -77,4 +79,8 @@ function animate(now){
   requestAnimationFrame(animate);
 }
 
-initHardware();reset();requestAnimationFrame(animate);
+initHardware();
+metrics=initMetrics();
+trainer=initTraining({controls,onChange:update});
+reset();
+requestAnimationFrame(animate);

@@ -11,3 +11,35 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
 .beamPath{fill:none;stroke:var(--beam);stroke-width:7;stroke-linecap:round;filter:url(#beamGlow)}.beamCore{fill:none;stroke:#fff;stroke-width:1.4}.dispLow{fill:none;stroke:var(--low);stroke-width:3.2}.dispHigh{fill:none;stroke:var(--high);stroke-width:3.2}.mismatchPath{fill:none;stroke:var(--bad);stroke-width:3.5;stroke-dasharray:9 8}.centralRay{fill:none;stroke:#ffd66b;stroke-width:2.5}.vectorLine{stroke:#52df99;stroke-width:2}.vectorDot{fill:#52df99}#labels{fill:#dbe8f5;font-size:12px;font-weight:800}.component{cursor:pointer}.component:hover .hit{stroke:#fff!important;stroke-width:3!important}
 @media(max-width:1000px){.layout{grid-template-columns:1fr}.controls{position:static;max-height:none;grid-template-columns:repeat(2,1fr)}.modelNote{grid-column:1/-1}.hero{align-items:flex-start;flex-direction:column}}
 @media(max-width:650px){.simShell{padding:9px}.simToolbar{align-items:flex-start;flex-direction:column}.toolbarActions{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}.controls{grid-template-columns:1fr}.hero{padding:13px}.statusGrid{grid-template-columns:repeat(2,1fr)}.viewerHead button{display:none}}
+.trainingPanel summary{background:#eef8f2!important;color:#167b2c!important}
+.trainingBody{padding:10px 13px 13px;display:grid;gap:10px}
+.trainingSelectLabel{display:grid;gap:6px;font-size:.84rem;font-weight:800;color:#334155}
+.trainingSelectLabel select{width:100%;padding:9px 10px;border:1px solid #b9c9db;border-radius:8px;background:#fff;color:#172033}
+#trainingDescription,.trainingHint{margin:0;color:var(--muted);font-size:.78rem;line-height:1.45}
+.trainingScore{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center}
+.trainingScore span{font-size:.75rem;color:var(--muted);font-weight:800;text-transform:uppercase}
+.trainingScore strong{color:var(--umc);font-size:1.05rem}
+.scoreTrack{grid-column:1/-1;height:9px;background:#e6edf4;border-radius:999px;overflow:hidden}
+.scoreTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c67a1c,#24963a);transition:width .2s ease}
+.trainingActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.trainingTarget{padding:7px;border-radius:8px;background:#fff7dc;outline:2px solid #e6b94f}
+.trainingSolved{border-color:#8bd397!important;box-shadow:0 0 0 2px #dff4e4 inset}
+.trainingSolved summary{background:#eaf8ed!important}
+.metricsCard{margin-top:12px}
+.metricsHead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:11px 12px;border-bottom:1px solid var(--line)}
+.metricsHead strong{display:block;color:#223044}.metricsHead span{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}
+.metricsNote{white-space:nowrap}
+.metricsScroll{overflow:auto}
+.metricsTable{width:100%;border-collapse:collapse;min-width:700px;font-variant-numeric:tabular-nums}
+.metricsTable th,.metricsTable td{padding:8px 9px;border-bottom:1px solid #e3eaf1;text-align:right;font-size:.78rem}
+.metricsTable thead th{position:sticky;top:0;background:#eef5fd;color:#1961ab;font-weight:900}
+.metricsTable th:first-child,.metricsTable td:first-child{text-align:left}
+.metricsTable tbody tr{cursor:pointer}.metricsTable tbody tr:hover{background:#f5f9fd}
+.metricsTable tbody tr.metricWarn{background:#fff9ea}
+.metricsFoot{margin:0;padding:9px 12px 12px;color:var(--muted);font-size:.73rem;line-height:1.45}
+.metricHighlight .hit{stroke:#52df99!important;stroke-width:5!important;filter:drop-shadow(0 0 7px #52df99)}
+@media(max-width:650px){
+  .trainingActions{grid-template-columns:1fr 1fr}
+  .metricsHead{align-items:flex-start;flex-direction:column}
+  .metricsNote{white-space:normal}
+}
