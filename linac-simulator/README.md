@@ -4,38 +4,93 @@ Onderdeel van het RT-VTech / Linac Techniek Dashboard.
 
 ## Bestandsstructuur
 
-- `index.html` — responsive UI + SVG-machine
+- `index.html` — responsive UI + volledige SVG-machine
 - `simulator.css` — telefoon/tablet/desktop layout
-- `js/config.js` — defaults, modelconfiguratie en onderdeelteksten
-- `js/beam-model.js` — paraxiaal transfer-matrixmodel voor focus/steering plus genormaliseerd sector-magnetmodel in het bending-vlak
-- `js/render.js` — machinegeometrie, slalompad en SVG-rendering
+- `js/config.js` — defaults, geometrische modelconfiguratie en onderdeelteksten
+- `js/beam-model.js` — gekoppeld 4D R/R′/T/T′-model, covariance-transport en D/D′-dispersie
+- `js/feedback.js` — gantry-afhankelijke verstoring, LUT en chamber-servo onderwijsmodel
+- `js/detector.js` — relatieve FF/FFF photonprofielen, electron fluence en virtuele EPID-geometrie
+- `js/render.js` — machinegeometrie, 1σ/2σ envelope, slalompad, electron scattering en Agility leaf-tip visualisatie
+- `js/diagnostics.js` — dual-plane views, profiles, chamber readouts, EPID QA en source-audit
 - `js/training.js` — dimensieloze oefenscenario's en scorelogica
-- `js/metrics.js` — live R/R′/T/T′/dispersie-tabel per element
-- `js/main.js` — UI-state, events en animatie
+- `js/metrics.js` — live 4D beam state / D / D′ / σR / σT / R-T correlatie
+- `js/sources.js` — bronmetadata, machinefamilie en confidence per claim
+- `js/main.js` — state, twee-pass LUT/servo-loop, events en animatie
 
-## Programmeerbaar houden
+## Physics v5
 
-Nieuwe beam-physics hoort in `beam-model.js`. Visuele hardware of projectie hoort in `render.js`. Trainingsscenario's blijven geïsoleerd in `training.js`; de tabelweergave in `metrics.js`. Zo kunnen fysica, UI en machinevorm onafhankelijk worden uitgebreid.
+De simulator gebruikt nu één gekoppelde toestand:
 
-## Huidig model
+`[R, R′, T, T′]`
 
-De electron-optics vóór de bend gebruikt lineaire 2×2 paraxiale matrices: drift, thin-lens focus en steering-kicks. Het radiale bending-vlak gebruikt een genormaliseerde sector-magnet transfermatrix met een lineaire dispersieterm. Voor het transverse vlak van M1/M2/M3 worden geen niet-publieke Elekta field maps verzonnen; daar blijft het model bewust eenvoudiger.
+De electron-optics vóór de bend gebruikt 4×4 lineaire transportmatrices. Focus 1 en Focus 2 zijn als geroteerde anisotrope thin-lens elementen gemodelleerd zodat R/T-koppeling zichtbaar wordt zonder te doen alsof publieke OEM solenoid-fieldmaps beschikbaar zijn.
 
-De live tabel toont voor Gun, Focus 1, 1R/1T, Focus 2, 2R/2T, bend entry, M1, M2, M3 en target:
-- R en R′
-- T en T′
-- relatieve dispersie
-- relatieve bundelbreedte σ
+De bundelbreedte wordt niet meer met een losse schaalfactor getekend. Een 4×4 covariance-matrix `Σ` wordt per element gepropageerd met:
 
-## Training
+`Σout = M Σin Mᵀ`
 
-De training injecteert uitsluitend verborgen, dimensieloze modelafwijkingen:
-- radiale bronpositie/hoek
-- transverse bronpositie/hoek
-- bending coarse/fine mismatch
+De hoofdtekening en de twee diagnostische beam views tonen daarvan relatieve 1σ- en 2σ-envelopes.
 
-De gebruiker corrigeert deze met de bijbehorende virtuele controls. Tijdens de oefening tonen twee live meters de target-positie en target-hoek (of target-offset en dispersie bij de bending-oefening), plus een stapsgewijze uitleg van de verschillende response-vectoren van de eerste en tweede corrector. Scores en instellingen zijn niet te vertalen naar een echte LINAC.
+## Slalom bending
+
+M1/M2/M3 gebruiken genormaliseerde sector-magnet matrices in het radial plane. De dispersie-vector `D/D′` wordt afzonderlijk gepropageerd. De interne dispersion coefficients zijn alleen zo getuned dat het nominale onderwijsmodel achromatisch reconvergeert; dit zijn geen Elekta pole-piece parameters of veldkaarten.
+
+Terminologie in de UI:
+- **Main bending supply** — gezamenlijke modelbijdrage aan M1/M2/M3
+- **M3 top-up / fine channel** — extra laatste-magneettrim
+
+## Gantry, LUT en servo
+
+De gantry slider introduceert een kleine genormaliseerde gantry-angle afhankelijke beam disturbance, inclusief een richtingsterm voor CW/CCW.
+
+Drie beam-control modi:
+- Set only
+- Set + LUT
+- Set + LUT + Servo
+
+De servo is een gesloten onderwijsloop in twee rekenstappen:
+1. bereken beam + chamber tilt met Set/LUT;
+2. bereken een proportionele secondary steering correctie en simuleer opnieuw.
+
+Werkelijke Elekta LUT waarden, servo gains, steering currents en toleranties worden niet gebruikt.
+
+## Treatment head en detector
+
+Photon mode koppelt target position/angle aan relatieve radial/transverse profiles:
+- FF — relatief vlak profiel
+- FFF — centraal gepiekt profiel
+
+Electron mode volgt een ander pad:
+- electron window
+- scattering foils
+- verbrede fluence
+- applicator / trimmers
+- patiënt
+
+De Agility MLC is schematisch verbeterd met afgeronde/eccentrische leaf tips en blijft expliciet onder het confidence/model-grens systeem vallen.
+
+## Virtuele QA
+
+De EPID/focal-spot QA panel visualiseert alleen het geometrische principe dat focal-spot offset verschillende geprojecteerde centra van MLC en diaphragms kan geven. Er zijn bewust geen klinische toleranties of stap-voor-stap service/kalibratie-instructies opgenomen.
+
+## Bron-audit
+
+`sources.js` legt per claim vast:
+- bron
+- bronsoort
+- machinefamilie/scope
+- confidence
+- expliciete modelgrens
+
+Belangrijkste bronfamilies:
+- Elekta fabrikantinformatie
+- IAEA Radiation Oncology Physics
+- Elekta triple-magnet patent
+- van Appeldoorn et al. over Focus/1R-1T/Focus/2R-2T en gantry LUT/servo
+- Chojnowski et al. over Agility focal spot / MLC / diaphragms
+- Hernandez et al. over Agility leaf geometry
+- Versa HD FF/FFF beam-characterisation literatuur
 
 ## Modelgrenzen
 
-De functionele volgorde is brongebaseerd, maar exacte Elekta currents, pole-piece-profielen, veldkaarten, toleranties en servicekalibraties zijn niet publiek volledig beschikbaar. Alle sliders en scores zijn daarom dimensieloos en educatief.
+De simulator is educatief. Alle sliders, scores, LUT/servo correcties, magnetische response-coefficients, profile shifts en QA readouts zijn dimensieloos. Exacte Elekta currents, service-items, tolerantiegrenzen, poolprofielen, field maps, calibration procedures en klinische dose data zijn niet gereconstrueerd.
