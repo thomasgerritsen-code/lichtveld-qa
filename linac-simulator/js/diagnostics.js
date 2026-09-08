@@ -75,6 +75,32 @@ export function initDiagnostics(){
     </div>`;
   viewer.appendChild(qaCard);
 
+  const agilityCard=document.createElement('article');
+  agilityCard.className='panelCard diagnosticsCard';
+  agilityCard.innerHTML=`<div class="metricsHead"><div><strong>Agility MLC detail</strong><span>Eccentric leaf tip, defocused sides en 160-leaf architectuur</span></div><span class="metricsNote">schematische cutaway</span></div>
+    <div class="agilityGrid">
+      <svg viewBox="0 0 520 210" aria-label="Schematisch detail van Agility MLC leaves">
+        <rect width="520" height="210" rx="10" class="agilityBg"/>
+        <line x1="260" y1="20" x2="260" y2="190" class="agilityAxis"/>
+        <g class="agilityLeaves">
+          <path d="M35 48 L224 44 Q256 58 224 72 L38 76 Z"/>
+          <path d="M35 82 L225 78 Q257 92 225 106 L38 110 Z"/>
+          <path d="M35 116 L226 112 Q258 126 226 140 L38 144 Z"/>
+          <path d="M485 48 L296 44 Q264 58 296 72 L482 76 Z"/>
+          <path d="M485 82 L295 78 Q263 92 295 106 L482 110 Z"/>
+          <path d="M485 116 L294 112 Q262 126 294 140 L482 144 Z"/>
+        </g>
+        <text x="24" y="24" class="diagLabel">Leaf bank A</text><text x="402" y="24" class="diagLabel">Leaf bank B</text>
+        <text x="205" y="178" class="diagLabel2">eccentric / rounded tips</text>
+      </svg>
+      <div class="agilityNotes">
+        <div><strong>160 leaves</strong><span>80 leaf pairs; 5 mm projected width at isocentre in the documented Agility design.</span></div>
+        <div><strong>Tip geometry</strong><span>The drawing uses an eccentric rounded tip instead of a rectangular absorber.</span></div>
+        <div><strong>Defocus / tongue-and-groove</strong><span>Shown qualitatively only. The simulator does not claim OEM leaf dimensions or transmission maps.</span></div>
+      </div>
+    </div>`;
+  viewer.appendChild(agilityCard);
+
   const sourceCard=document.createElement('article');
   sourceCard.className='panelCard diagnosticsCard sourceAuditCard';
   sourceCard.innerHTML=`<div class="metricsHead"><div><strong>Bron-audit en confidence</strong><span>Machinefamilie, bronsoort en modelgrens per claim</span></div></div><div id="sourceAudit" class="sourceAudit"></div>`;
