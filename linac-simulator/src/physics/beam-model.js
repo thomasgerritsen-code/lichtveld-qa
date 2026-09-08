@@ -22,7 +22,7 @@ export function decodeControls(raw){
     fieldYcm:clamp(raw.fy,1,40),
     fx:clamp(raw.fx/40,.025,1),
     fy:clamp(raw.fy/40,.025,1),
-    doseRateSet:clamp(raw.doseRateSet??600,30,600)
+    doseRateSet:clamp(raw.doseRateSet??600,37,600)
   };
 }
 
