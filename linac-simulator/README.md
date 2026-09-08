@@ -23,7 +23,7 @@ De simulator gebruikt nu één gekoppelde toestand:
 
 `[R, R′, T, T′]`
 
-De electron-optics vóór de bend gebruikt 4×4 lineaire transportmatrices. Focus 1 en Focus 2 zijn als geroteerde anisotrope thin-lens elementen gemodelleerd zodat R/T-koppeling zichtbaar wordt zonder te doen alsof publieke OEM solenoid-fieldmaps beschikbaar zijn.
+De electron-optics vóór de bend gebruikt 4×4 lineaire transportmatrices. In v5 waren Focus 1 en Focus 2 nog geroteerde thin-lens elementen; **v14 vervangt dit bewust door pure opeenvolgende envelope-compressie** zodat de focus-sliders alleen σR/σT versmallen en de centroidbaan niet verplaatsen.
 
 De bundelbreedte wordt niet meer met een losse schaalfactor getekend. Een 4×4 covariance-matrix `Σ` wordt per element gepropageerd met:
 
@@ -167,7 +167,7 @@ Causale mapping:
 - Veld Y → beweegt zichtbaar de diaphragms
 - Gantry → globale genormaliseerde disturbance + optionele LUT/servo response
 
-De machine-side-view is een radiale projectie. Een 1T/2T-correctie kan daarom vooral in de transverse diagnostic view zichtbaar zijn; R/T-koppeling door de vereenvoudigde focusmatrices kan downstream wel een klein radiaal effect geven.
+De machine-side-view is een radiale projectie. Een 1T/2T-correctie is daarom vooral in de transverse diagnostic view zichtbaar. Vanaf v14 geven Focus 1/2 geen centroid R/T-koppeling meer; zij veranderen alleen de envelope.
 
 De bending- en momentumrespons is gerefereerd aan de vaste nominale flight-tube orbit. Daardoor geeft een bending-field/momentum mismatch een lokale hoekfout op de juiste magneetpositie in plaats van een kunstmatige verplaatsing over de volledige bend.
 
@@ -274,3 +274,65 @@ Dit is nadrukkelijk geen commissioning table en mag niet als dose-calibratiedata
 
 ### UI
 De donkere console, statusblokken en groene active-state cues zijn geïnspireerd op publiek beschikbare Elekta Integrity/Harmony/Versa HD beelden. Er zijn geen OEM screenshots, assets of pixel-exacte interface-elementen gekopieerd.
+
+
+## Focus, steering en magnetron/RF v14
+
+V14 maakt drie grote onderwijswijzigingen.
+
+### Focus 1 en Focus 2
+
+Op verzoek zijn de focus-sliders niet langer gekoppeld aan centroidpositie of centroidhoek.
+
+- Focus 1 comprimeert alleen de relatieve beam envelope `σR/σT`.
+- Focus 2 werkt downstream als een tweede, extra envelope-compressie.
+- Focus 2 kan daardoor een al door Focus 1 versmalde bundel nog verder versmallen.
+- De centrale ray verandert door de focus-sliders zelf niet.
+
+Dit is bewust een visuele/educatieve vereenvoudiging. Van Appeldoorn et al. beschrijven dat echte Elekta focuscoils ook een helical rotation van electron trajectories veroorzaken. V14 laat die coupling expres niet zien zodat de focusfunctie visueel eenduidig blijft.
+
+### Steering naar de waveguide-wand
+
+De acceleratorsectie heeft extra samplepunten:
+- `wgAfter1`
+- `wgAfter2`
+- `wgExit`
+
+1R/1T en 2R/2T geven nog steeds lokale centroid-angle kicks. De daaropvolgende drift kan de centroid tegen een genormaliseerde virtuele waveguide-aperture laten lopen. Bij gedeeltelijke clipping daalt de transmissie en ontstaat scatter; bij een harde interceptie stopt de primary electron ray op dat punt en wordt useful dose rate nul.
+
+De aperturewaarden zijn uitsluitend simulatorparameters en zijn geen Elekta bore-, damage- of interlockgrenzen.
+
+### Magnetron en RF
+
+Er is een afzonderlijke `physics/rf-source.js` laag toegevoegd met:
+- gun emission;
+- gun timing;
+- magnetron RF power;
+- magnetron tune / AFC offset;
+- RF phase.
+
+Daaruit worden uitsluitend genormaliseerde grootheden afgeleid:
+- RF efficiency;
+- electron capture;
+- source factor;
+- effective electron momentum;
+- effective energy spread.
+
+Deze factoren beïnvloeden vervolgens beam envelope, steering rigidity, bending response, waveguide loss en useful dose rate.
+
+Geen echte magnetronfrequenties, RF-vermogens, pulslengtes, gun currents, AFC-waarden of serviceparameters worden gebruikt.
+
+### Animatie volgens Elekta's publieke uitleg
+
+De visuele volgorde is afgestemd op Elekta's publieke video **How the linear accelerator works**:
+
+1. magnetron/RF-bron activeert;
+2. RF-pulsen lopen naar en door de travelling waveguide;
+3. electronen worden door de waveguide getransporteerd;
+4. Focus 1 en Focus 2 versmallen de getekende envelope;
+5. steering kan de centroid in de waveguide-wand sturen;
+6. de bundel passeert de slalom bending;
+7. in photon mode pulseert de tungsten target wanneer useful electron output aankomt;
+8. de treatment cone en monitor-output volgen de beschikbare useful beam.
+
+Bronnen voor deze laag zijn Elekta's eigen video/pagina, Paynter's Elekta transportdiagram, Cashmore's travelling-wave/magnetron beschrijving en van Appeldoorn et al. voor de Focus/1R-1T/Focus/2R-2T volgorde.
