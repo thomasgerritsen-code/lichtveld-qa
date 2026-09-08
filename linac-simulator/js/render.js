@@ -39,36 +39,88 @@ function offsetPath(mech,params,sim,sign=0,bad=false){
     else if(f>=.84)ds=.28*(1-(f-.84)/.16);
     ds=Math.max(0,ds);
     const steer=sim.radialOffset*(.12+.88*f);
-    const residual=sign*dispersionAmp*sim.mismatch*f*f*.48;
-    const bendBias=((sim.effectiveBend?.coarse??params.coarse)*.70+(sim.effectiveBend?.fine??params.fine)*.30)*28*f*f;
+    const residual=sign*dispersionAmp*(1-sim.achromacy)*f*f*.48;
+    const bendBias=((sim.effectiveBend?.mainBend??params.mainBend)*.70+(sim.effectiveBend?.m3Topup??params.m3Topup)*.30)*28*f*f;
     const mismatchKick=bad?(12+18*Math.sin(f*5))*sim.mismatch*(.25+.75*f):0;
     const off=steer+sign*dispersionAmp*ds+residual+bendBias+mismatchKick;
     return {x:p.x+nx*off,y:p.y+ny*off};
   });
 }
 
+function stageSigmaAt(sim,f){
+  const stages=sim.stages||[];
+  if(!stages.length)return .01;
+  const q=f*(stages.length-1),i=Math.floor(q),j=Math.min(stages.length-1,i+1),u=q-i;
+  const a=stages[i].sigmaR||stages[i].sigma||.01,b=stages[j].sigmaR||stages[j].sigma||.01;
+  return a+(b-a)*u;
+}
+
+function envelopePolygon(path,sim,mult=1){
+  const upper=[],lower=[];
+  path.forEach((p,i)=>{
+    const f=i/(path.length-1);
+    const prev=path[Math.max(0,i-1)],next=path[Math.min(path.length-1,i+1)];
+    let dx=next.x-prev.x,dy=next.y-prev.y,m=Math.hypot(dx,dy)||1;dx/=m;dy/=m;
+    const nx=-dy,ny=dx;
+    const w=clamp(stageSigmaAt(sim,f)*850*mult,2,34*mult);
+    upper.push({x:p.x+nx*w,y:p.y+ny*w});
+    lower.push({x:p.x-nx*w,y:p.y-ny*w});
+  });
+  const all=[...upper,...lower.reverse()];
+  return all.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+}
+
 export function initHardware(){
   const rf=document.querySelector('#rfCells');
-  for(let i=0;i<24;i++){const l=document.createElementNS('http://www.w3.org/2000/svg','line');const x=20+i*25;l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',-30);l.setAttribute('y2',30);l.setAttribute('stroke','#2e4963');rf.appendChild(l);}
+  if(rf && !rf.childNodes.length){
+    for(let i=0;i<24;i++){const l=document.createElementNS('http://www.w3.org/2000/svg','line');const x=20+i*25;l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',-30);l.setAttribute('y2',30);l.setAttribute('stroke','#2e4963');rf.appendChild(l);}
+  }
+
   const bellows=document.querySelector('#bellowsLines');
-  const a=-22.5*DEG;
-  for(let i=0;i<7;i++){const t=(i+1)/8,x=774+Math.cos(a)*48*t,y=514+Math.sin(a)*48*t,nx=-Math.sin(a),ny=Math.cos(a),l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x-nx*20);l.setAttribute('y1',y-ny*20);l.setAttribute('x2',x+nx*20);l.setAttribute('y2',y+ny*20);l.setAttribute('stroke','#a9b9c8');l.setAttribute('stroke-width','2');bellows.appendChild(l);}
+  if(bellows && !bellows.childNodes.length){
+    const a=-22.5*DEG;
+    for(let i=0;i<7;i++){const t=(i+1)/8,x=774+Math.cos(a)*48*t,y=514+Math.sin(a)*48*t,nx=-Math.sin(a),ny=Math.cos(a),l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x-nx*20);l.setAttribute('y1',y-ny*20);l.setAttribute('x2',x+nx*20);l.setAttribute('y2',y+ny*20);l.setAttribute('stroke','#a9b9c8');l.setAttribute('stroke-width','2');bellows.appendChild(l);}
+  }
+
   const left=document.querySelector('#mlcLeft'),right=document.querySelector('#mlcRight');
-  for(let i=0;i<14;i++){for(const [g,x] of [[left,1327],[right,1475]]){const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',x);r.setAttribute('y',971+i*3.3);r.setAttribute('width',98);r.setAttribute('height',2.7);r.setAttribute('rx',1);r.setAttribute('fill','#586674');g.appendChild(r);}}
+  if(left && right && !left.childNodes.length){
+    for(let i=0;i<14;i++){
+      const y=971+i*3.3,h=2.7;
+      const L=document.createElementNS('http://www.w3.org/2000/svg','path');
+      L.setAttribute('d',`M1327 ${y} H1410 Q1426 ${y+h/2} 1410 ${y+h} H1327 Z`);
+      L.setAttribute('class','mlcLeaf');
+      left.appendChild(L);
+      const R=document.createElementNS('http://www.w3.org/2000/svg','path');
+      R.setAttribute('d',`M1573 ${y} H1490 Q1474 ${y+h/2} 1490 ${y+h} H1573 Z`);
+      R.setAttribute('class','mlcLeaf');
+      right.appendChild(R);
+    }
+  }
+
   const shift='translate(-59 0)';
   for(const sel of ['[data-part="head"]','#photonTarget','#electronWindow','#photonHead','#electronHead','[data-part="monitor"]','[data-part="mirror"]','#mlcGroup','#jawsGroup','#electronApplicator','[data-part="patient"]','#treatmentCone','#centralRay']){
-    const el=document.querySelector(sel); if(el) el.setAttribute('transform',shift);
+    const el=document.querySelector(sel);if(el&&!el.hasAttribute('data-shifted')){el.setAttribute('transform',shift);el.setAttribute('data-shifted','1');}
   }
 }
 
-export function render(params,sim,overlays){
+export function render(params,sim,overlays,view={mode:'photon',filter:'ff'}){
   const mech=buildMechanicalPath();
   const nominal=offsetPath(mech,params,sim,0,false),low=offsetPath(mech,params,sim,1,false),high=offsetPath(mech,params,sim,-1,false),bad=offsetPath(mech,params,sim,0,true);
+
   const incoming=[];
   const x0=135,y0=778,x1=mech[0].x,y1=mech[0].y,dx=x1-x0,dy=y1-y0,m=Math.hypot(dx,dy)||1,nx=-dy/m,ny=dx/m;
-  for(let i=0;i<=28;i++){const t=i/28,off=sim.radialOffset*.78*t*t;incoming.push({x:x0+dx*t+nx*off,y:y0+dy*t+ny*off});}
+  for(let i=0;i<=28;i++){
+    const t=i/28;
+    const stageF=t*.55;
+    const stageIndex=Math.min(5,Math.round(stageF*5));
+    const s=sim.stages?.[stageIndex];
+    const off=(s?.r||0)*780;
+    incoming.push({x:x0+dx*t+nx*off,y:y0+dy*t+ny*off});
+  }
+
   const last=nominal[nominal.length-1];
   const fullNominal=[...incoming,...nominal.slice(1),{x:last.x,y:760}];
+
   document.querySelector('#flightOuter').setAttribute('d',pathD(mech));
   document.querySelector('#flightInner').setAttribute('d',pathD(mech));
   document.querySelector('#beamPath').setAttribute('d',pathD(fullNominal));
@@ -81,20 +133,32 @@ export function render(params,sim,overlays){
   document.querySelector('#mismatchPath').hidden=!overlays.bad;
   document.querySelector('#labels').style.display=overlays.labels?'block':'none';
 
+  const env1=document.querySelector('#envelope1'),env2=document.querySelector('#envelope2');
+  if(env1&&env2){
+    env1.setAttribute('points',envelopePolygon(fullNominal,sim,1));
+    env2.setAttribute('points',envelopePolygon(fullNominal,sim,2));
+    env1.hidden=env2.hidden=!overlays.envelope;
+  }
+
   const vectorLayer=document.querySelector('#vectorLayer');vectorLayer.innerHTML='';
   if(overlays.vectors){
     const anchors=[.10,.31,.52,.74,.95];
     for(const f of anchors){
       const i=Math.min(nominal.length-2,Math.max(1,Math.round(f*(nominal.length-1))));
-      const p=nominal[i],q=nominal[i+1],dx=q.x-p.x,dy=q.y-p.y,m=Math.hypot(dx,dy)||1;
+      const p=nominal[i],q=nominal[i+1],vx=q.x-p.x,vy=q.y-p.y,vm=Math.hypot(vx,vy)||1;
       const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-      l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',p.x+dx/m*30);l.setAttribute('y2',p.y+dy/m*30);l.setAttribute('class','vectorLine');vectorLayer.appendChild(l);
+      l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',p.x+vx/vm*30);l.setAttribute('y2',p.y+vy/vm*30);l.setAttribute('class','vectorLine');vectorLayer.appendChild(l);
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',4);c.setAttribute('class','vectorDot');vectorLayer.appendChild(c);
     }
   }
 
-  const center=1450,patientY=1080,half=70+125*params.fx;
+  const center=1450,patientY=1080;
+  const electronBroad=.82+(.18*(1-params.energy/2));
+  const half=view.mode==='electron'
+    ?105+150*Math.min(params.fx,params.fy)*electronBroad
+    :70+125*params.fx;
   document.querySelector('#treatmentCone').setAttribute('d',`M ${center-4} 774 L ${center+4} 774 L ${center+half} ${patientY} L ${center-half} ${patientY} Z`);
+
   const gap=22+76*params.fy;
   document.querySelector('#jawL').setAttribute('x',center-gap-78);
   document.querySelector('#jawR').setAttribute('x',center+gap);
