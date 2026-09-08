@@ -15,8 +15,8 @@ export const MODEL = Object.freeze({
     focus1RotationDeg:18,
     focus2RotationDeg:-14,
     sourceSigma:[.018,.009,.018,.009],
-    focus1MaxCompression:.58,
-    focus2MaxCompression:.64
+    focus1MinScale:.58,
+    focus2MinScale:.62
   },
   bend:{
     m1Deg:45,
