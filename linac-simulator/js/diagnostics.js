@@ -1,5 +1,5 @@
 import {photonProfiles,electronProfile,virtualEpid} from './detector.js?v=5';
-import {SOURCES,CLAIMS,sourceById} from './sources.js?v=6';
+import {SOURCES,CLAIMS,sourceById} from './sources.js?v=7';
 
 const NS='http://www.w3.org/2000/svg';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
