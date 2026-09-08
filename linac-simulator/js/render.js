@@ -318,9 +318,16 @@ export function render(params,sim,overlays,view={mode:'photon',filter:'ff'}){
   if(overlays.vectors){
     const stageNames=['focus1','steer1','focus2','steer2','m1','m2','m3','target'];
     const allBase=[...incomingBase,...bend.base.slice(1),{x:last.x,y:760,state:targetState}];
+    const incomingEndIndex=name=>{
+      const i=allBase.findIndex(p=>p.stageEnd===name);
+      return i>=0?i:allBase.findIndex(p=>p.stageStart===name);
+    };
+    const bendBaseOffset=incomingBase.length-1;
+    const bendIndex=name=>name==='target'?allBase.length-1:bendBaseOffset+(geometry.marks[name]||0);
     for(const name of stageNames){
       const state=map.get(name);if(!state)continue;
-      const index=Math.max(0,allBase.findIndex(p=>p.stageStart===name||p.stageEnd===name));
+      const index=name==='m1'||name==='m2'||name==='m3'||name==='target'?bendIndex(name):incomingEndIndex(name);
+      if(index<0)continue;
       const p=fullNominal[Math.min(fullNominal.length-2,index)],q=fullNominal[Math.min(fullNominal.length-1,index+1)];
       const dx=q.x-p.x,dy=q.y-p.y,m=Math.hypot(dx,dy)||1;
       const l=document.createElementNS(NS,'line');
