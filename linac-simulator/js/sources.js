@@ -62,7 +62,8 @@ export const SOURCES = Object.freeze([
     confidence:'high',
     claims:['Flight tube and target move horizontally between photon and electron home positions','Stainless-steel bellows permits motion relative to the waveguide','Bending magnet assembly is adjacent to the target-shift drive and is not described as moving during normal mode selection']
   },
-
+  {
+    id:'elekta-patent',
     title:'Elekta patent – achromatic triple-magnet beam transport',
     url:'https://patents.google.com/patent/EP4010073B1/en',
     type:'patent',
