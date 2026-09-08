@@ -1,10 +1,10 @@
-import {UI_DEFAULTS,PART_INFO} from './config.js?v=6';
+import {UI_DEFAULTS,PART_INFO} from './config.js?v=7';
 import {decodeControls,simulate} from './beam-model.js?v=5';
-import {initHardware,render} from './render.js?v=6';
+import {initHardware,render} from './render.js?v=7';
 import {initTraining} from './training.js?v=5';
 import {initMetrics} from './metrics.js?v=5';
 import {gantryEnvironment,buildControlContext,chamberSignals} from './feedback.js?v=5';
-import {initDiagnostics} from './diagnostics.js?v=6';
+import {initDiagnostics} from './diagnostics.js?v=7';
 
 const $=s=>document.querySelector(s);
 const ids=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','gantry'];
@@ -51,8 +51,12 @@ function setModeUI(){
   $('#fffBtn').classList.toggle('selected',filter==='fff');
   $('#ffWrap').style.opacity=mode==='photon'?'1':'.4';
   $('#ffWrap').style.pointerEvents=mode==='photon'?'auto':'none';
-  $('#photonTarget').hidden=mode!=='photon';
-  $('#electronWindow').hidden=mode!=='electron';
+  $('#photonTarget').hidden=false;
+  $('#electronWindow').hidden=false;
+  $('#photonTarget').classList.toggle('modePortActive',mode==='photon');
+  $('#photonTarget').classList.toggle('modePortInactive',mode!=='photon');
+  $('#electronWindow').classList.toggle('modePortActive',mode==='electron');
+  $('#electronWindow').classList.toggle('modePortInactive',mode!=='electron');
   $('#photonHead').hidden=mode!=='photon';
   $('#electronHead').hidden=mode!=='electron';
   $('#mlcGroup').hidden=mode!=='photon';
