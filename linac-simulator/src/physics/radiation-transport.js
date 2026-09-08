@@ -24,7 +24,7 @@ function normalizedRadius(stage,aperture){
     (stage.sigmaR||0)/aperture.r,
     (stage.sigmaT||0)/aperture.t
   );
-  return centroid+envelope*1.25;
+  return centroid+envelope*.35;
 }
 
 function targetCoupling(target,mode){
