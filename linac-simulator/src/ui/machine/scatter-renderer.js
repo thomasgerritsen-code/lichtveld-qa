@@ -126,7 +126,7 @@ export function renderScatter(sim,radiation,{visible=true}={}){
       point.y,
       5+8*strength,
       .35+.5*strength,
-      event.type==='wall'?'scatterCore wallScatterCore':'scatterCore targetScatterCore'
+      (event.type==='wall'||event.type==='rf-loss')?'scatterCore wallScatterCore':'scatterCore targetScatterCore'
     );
 
     makeCircle(
