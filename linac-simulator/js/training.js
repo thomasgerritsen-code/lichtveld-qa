@@ -158,7 +158,8 @@ export function initTraining({controls,onChange}){
       panel.querySelector('#step3Text').textContent='Fine werkt later in de lijn en geeft daarom een andere eindrespons.';
       whyText.textContent='Coarse en Fine zijn in dit educatieve model twee verschillende response-richtingen. Coarse beïnvloedt de gehele M1/M2/M3-keten; Fine voegt een extra M3-trim toe. Twee verschillende response-richtingen geven meer vrijheid om de eindtoestand te centreren.';
     }else{
-      const names={r1:'1R',r2:'2R',t1:'1T',t2:'2T'};\n      const [c1,c2]=s.controls.map(id=>names[id]||id);
+      const names={r1:'1R',r2:'2R',t1:'1T',t2:'2T'};
+      const [c1,c2]=s.controls.map(id=>names[id]||id);
       panel.querySelector('#step1Title').textContent='Bekijk de beginfout';
       panel.querySelector('#step1Text').textContent=`Let op ${s.axis[0]} én ${s.axis[1]} aan de target.`;
       panel.querySelector('#step2Title').textContent=`Verander ${c1}`;
