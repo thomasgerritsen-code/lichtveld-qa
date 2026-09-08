@@ -1,10 +1,11 @@
-import {UI_DEFAULTS,PART_INFO} from './config.js?v=8';
-import {decodeControls,simulate} from './beam-model.js?v=8';
-import {initHardware,render} from './render.js?v=8';
+import {UI_DEFAULTS,PART_INFO} from './config.js?v=9';
+import {decodeControls,simulate} from './beam-model.js?v=9';
+import {initHardware,render,setActiveControlEffect} from './render.js?v=9';
 import {initTraining} from './training.js?v=5';
 import {initMetrics} from './metrics.js?v=5';
 import {gantryEnvironment,buildControlContext,chamberSignals} from './feedback.js?v=5';
-import {initDiagnostics} from './diagnostics.js?v=8';
+import {initDiagnostics} from './diagnostics.js?v=9';
+import {CONTROL_EFFECTS} from './control-effects.js?v=9';
 
 const $=s=>document.querySelector(s);
 const ids=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','gantry'];
@@ -13,7 +14,7 @@ const outputs=Object.fromEntries(ids.map(id=>[id,$('#'+id+'v')]));
 
 let mode='photon',filter='ff',paused=false,direction='cw',controlMode='manual';
 const overlays={disp:true,envelope:true,labels:true,bad:false,vectors:false};
-let lastPath=[],t0=performance.now(),trainer=null,metrics=null,diagnostics=null;
+let lastPath=[],t0=performance.now(),trainer=null,metrics=null,diagnostics=null,activeControlId=null;
 
 function rawValues(){return Object.fromEntries(ids.map(id=>[id,+controls[id].value]));}
 
@@ -113,6 +114,28 @@ function update(){
   window.linacSimulator={params,sim,disturbance,control,chamber,mode,filter};
 }
 
+function showControlEffect(id){
+  activeControlId=id;
+  const effect=CONTROL_EFFECTS[id];
+  document.querySelectorAll('.controlActiveLabel').forEach(el=>el.classList.remove('controlActiveLabel'));
+  if(controls[id]) controls[id].closest('label')?.classList.add('controlActiveLabel');
+  setActiveControlEffect(effect);
+
+  const banner=$('#effectBanner');
+  if(banner&&effect){
+    const plane=effect.plane==='transverse'?' · transverse view':effect.plane==='radial'?' · radial side-view':effect.plane==='both'?' · R + T':'';
+    banner.innerHTML=`<strong>${effect.label}${plane}</strong><span>${effect.text}</span>`;
+  }
+}
+
+function clearControlEffect(){
+  activeControlId=null;
+  document.querySelectorAll('.controlActiveLabel').forEach(el=>el.classList.remove('controlActiveLabel'));
+  setActiveControlEffect(null);
+  const banner=$('#effectBanner');
+  if(banner) banner.innerHTML='<strong>Slider-effect</strong><span>Beweeg een schuifje; het gekoppelde onderdeel en het downstream effect worden gemarkeerd.</span>';
+}
+
 function reset(){
   for(const [id,v] of Object.entries(UI_DEFAULTS)){
     if(controls[id])controls[id].value=v;
@@ -125,6 +148,7 @@ function reset(){
   $('#badToggle').checked=false;
   $('#vectorsToggle').checked=false;
   trainer?.reset();
+  clearControlEffect();
   update();
 }
 
@@ -136,7 +160,7 @@ function exampleFault(){
   update();
 }
 
-ids.forEach(id=>controls[id].addEventListener('input',update));
+ids.forEach(id=>controls[id].addEventListener('input',()=>{showControlEffect(id);update();}));
 $('#photonBtn').onclick=()=>{mode='photon';update()};
 $('#electronBtn').onclick=()=>{mode='electron';update()};
 $('#ffBtn').onclick=()=>{filter='ff';update()};
