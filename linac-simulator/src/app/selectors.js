@@ -18,6 +18,7 @@ export function selectOverlayState(state){
     envelope:state.display.envelope,
     labels:state.display.labels,
     bad:state.display.mismatch,
-    vectors:state.display.vectors
+    vectors:state.display.vectors,
+    scatter:state.display.scatter
   };
 }

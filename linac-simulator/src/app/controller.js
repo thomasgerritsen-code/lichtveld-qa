@@ -2,6 +2,7 @@ import {PART_INFO} from '../machine/model.js';
 import {CONTROL_EFFECTS} from '../machine/control-effects.js';
 import {decodeControls,simulate} from '../physics/beam-model.js';
 import {gantryEnvironment,buildControlContext,chamberSignals} from '../physics/feedback.js';
+import {evaluateRadiationTransport} from '../physics/radiation-transport.js';
 import {initHardware,render,setActiveControlEffect} from '../ui/machine-renderer.js';
 import {initTraining} from '../ui/training.js';
 import {initMetrics} from '../ui/metrics.js';
@@ -66,6 +67,7 @@ export function createController(){
     $('#labelsToggle').checked=state.display.labels;
     $('#badToggle').checked=state.display.mismatch;
     $('#vectorsToggle').checked=state.display.vectors;
+    $('#scatterToggle').checked=state.display.scatter;
     $('#pauseBtn').textContent=state.runtime.paused?'Hervat':'Pauzeer';
   }
 
@@ -159,10 +161,21 @@ export function createController(){
       t2:control.lut.t2+control.servo.t2
     };
     const sim=simulate(params,disturbance,assist);
-    const chamber=chamberSignals(sim);
+    const radiation=evaluateRadiationTransport(sim,{mode:view.mode});
+
+    const chamberRaw=chamberSignals(sim);
+    const transmission=radiation.primaryTransmission;
+    const tiltScale=Math.sqrt(transmission);
+    const chamber={
+      ...chamberRaw,
+      doseA:chamberRaw.doseA*transmission,
+      doseB:chamberRaw.doseB*transmission,
+      radialTilt:chamberRaw.radialTilt*tiltScale,
+      transverseTilt:chamberRaw.transverseTilt*tiltScale
+    };
     control.chamber=chamber;
 
-    return {raw,params,view,disturbance,control,sim,chamber};
+    return {raw,params,view,disturbance,control,sim,chamber,radiation};
   }
 
   function renderState(state){
@@ -178,7 +191,8 @@ export function createController(){
       result.params,
       result.sim,
       selectOverlayState(state),
-      result.view
+      result.view,
+      result.radiation
     );
 
     $('#achOut').textContent=Math.round(result.sim.achromacy*100)+'%';
@@ -193,6 +207,15 @@ export function createController(){
         ?'Set + LUT'
         :'Set + LUT + Servo';
     $('#dispOut').textContent=result.sim.target.disp.toFixed(3)+' / '+result.sim.target.dispPrime.toFixed(3);
+    $('#doseRateOut').textContent=result.radiation.doseRatePercent.toFixed(1)+'%';
+    $('#transmissionOut').textContent=(result.radiation.transportTransmission*100).toFixed(1)+'%';
+    $('#scatterOut').textContent=result.radiation.scatterIndex.toFixed(1)+'%';
+    $('#wallHitOut').textContent=result.radiation.firstStrike
+      ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
+      :'geen';
+    $('#doseRateFill').style.width=result.radiation.doseRatePercent+'%';
+    $('#doseRateFill').classList.toggle('zero',result.radiation.doseRatePercent===0);
+    $('#radiationStatus').textContent=result.radiation.status;
 
     trainer?.update(result.sim);
     metrics?.update(result.sim.stages);
@@ -251,6 +274,7 @@ export function createController(){
     $('#labelsToggle').onchange=e=>store.dispatch({type:'display/set',key:'labels',value:e.target.checked});
     $('#badToggle').onchange=e=>store.dispatch({type:'display/set',key:'mismatch',value:e.target.checked});
     $('#vectorsToggle').onchange=e=>store.dispatch({type:'display/set',key:'vectors',value:e.target.checked});
+    $('#scatterToggle').onchange=e=>store.dispatch({type:'display/set',key:'scatter',value:e.target.checked});
 
     $('#resetBtn').onclick=reset;
     $('#faultBtn').onclick=exampleFault;

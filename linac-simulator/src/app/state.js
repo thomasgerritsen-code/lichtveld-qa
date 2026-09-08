@@ -16,7 +16,8 @@ export function createInitialState(){
       envelope:true,
       labels:true,
       mismatch:false,
-      vectors:false
+      vectors:false,
+      scatter:true
     },
     runtime:{
       paused:false,

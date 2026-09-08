@@ -34,7 +34,26 @@ export const MODEL = Object.freeze({
     selectorTravelPx:26,
     selectorAxisDeg:0,
     beamOffsetPx:560,
-    dispersionVisualScale:28
+    dispersionVisualScale:28,
+    scatterVisualScale:1
+  },
+  radiation:{
+    // Dimensionless educational apertures. These are deliberately not OEM bore sizes.
+    apertures:{
+      focus1:{r:.13,t:.13},
+      steer1:{r:.12,t:.12},
+      focus2:{r:.11,t:.11},
+      steer2:{r:.10,t:.10},
+      bendEntry:{r:.105,t:.105},
+      m1:{r:.11,t:.12},
+      m2:{r:.095,t:.17},
+      m3:{r:.085,t:.20}
+    },
+    targetAcceptance:{
+      photon:{r:.070,t:.070,rp:.080,tp:.080},
+      electron:{r:.095,t:.095,rp:.100,tp:.100}
+    }
+  
   }
 });
 

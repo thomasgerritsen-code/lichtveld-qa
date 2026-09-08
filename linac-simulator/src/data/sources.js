@@ -117,6 +117,15 @@ export const SOURCES = Object.freeze([
     claims:['FF and FFF have different beam characteristics','FFF profile is not equivalent to simply drawing the FF profile without a filter']
   },
   {
+    id:'out-of-field-review',
+    title:'Hauri et al. – Analytical models for external photon beam radiotherapy out-of-field dose calculation',
+    url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC10203488/',
+    type:'peer-reviewed-review',
+    scope:'External photon beam radiotherapy – secondary/out-of-field radiation',
+    confidence:'high',
+    claims:['Primary and secondary radiation are distinct components','Secondary radiation includes patient scatter, head/collimator scatter and leakage','Room scatter is a separate contribution']
+  },
+  {
     id:'epid-focal',
     title:'Chojnowski et al. – EPID-based focal spot determination',
     url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6036348/',
@@ -138,6 +147,7 @@ export const CLAIMS = Object.freeze({
   agility:{confidence:'high',sourceIds:['agility-focal','agility-model','agility-elekta'],label:'Agility head / MLC'},
   controlCausality:{confidence:'high',sourceIds:['appeldoorn-2020','elekta-patent','versa-commissioning'],label:'Slider → fysiek subsysteem',note:'Steeringcorrecties beginnen bij hun eigen coils, main bending bij M1, M3 top-up pas bij M3 en field X/Y worden aan MLC/diaphragms gekoppeld. De grootte van de respons blijft een genormaliseerd onderwijsmodel.'},
   photonProfile:{confidence:'model',sourceIds:['fff','agility-focal'],label:'Photon profile koppeling',note:'Kwalitatief educatief profiel; geen dosisberekening.'},
+  beamLossScatter:{confidence:'model',sourceIds:['out-of-field-review','iaea-1196','appeldoorn-2025'],label:'Beam loss, scatter en relatieve dose rate',note:'V12 koppelt genormaliseerde beam-interception aan verlies van useful-beam transmissie en een relatieve scatter-index. Dit is geen shieldingberekening, geen leakage-specificatie en geen klinische dose-rate calibratie.'},
   electronMode:{confidence:'high',sourceIds:['iaea-1196'],label:'Electron window / scattering foils / applicator'},
   epid:{confidence:'medium-high',sourceIds:['epid-focal'],label:'Virtuele EPID/focal-spot QA',note:'Alleen geometrisch principe, geen klinische procedure of tolerantie.'}
 });

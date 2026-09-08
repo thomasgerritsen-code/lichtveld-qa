@@ -25,7 +25,7 @@ export function initMlcLeaves(){
   }
 }
 
-export function updateTreatmentHead(params,view){
+export function updateTreatmentHead(params,view,radiation=null){
   const center=1450;
   const patientY=1080;
 
@@ -49,8 +49,14 @@ export function updateTreatmentHead(params,view){
     ?105+150*Math.min(params.fx,params.fy)*electronBroad
     :70+125*params.fx;
 
-  document.querySelector('#treatmentCone')?.setAttribute(
+  const cone=document.querySelector('#treatmentCone');
+  cone?.setAttribute(
     'd',
     `M ${center-4} 774 L ${center+4} 774 L ${center+half} ${patientY} L ${center-half} ${patientY} Z`
   );
+
+  const useful=radiation?.primaryTransmission??1;
+  if(cone) cone.style.opacity=String(Math.max(0,Math.min(1,useful)));
+  const central=document.querySelector('#centralRay');
+  if(central) central.style.opacity=String(Math.max(0,Math.min(1,useful)));
 }
