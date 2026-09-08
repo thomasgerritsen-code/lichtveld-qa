@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=8">
+  <link rel="stylesheet" href="./simulator.css?v=9">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -16,7 +16,7 @@
 
 <main class="simShell">
   <div class="simToolbar">
-    <a class="backLink" href="../index.html?v=24">← Dashboard</a>
+    <a class="backLink" href="../index.html?v=25">← Dashboard</a>
     <div class="toolbarActions">
       <button id="resetBtn" type="button">Reset</button>
       <button id="faultBtn" type="button">Voorbeeld afwijking</button>
@@ -53,9 +53,13 @@
         <p class="controlHelp">De LUT en servo gebruiken alleen genormaliseerde modelcorrecties. Geen echte Elekta steering currents of gantry-LUT waarden.</p>
       </div></details>
 
-      <details open><summary>Bending assembly</summary><div class="controlBody">
-        <label>Relatieve energie <output id="energyv">1.00</output><input id="energy" type="range" min="0" max="100" value="55"></label>
+      <details open><summary>Electron energy</summary><div class="controlBody">
+        <label>Electron momentum (rel.) <output id="energyv">1.00</output><input id="energy" type="range" min="0" max="100" value="50"></label>
         <label>Energiespreiding <output id="spreadv">0.25</output><input id="spread" type="range" min="0" max="100" value="25"></label>
+        <p class="controlHelp">Momentum beïnvloedt de magnetische rigiditeit. Spread beïnvloedt vooral de chromatische envelope/dispersierays vanaf M1.</p>
+      </div></details>
+
+      <details open><summary>Bending assembly</summary><div class="controlBody">
         <label>Main bending supply <output id="coarsev">0.00</output><input id="coarse" type="range" min="-100" max="100" value="0"></label>
         <label>M3 top-up / fine channel <output id="finev">0.00</output><input id="fine" type="range" min="-100" max="100" value="0"></label>
       </div></details>
@@ -63,8 +67,8 @@
       <details><summary>Behandelkop</summary><div class="controlBody">
         <div class="segmented"><button id="photonBtn" class="selected" type="button">Photon</button><button id="electronBtn" type="button">Electron</button></div>
         <div id="ffWrap" class="segmented"><button id="ffBtn" class="selected" type="button">FF</button><button id="fffBtn" type="button">FFF</button></div>
-        <label>Veld X <output id="fxv">60%</output><input id="fx" type="range" min="15" max="100" value="60"></label>
-        <label>Veld Y <output id="fyv">60%</output><input id="fy" type="range" min="15" max="100" value="60"></label>
+        <label>Veld X – MLC <output id="fxv">60%</output><input id="fx" type="range" min="15" max="100" value="60"></label>
+        <label>Veld Y – diaphragms <output id="fyv">60%</output><input id="fy" type="range" min="15" max="100" value="60"></label>
       </div></details>
 
       <details><summary>Overlays</summary><div class="controlBody">
@@ -80,7 +84,7 @@
 
     <section>
       <article class="panelCard">
-        <div class="viewerHead"><div><strong>Complete machine</strong><span>Begin tot eind van de bundel in één beeld</span></div><button id="fitBtn" type="button">Pas in beeld</button></div>
+        <div class="viewerHead"><div><strong>Complete machine</strong><span>Begin tot eind van de bundel in één beeld</span></div><button id="fitBtn" type="button">Pas in beeld</button></div><div id="effectBanner" class="effectBanner"><strong>Slider-effect</strong><span>Beweeg een schuifje; het gekoppelde onderdeel en het downstream effect worden gemarkeerd.</span></div>
         <div id="machineViewport" class="machineViewport">
           <svg id="machineSvg" viewBox="0 0 1500 1120" role="img" aria-label="Volledige medische lineaire versneller">
             <defs>
@@ -176,6 +180,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=8"></script>
+<script type="module" src="./js/main.js?v=9"></script>
 </body>
 </html>
