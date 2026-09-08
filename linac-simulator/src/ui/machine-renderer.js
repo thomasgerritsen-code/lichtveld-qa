@@ -13,7 +13,7 @@ export function render(params,sim,overlays,view={mode:'photon',filter:'ff'},radi
   const beamPath=renderBeam(params,sim,overlays,radiation,delivery);
   applySelectorMotion(view.mode);
   updateTreatmentHead(params,view,delivery);
-  updateRfAnimation(sim,delivery);
+  updateRfAnimation(sim,delivery,view);
   if(radiation){
     renderScatter(sim,radiation,{
       visible:Boolean(delivery?.beamActive&&delivery?.sourceActive)&&overlays.scatter!==false
