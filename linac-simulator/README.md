@@ -336,3 +336,31 @@ De visuele volgorde is afgestemd op Elekta's publieke video **How the linear acc
 8. de treatment cone en monitor-output volgen de beschikbare useful beam.
 
 Bronnen voor deze laag zijn Elekta's eigen video/pagina, Paynter's Elekta transportdiagram, Cashmore's travelling-wave/magnetron beschrijving en van Appeldoorn et al. voor de Focus/1R-1T/Focus/2R-2T volgorde.
+
+
+## QA / hardening v15
+
+V15 is een brede regressie- en consistentieronde bovenop Physics v14.
+
+Automatisch getest:
+- min / nominal / max voor iedere zichtbare control in Photon en Electron mode;
+- pairwise extreme combinaties van RF, focus, steering, energy, spread en bending;
+- CW/CCW × Manual/LUT/Servo over 0–360° gantry;
+- 1/5/10/20/40 cm velden, FF/FFF, Electron mode en dose-rate setpoints;
+- Focus 1/2 centroid-invariantie en opeenvolgende envelopecompressie;
+- ±100 steering voor 1R/1T/2R/2T naar een harde waveguide-interceptie;
+- profiel/EPID finite-value checks;
+- DOM-id en control/output wiring;
+- import-smoke van de volledige src-moduleboom.
+
+Gevonden en herstelde inconsistenties:
+- useful dose rate kon bij gun emission >100% boven het ingestelde setpoint uitkomen;
+- dose-rate balk volgde alleen transportkwaliteit en niet RF/gun-output;
+- scatter-readout/animatie kon bij lage of nul emission niet consistent met source intensity zijn;
+- interception readout kon een eerdere partial strike tonen terwijl downstream een hard strike bestond;
+- electron profile gebruikte de ruwe momentumslider in plaats van RF-adjusted effective energy;
+- Spot/focus readout had een oude vaste ondergrens van 0.200 en reageerde daardoor nauwelijks op focus;
+- Focus 1 helptekst bevatte nog pre-v14 gekoppelde R/T-rotatie;
+- oude focus-rotation configuratie is verwijderd.
+
+De QA-sweep test continue ranges via grenswaarden, pairwise extremes en geselecteerde grids; dit is nadrukkelijk niet hetzelfde als letterlijk ieder reëel getal tussen twee sliderposities testen.

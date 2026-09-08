@@ -267,17 +267,18 @@ export function createController(){
     $('#dispOut').textContent=result.sim.target.disp.toFixed(3)+' / '+result.sim.target.dispPrime.toFixed(3);
     $('#doseRateOut').textContent=Math.round(result.delivery.usefulDoseRate)+' MU/min';
     $('#transmissionOut').textContent=(result.radiation.primaryTransmission*100).toFixed(1)+'%';
-    $('#scatterOut').textContent=(result.delivery.beamActive?result.radiation.scatterIndex:0).toFixed(1)+'%';
-    $('#wallHitOut').textContent=!result.delivery.beamActive
+    $('#scatterOut').textContent=(result.delivery.radiationActive?result.radiation.scatterIndex:0).toFixed(1)+'%';
+    const visibleStrike=result.radiation.hardStrike||result.radiation.firstStrike;
+    $('#wallHitOut').textContent=!result.delivery.radiationActive
       ?'—'
-      :result.radiation.firstStrike
-        ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
+      :visibleStrike
+        ?(visibleStrike.stage+' · '+(visibleStrike.hard?'volledig':'gedeeltelijk'))
         :'geen';
-    const qualityPercent=result.delivery.beamActive
-      ?Math.min(100,result.delivery.beamQuality*100)
+    const outputPercent=result.delivery.radiationActive
+      ?Math.min(100,result.delivery.outputFraction*100)
       :0;
-    $('#doseRateFill').style.width=qualityPercent+'%';
-    $('#doseRateFill').classList.toggle('zero',qualityPercent===0);
+    $('#doseRateFill').style.width=outputPercent+'%';
+    $('#doseRateFill').classList.toggle('zero',outputPercent===0);
     $('#radiationStatus').textContent=result.delivery.status;
 
     $('#fieldOut').textContent=result.params.fieldXcm.toFixed(1)+' × '+result.params.fieldYcm.toFixed(1)+' cm';

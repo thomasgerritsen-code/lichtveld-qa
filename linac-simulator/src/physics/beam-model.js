@@ -205,7 +205,7 @@ export function simulate(params,disturbance={},assist={}){
   const stages=[...optics.stages,...bend.stages];
   const target=bend.target;
 
-  const spot=Math.max(.2,target.sigma);
+  const spot=Math.max(0,target.sigma);
   const mismatch=clamp(1-bend.achromacy,0,1);
   const error=Math.hypot(
     target.r*2.0,

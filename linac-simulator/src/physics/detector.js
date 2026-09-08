@@ -50,7 +50,8 @@ export function electronProfile(sim,params){
   const pts=[];
   const half=clamp(.08+.84*Math.min(params.fx,params.fy),.08,.92);
   const center=clamp(t.t*4.5,-.18,.18);
-  const scatter=.08+.16*(1-params.energy/2);
+  const effectiveEnergy=sim.effectiveEnergy??params.energy;
+  const scatter=.08+.16*(1-effectiveEnergy/2);
   for(let i=0;i<81;i++){
     const x=-1+2*i/80,u=x-center;
     const broad=edge(u,half,.055+scatter*.08);
