@@ -1,17 +1,67 @@
 import {MODEL} from './config.js';
 
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const DEG=Math.PI/180;
 
-function drift(state,L){ return {...state,x:state.x+L*state.xp}; }
-function kick(state,k){ return {...state,xp:state.xp+k}; }
-function lens(state,f){ return {...state,xp:state.xp-state.x/f}; }
+const I4=()=>[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+const zeros4=()=>[0,0,0,0];
 
-function sector(state,theta,rho=1){
-  const c=Math.cos(theta),s=Math.sin(theta),d=state.d||0;
+function mv(M,v){return M.map(row=>row.reduce((s,a,i)=>s+a*v[i],0));}
+function mm(A,B){return A.map(row=>B[0].map((_,j)=>row.reduce((s,a,k)=>s+a*B[k][j],0)));}
+function mt(A){return A[0].map((_,j)=>A.map(row=>row[j]));}
+function addv(a,b){return a.map((v,i)=>v+b[i]);}
+function scalev(a,k){return a.map(v=>v*k);}
+function covProp(S,M){return mm(mm(M,S),mt(M));}
+
+function driftM(L){return [[1,L,0,0],[0,1,0,0],[0,0,1,L],[0,0,0,1]];}
+
+function rotatedLensM(fR,fT,phi){
+  const c=Math.cos(phi),s=Math.sin(phi);
+  const kR=1/fR,kT=1/fT;
+  const k11=kR*c*c+kT*s*s;
+  const k22=kR*s*s+kT*c*c;
+  const k12=(kR-kT)*c*s;
+  return [
+    [1,0,0,0],
+    [-k11,1,-k12,0],
+    [0,0,1,0],
+    [-k12,0,-k22,1]
+  ];
+}
+
+function kickState(x,kr,kt){return [x[0],x[1]+kr,x[2],x[3]+kt];}
+
+function sectorM(theta,rho){
+  const c=Math.cos(theta),s=Math.sin(theta);
+  const L=Math.abs(theta*rho)*.55;
+  return [
+    [c,rho*s,0,0],
+    [-s/rho,c,0,0],
+    [0,0,1,L],
+    [0,0,0,1]
+  ];
+}
+
+function sectorDispersion(theta,rho,scale=1){
+  const c=Math.cos(theta),s=Math.sin(theta);
+  return [rho*(1-c)*scale,s*scale,0,0];
+}
+
+function sigmaFromCov(S,D,spread){
+  const eSigma=.012*spread;
+  const r=Math.sqrt(Math.max(0,S[0][0]+(D[0]*eSigma)**2));
+  const t=Math.sqrt(Math.max(0,S[2][2]+(D[2]*eSigma)**2));
+  return {r,t,mean:(r+t)/2};
+}
+
+function makeStage(name,x,S,D,spread){
+  const sig=sigmaFromCov(S,D,spread);
   return {
-    x:c*state.x+rho*s*state.xp+rho*(1-c)*d,
-    xp:-(s/rho)*state.x+c*state.xp+s*d,
-    d
+    name,
+    r:x[0],rp:x[1],t:x[2],tp:x[3],
+    disp:D[0],dispPrime:D[1],
+    sigmaR:sig.r,sigmaT:sig.t,sigma:sig.mean,
+    corrRT:(S[0][2]||0)/Math.max(1e-8,Math.sqrt(Math.abs(S[0][0]*S[2][2])))
   };
 }
 
@@ -23,103 +73,138 @@ export function decodeControls(raw){
     r2:raw.r2/100,t2:raw.t2/100,
     energy:.72+(raw.energy/100)*1.28,
     spread:raw.spread/100,
-    coarse:raw.coarse/100,fine:raw.fine/100,
+    mainBend:raw.coarse/100,
+    m3Topup:raw.fine/100,
+    coarse:raw.coarse/100,
+    fine:raw.fine/100,
     fx:raw.fx/100,fy:raw.fy/100
   };
 }
 
-export function transferPlane(k1,k2,f1,f2,initial={x:0,xp:0}){
+function initialCovariance(){
+  const [sr,srp,st,stp]=MODEL.optics.sourceSigma;
+  return [
+    [sr*sr,0,0,0],
+    [0,srp*srp,0,0],
+    [0,0,st*st,0],
+    [0,0,0,stp*stp]
+  ];
+}
+
+function mergeInitial(disturbance={}){
+  return [
+    disturbance.radial?.x||0,
+    disturbance.radial?.xp||0,
+    disturbance.transverse?.x||0,
+    disturbance.transverse?.xp||0
+  ];
+}
+
+function optics4D(params,disturbance={},assist={}){
   const o=MODEL.optics;
-  let s={x:initial.x||0,xp:initial.xp||0};
-  const samples=[{name:'gun',...s}];
-  s=drift(s,o.sourceToF1);s=lens(s,2.5/f1);samples.push({name:'focus1',...s});
-  s=drift(s,o.f1ToSteer1);s=kick(s,k1);samples.push({name:'steer1',...s});
-  s=drift(s,o.steer1ToF2);s=lens(s,2.4/f2);samples.push({name:'focus2',...s});
-  s=drift(s,o.f2ToSteer2);s=kick(s,k2);samples.push({name:'steer2',...s});
-  s=drift(s,o.steer2ToBend);samples.push({name:'bendEntry',...s});
-  return {state:s,samples};
-}
-
-function bendRadial(entry,params,disturbance){
-  const DEG=Math.PI/180;
-  const coarse=params.coarse+(disturbance.coarseBias||0);
-  const fine=params.fine+(disturbance.fineBias||0);
-  const energyOffset=disturbance.energyOffset||0;
-  const theta1=MODEL.bend.m1Deg*DEG;
-  const theta2=MODEL.bend.m2Deg*DEG;
-  const theta3=MODEL.bend.m3Deg*DEG;
-  let s={x:entry.x,xp:entry.xp,d:energyOffset};
-  const samples=[];
-
-  s=sector(s,theta1,1.0);s=kick(s,coarse*.030);samples.push({name:'m1',...s});
-  s=drift(s,.85);
-  s=sector(s,theta2,.95);s=kick(s,-coarse*.022);samples.push({name:'m2',...s});
-  s=drift(s,.90);
-  s=sector(s,theta3,1.18);s=kick(s,coarse*.035+fine*.040);samples.push({name:'m3',...s});
-  s=drift(s,.55);samples.push({name:'target',...s});
-
-  // Propagate a unit energy-offset ray to estimate normalized dispersion D = dx/dδ.
-  let d={x:0,xp:0,d:1};
-  const dispersion=[];
-  d=sector(d,theta1,1.0);dispersion.push({name:'m1',D:d.x});
-  d=drift(d,.85);d=sector(d,theta2,.95);dispersion.push({name:'m2',D:d.x});
-  d=drift(d,.90);d=sector(d,theta3,1.18);dispersion.push({name:'m3',D:d.x});
-  d=drift(d,.55);dispersion.push({name:'target',D:d.x});
-  return {state:s,samples,dispersion,effective:{coarse,fine,energyOffset}};
-}
-
-function bendTransverse(entry){
-  // Exact Elekta transverse field maps are not public. Keep this plane as paraxial drift transport.
-  let s={x:entry.x,xp:entry.xp};
-  const samples=[];
-  s=drift(s,.65);samples.push({name:'m1',...s});
-  s=drift(s,.85);samples.push({name:'m2',...s});
-  s=drift(s,1.05);samples.push({name:'m3',...s});
-  s=drift(s,.55);samples.push({name:'target',...s});
-  return {state:s,samples};
-}
-
-function combineStages(radial,transverse,bendR,bendT,params){
-  const tMap=new Map(transverse.samples.map(s=>[s.name,s]));
-  const stages=radial.samples.map((r,i)=>{
-    const t=tMap.get(r.name)||{x:0,xp:0};
-    const sigmaBase=i<2?1.0:(i<4?.9:.82);
-    return {name:r.name,r:r.x,rp:r.xp,t:t.x,tp:t.xp,disp:0,sigma:sigmaBase/((params.f1+params.f2)/2)};
-  });
-  const bt=new Map(bendT.samples.map(s=>[s.name,s]));
-  const bd=new Map(bendR.dispersion.map(s=>[s.name,s.D]));
-  bendR.samples.forEach((r,i)=>{
-    const t=bt.get(r.name)||{x:0,xp:0};
-    const sigma=[.82,.70,.62,.58][i]/((params.f1+params.f2)/2);
-    stages.push({name:r.name,r:r.x,rp:r.xp,t:t.x,tp:t.xp,disp:bd.get(r.name)||0,sigma});
-  });
-  return stages;
-}
-
-export function simulate(params,disturbance={}){
   const rigidity=1/params.energy;
-  const radial=transferPlane(
-    params.r1*.020*rigidity,params.r2*.026*rigidity,params.f1,params.f2,
-    disturbance.radial||{x:0,xp:0}
+  let x=mergeInitial(disturbance);
+  let S=initialCovariance();
+  let D=zeros4();
+  const stages=[makeStage('gun',x,S,D,params.spread)];
+
+  const apply=M=>{x=mv(M,x);S=covProp(S,M);D=mv(M,D);};
+
+  apply(driftM(o.sourceToF1));
+  apply(rotatedLensM(2.45/params.f1,2.75/params.f1,o.focus1RotationDeg*DEG*params.f1));
+  stages.push(makeStage('focus1',x,S,D,params.spread));
+
+  apply(driftM(o.f1ToSteer1));
+  x=kickState(x,params.r1*.020*rigidity,params.t1*.020*rigidity);
+  stages.push(makeStage('steer1',x,S,D,params.spread));
+
+  apply(driftM(o.steer1ToF2));
+  apply(rotatedLensM(2.35/params.f2,2.62/params.f2,o.focus2RotationDeg*DEG*params.f2));
+  stages.push(makeStage('focus2',x,S,D,params.spread));
+
+  apply(driftM(o.f2ToSteer2));
+  const r2Kick=params.r2*.026*rigidity+(assist.r2||0);
+  const t2Kick=params.t2*.026*rigidity+(assist.t2||0);
+  x=kickState(x,r2Kick,t2Kick);
+  stages.push(makeStage('steer2',x,S,D,params.spread));
+
+  apply(driftM(o.steer2ToBend));
+  stages.push(makeStage('bendEntry',x,S,D,params.spread));
+
+  return {x,S,D,stages,r2Kick,t2Kick};
+}
+
+function bending4D(optics,params,disturbance={}){
+  const b=MODEL.bend;
+  const main=params.mainBend+(disturbance.coarseBias||0);
+  const topup=params.m3Topup+(disturbance.fineBias||0);
+  const delta=disturbance.energyOffset||0;
+
+  let x=[...optics.x];
+  let S=optics.S.map(r=>[...r]);
+  let D=[...optics.D];
+  const stages=[];
+  const maxDisp=[];
+
+  function magnet(index,name,mainKick,topupKick=0){
+    const theta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
+    const rho=b.rho[index];
+    const M=sectorM(theta,rho);
+    const g=sectorDispersion(theta,rho,b.dispersionScale[index]);
+
+    x=addv(mv(M,x),scalev(g,delta));
+    S=covProp(S,M);
+    D=addv(mv(M,D),g);
+    x=kickState(x,main*mainKick+topup*topupKick,0);
+    stages.push(makeStage(name,x,S,D,params.spread));
+    maxDisp.push(Math.abs(D[0]));
+
+    const drift=driftM(b.drift[index]);
+    x=mv(drift,x);S=covProp(S,drift);D=mv(drift,D);
+  }
+
+  magnet(0,'m1',.030,0);
+  magnet(1,'m2',-.022,0);
+  magnet(2,'m3',.035,.040);
+
+  const target=makeStage('target',x,S,D,params.spread);
+  stages.push(target);
+
+  const maxD=Math.max(...maxDisp,1e-6);
+  const residualD=Math.hypot(D[0],D[1]*.6);
+  const intrinsicAchromacy=clamp(1-residualD/(maxD*1.5),0,1);
+  const supplyPenalty=clamp(Math.abs(main)*.45+Math.abs(topup)*.28,0,.8);
+  const achromacy=clamp(intrinsicAchromacy-supplyPenalty,0,1);
+
+  return {x,S,D,stages,target,achromacy,effective:{mainBend:main,m3Topup:topup,energyOffset:delta}};
+}
+
+export function simulate(params,disturbance={},assist={}){
+  const optics=optics4D(params,disturbance,assist);
+  const bend=bending4D(optics,params,disturbance);
+  const stages=[...optics.stages,...bend.stages];
+  const target=bend.target;
+
+  const spot=Math.max(.2,target.sigma);
+  const mismatch=clamp(1-bend.achromacy,0,1);
+  const error=Math.hypot(
+    target.r*2.0,target.rp*1.2,target.t*2.0,target.tp*1.2,
+    target.disp*.params?.spread||0
   );
-  const transverse=transferPlane(
-    params.t1*.020*rigidity,params.t2*.026*rigidity,params.f1,params.f2,
-    disturbance.transverse||{x:0,xp:0}
-  );
-  const bendR=bendRadial(radial.state,params,disturbance);
-  const bendT=bendTransverse(transverse.state);
-  const stages=combineStages(radial,transverse,bendR,bendT,params);
-  const target=stages[stages.length-1];
-  const mismatch=Math.abs(params.coarse+(disturbance.coarseBias||0))*.68+Math.abs(params.fine+(disturbance.fineBias||0))*.36+Math.abs(disturbance.energyOffset||0)*.55;
-  const achromacy=clamp(1-mismatch,0,1);
-  const spot=clamp(1/((params.f1+params.f2)/2),.45,1.8);
-  const error=Math.hypot(target.r*2.0,target.rp*1.2,target.t*2.0,target.tp*1.2,(target.disp*params.spread)*.12);
+
   return {
-    radial,transverse,bendR,bendT,stages,target,
-    radialOffset:radial.state.x*24,
-    transverseOffset:transverse.state.x*24,
-    radialAngle:radial.state.xp,
-    transverseAngle:transverse.state.xp,
-    mismatch,achromacy,spot,error,effectiveBend:bendR.effective
+    stages,target,
+    radialOffset:optics.x[0]*24,
+    transverseOffset:optics.x[2]*24,
+    radialAngle:optics.x[1],
+    transverseAngle:optics.x[3],
+    mismatch,
+    achromacy:bend.achromacy,
+    spot,
+    error:Math.hypot(target.r*2,target.rp*1.2,target.t*2,target.tp*1.2,target.disp*params.spread*.08),
+    effectiveBend:bend.effective,
+    effectiveSteering:{r2Kick:optics.r2Kick,t2Kick:optics.t2Kick},
+    covariance:bend.S,
+    dispersionVector:bend.D
   };
 }
