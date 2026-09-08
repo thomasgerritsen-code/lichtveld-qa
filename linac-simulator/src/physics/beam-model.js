@@ -1,83 +1,25 @@
 import {MODEL} from '../machine/model.js';
-
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const DEG=Math.PI/180;
-
-const I4=()=>[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
-const zeros4=()=>[0,0,0,0];
-
-function mv(M,v){return M.map(row=>row.reduce((s,a,i)=>s+a*v[i],0));}
-function mm(A,B){return A.map(row=>B[0].map((_,j)=>row.reduce((s,a,k)=>s+a*B[k][j],0)));}
-function mt(A){return A[0].map((_,j)=>A.map(row=>row[j]));}
-function addv(a,b){return a.map((v,i)=>v+b[i]);}
-function scalev(a,k){return a.map(v=>v*k);}
-function covProp(S,M){return mm(mm(M,S),mt(M));}
-
-function driftM(L){return [[1,L,0,0],[0,1,0,0],[0,0,1,L],[0,0,0,1]];}
-
-function rotatedLensM(fR,fT,phi){
-  const c=Math.cos(phi),s=Math.sin(phi);
-  const kR=1/fR,kT=1/fT;
-  const k11=kR*c*c+kT*s*s;
-  const k22=kR*s*s+kT*c*c;
-  const k12=(kR-kT)*c*s;
-  return [
-    [1,0,0,0],
-    [-k11,1,-k12,0],
-    [0,0,1,0],
-    [-k12,0,-k22,1]
-  ];
-}
-
-function kickState(x,kr,kt){return [x[0],x[1]+kr,x[2],x[3]+kt];}
-
-function sectorM(theta,rho){
-  const c=Math.cos(theta),s=Math.sin(theta);
-  const L=Math.abs(theta*rho)*.55;
-  return [
-    [c,rho*s,0,0],
-    [-s/rho,c,0,0],
-    [0,0,1,L],
-    [0,0,0,1]
-  ];
-}
-
-function sectorDispersion(theta,rho,scale=1){
-  const c=Math.cos(theta),s=Math.sin(theta);
-  return [rho*(1-c)*scale,s*scale,0,0];
-}
-
-function sigmaFromCov(S,D,spread){
-  const eSigma=.012*spread;
-  const r=Math.sqrt(Math.max(0,S[0][0]+(D[0]*eSigma)**2));
-  const t=Math.sqrt(Math.max(0,S[2][2]+(D[2]*eSigma)**2));
-  return {r,t,mean:(r+t)/2};
-}
-
-function makeStage(name,x,S,D,spread){
-  const sig=sigmaFromCov(S,D,spread);
-  return {
-    name,
-    r:x[0],rp:x[1],t:x[2],tp:x[3],
-    disp:D[0],dispPrime:D[1],
-    sigmaR:sig.r,sigmaT:sig.t,sigma:sig.mean,
-    corrRT:(S[0][2]||0)/Math.max(1e-8,Math.sqrt(Math.abs(S[0][0]*S[2][2])))
-  };
-}
+import {DEG,clamp,zeros4,mv,addv,scalev,covProp} from './math/matrix.js';
+import {driftM,rotatedLensM,kickState} from './optics/elements.js';
+import {sectorM,sectorDispersion} from './bending/elements.js';
+import {makeStage} from './beam-state.js';
 
 export function decodeControls(raw){
   return {
     f1:.55+(raw.f1/100)*1.35,
-    r1:raw.r1/100,t1:raw.t1/100,
+    r1:raw.r1/100,
+    t1:raw.t1/100,
     f2:.55+(raw.f2/100)*1.35,
-    r2:raw.r2/100,t2:raw.t2/100,
+    r2:raw.r2/100,
+    t2:raw.t2/100,
     energy:.96+(raw.energy/100)*.08,
     spread:raw.spread/100,
     mainBend:raw.coarse/100,
     m3Topup:raw.fine/100,
     coarse:raw.coarse/100,
     fine:raw.fine/100,
-    fx:raw.fx/100,fy:raw.fy/100
+    fx:raw.fx/100,
+    fy:raw.fy/100
   };
 }
 
@@ -103,89 +45,137 @@ function mergeInitial(disturbance={}){
 function optics4D(params,disturbance={},assist={}){
   const o=MODEL.optics;
   const rigidity=1/params.energy;
-  let x=mergeInitial(disturbance);
-  let S=initialCovariance();
-  let D=zeros4();
-  const stages=[makeStage('gun',x,S,D,params.spread)];
 
-  const apply=M=>{x=mv(M,x);S=covProp(S,M);D=mv(M,D);};
+  let state=mergeInitial(disturbance);
+  let covariance=initialCovariance();
+  let dispersion=zeros4();
+  const stages=[makeStage('gun',state,covariance,dispersion,params.spread)];
+
+  const apply=matrix=>{
+    state=mv(matrix,state);
+    covariance=covProp(covariance,matrix);
+    dispersion=mv(matrix,dispersion);
+  };
 
   apply(driftM(o.sourceToF1));
-  apply(rotatedLensM(2.45/params.f1,2.75/params.f1,o.focus1RotationDeg*DEG*params.f1));
-  stages.push(makeStage('focus1',x,S,D,params.spread));
+  apply(rotatedLensM(
+    2.45/params.f1,
+    2.75/params.f1,
+    o.focus1RotationDeg*DEG*params.f1
+  ));
+  stages.push(makeStage('focus1',state,covariance,dispersion,params.spread));
 
   apply(driftM(o.f1ToSteer1));
-  x=kickState(x,params.r1*.020*rigidity,params.t1*.020*rigidity);
-  stages.push(makeStage('steer1',x,S,D,params.spread));
+  state=kickState(
+    state,
+    params.r1*.020*rigidity,
+    params.t1*.020*rigidity
+  );
+  stages.push(makeStage('steer1',state,covariance,dispersion,params.spread));
 
   apply(driftM(o.steer1ToF2));
-  apply(rotatedLensM(2.35/params.f2,2.62/params.f2,o.focus2RotationDeg*DEG*params.f2));
-  stages.push(makeStage('focus2',x,S,D,params.spread));
+  apply(rotatedLensM(
+    2.35/params.f2,
+    2.62/params.f2,
+    o.focus2RotationDeg*DEG*params.f2
+  ));
+  stages.push(makeStage('focus2',state,covariance,dispersion,params.spread));
 
   apply(driftM(o.f2ToSteer2));
   const r2Kick=params.r2*.026*rigidity+(assist.r2||0);
   const t2Kick=params.t2*.026*rigidity+(assist.t2||0);
-  x=kickState(x,r2Kick,t2Kick);
-  stages.push(makeStage('steer2',x,S,D,params.spread));
+  state=kickState(state,r2Kick,t2Kick);
+  stages.push(makeStage('steer2',state,covariance,dispersion,params.spread));
 
   apply(driftM(o.steer2ToBend));
-  stages.push(makeStage('bendEntry',x,S,D,params.spread));
+  stages.push(makeStage('bendEntry',state,covariance,dispersion,params.spread));
 
-  return {x,S,D,stages,r2Kick,t2Kick};
+  return {
+    state,
+    covariance,
+    dispersion,
+    stages,
+    r2Kick,
+    t2Kick
+  };
 }
 
 function bending4D(optics,params,disturbance={}){
-  const b=MODEL.bend;
+  const bendModel=MODEL.bend;
   const main=params.mainBend+(disturbance.coarseBias||0);
   const topup=params.m3Topup+(disturbance.fineBias||0);
-  const delta=disturbance.energyOffset||0;
+  const energyOffset=disturbance.energyOffset||0;
 
-  let x=[...optics.x];
-  let S=optics.S.map(r=>[...r]);
-  let D=[...optics.D];
+  let state=[...optics.state];
+  let covariance=optics.covariance.map(row=>[...row]);
+  let dispersion=[...optics.dispersion];
   const stages=[];
-  const maxDisp=[];
+  const maxDispersion=[];
 
-  function magnet(index,name){
-    const nominalTheta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
-    const rho=b.rho[index];
+  function transportMagnet(index,name){
+    const angleKey=['m1Deg','m2Deg','m3Deg'][index];
+    const nominalTheta=bendModel[angleKey]*DEG;
+    const rho=bendModel.rho[index];
 
-    // The transport coordinates are referenced to the fixed nominal flight-tube path.
-    // A field/momentum mismatch therefore appears as an angular error after the magnet.
     const mainResponse=1+main*.04;
     const topupResponse=index===2?(1+topup*.06):1;
     const actualTheta=nominalTheta*mainResponse*topupResponse/params.energy;
     const bendError=actualTheta-nominalTheta;
 
-    const M=sectorM(nominalTheta,rho);
+    const matrix=sectorM(nominalTheta,rho);
     const dispersionGain=actualTheta/nominalTheta;
-    const g=sectorDispersion(nominalTheta,rho,b.dispersionScale[index]*dispersionGain);
+    const dispersionKick=sectorDispersion(
+      nominalTheta,
+      rho,
+      bendModel.dispersionScale[index]*dispersionGain
+    );
 
-    x=addv(mv(M,x),scalev(g,delta));
-    S=covProp(S,M);
-    D=addv(mv(M,D),g);
-    x=kickState(x,bendError,0);
-    stages.push(makeStage(name,x,S,D,params.spread));
-    maxDisp.push(Math.abs(D[0]));
+    state=addv(mv(matrix,state),scalev(dispersionKick,energyOffset));
+    covariance=covProp(covariance,matrix);
+    dispersion=addv(mv(matrix,dispersion),dispersionKick);
+    state=kickState(state,bendError,0);
 
-    const drift=driftM(b.drift[index]);
-    x=mv(drift,x);S=covProp(S,drift);D=mv(drift,D);
+    stages.push(makeStage(
+      name,
+      state,
+      covariance,
+      dispersion,
+      params.spread
+    ));
+    maxDispersion.push(Math.abs(dispersion[0]));
+
+    const drift=driftM(bendModel.drift[index]);
+    state=mv(drift,state);
+    covariance=covProp(covariance,drift);
+    dispersion=mv(drift,dispersion);
   }
 
-  magnet(0,'m1');
-  magnet(1,'m2');
-  magnet(2,'m3');
+  transportMagnet(0,'m1');
+  transportMagnet(1,'m2');
+  transportMagnet(2,'m3');
 
-  const target=makeStage('target',x,S,D,params.spread);
+  const target=makeStage('target',state,covariance,dispersion,params.spread);
   stages.push(target);
 
-  const maxD=Math.max(...maxDisp,1e-6);
-  const residualD=Math.hypot(D[0],D[1]*.6);
+  const maxD=Math.max(...maxDispersion,1e-6);
+  const residualD=Math.hypot(dispersion[0],dispersion[1]*.6);
   const intrinsicAchromacy=clamp(1-residualD/(maxD*1.5),0,1);
   const supplyPenalty=clamp(Math.abs(main)*.45+Math.abs(topup)*.28,0,.8);
   const achromacy=clamp(intrinsicAchromacy-supplyPenalty,0,1);
 
-  return {x,S,D,stages,target,achromacy,effective:{mainBend:main,m3Topup:topup,energyOffset:delta}};
+  return {
+    state,
+    covariance,
+    dispersion,
+    stages,
+    target,
+    achromacy,
+    effective:{
+      mainBend:main,
+      m3Topup:topup,
+      energyOffset
+    }
+  };
 }
 
 export function simulate(params,disturbance={},assist={}){
@@ -197,23 +187,30 @@ export function simulate(params,disturbance={},assist={}){
   const spot=Math.max(.2,target.sigma);
   const mismatch=clamp(1-bend.achromacy,0,1);
   const error=Math.hypot(
-    target.r*2.0,target.rp*1.2,target.t*2.0,target.tp*1.2,
+    target.r*2.0,
+    target.rp*1.2,
+    target.t*2.0,
+    target.tp*1.2,
     target.disp*params.spread*.08
   );
 
   return {
-    stages,target,
-    radialOffset:optics.x[0]*24,
-    transverseOffset:optics.x[2]*24,
-    radialAngle:optics.x[1],
-    transverseAngle:optics.x[3],
+    stages,
+    target,
+    radialOffset:optics.state[0]*24,
+    transverseOffset:optics.state[2]*24,
+    radialAngle:optics.state[1],
+    transverseAngle:optics.state[3],
     mismatch,
     achromacy:bend.achromacy,
     spot,
     error,
     effectiveBend:bend.effective,
-    effectiveSteering:{r2Kick:optics.r2Kick,t2Kick:optics.t2Kick},
-    covariance:bend.S,
-    dispersionVector:bend.D
+    effectiveSteering:{
+      r2Kick:optics.r2Kick,
+      t2Kick:optics.t2Kick
+    },
+    covariance:bend.covariance,
+    dispersionVector:bend.dispersion
   };
 }
