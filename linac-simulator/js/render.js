@@ -74,6 +74,14 @@ function envelopePolygon(path,sim,mult=1){
 }
 
 export function initHardware(){
+  const scale=MODEL.visual?.bendAssemblyScale||1;
+  const [px,py]=MODEL.visual?.bendPivot||[805,499];
+  const slalom=document.querySelector('#slalomHardware');
+  if(slalom){
+    const tx=px*(1-scale),ty=py*(1-scale);
+    slalom.setAttribute('transform',`translate(${tx} ${ty}) scale(${scale})`);
+  }
+
   const rf=document.querySelector('#rfCells');
   if(rf && !rf.childNodes.length){
     for(let i=0;i<24;i++){const l=document.createElementNS('http://www.w3.org/2000/svg','line');const x=20+i*25;l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1',-30);l.setAttribute('y2',30);l.setAttribute('stroke','#2e4963');rf.appendChild(l);}
