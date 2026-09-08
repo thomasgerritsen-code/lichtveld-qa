@@ -77,7 +77,7 @@ export function createController(){
     const {powerOn,beamOn,mode,filter}=state.machine;
     const raw=selectRawControls(state);
 
-    $('#machineStateText').textContent=powerOn?'READY':'OFF';
+    $('#machineStateText').textContent=!powerOn?'OFF':(beamOn?'BEAM ON':'READY');
     $('#machineLamp').classList.toggle('ready',powerOn);
     $('#machineLamp').classList.toggle('off',!powerOn);
 
@@ -262,9 +262,11 @@ export function createController(){
     $('#doseRateOut').textContent=Math.round(result.delivery.usefulDoseRate)+' MU/min';
     $('#transmissionOut').textContent=(result.radiation.primaryTransmission*100).toFixed(1)+'%';
     $('#scatterOut').textContent=(result.delivery.beamActive?result.radiation.scatterIndex:0).toFixed(1)+'%';
-    $('#wallHitOut').textContent=result.radiation.firstStrike
-      ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
-      :'geen';
+    $('#wallHitOut').textContent=!result.delivery.beamActive
+      ?'—'
+      :result.radiation.firstStrike
+        ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
+        :'geen';
     const qualityPercent=result.delivery.beamActive
       ?Math.min(100,result.delivery.beamQuality*100)
       :0;
