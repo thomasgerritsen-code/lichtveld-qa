@@ -238,3 +238,19 @@ De steeringsectie bevat drie extra physics samples binnen de accelerating struct
 - photon-target conversion flash.
 
 De animatie volgt de componentvolgorde uit Elekta's publieke 'How the linear accelerator works' materiaal, zonder OEM graphics of timingwaarden te kopiëren.
+
+
+## Hardening test strategy v15
+
+`tests/qa-sweep.test.mjs` vormt een property/sweep-laag bovenop de scenario-regressietests.
+
+Voor iedere berekende toestand gelden vaste invarianten:
+- geen NaN/Infinity;
+- σR/σT/spot niet negatief;
+- transmissie, achromatie, mismatch en outputfraction binnen hun modelrange;
+- useful dose rate nooit hoger dan het ingestelde dose-rate setpoint;
+- Machine/Beam/source gating kan geen dose leveren wanneer radiation niet actief is;
+- alle HTML-control-id's en controllerselectors moeten bestaan en uniek zijn;
+- alle ES modules moeten zelfstandig importeerbaar blijven.
+
+Nieuwe physics/UI-wijzigingen horen naast een concrete regressietest ook deze sweep te blijven passeren.
