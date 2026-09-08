@@ -72,6 +72,15 @@ export const SOURCES = Object.freeze([
     claims:['M1 energy analysis','M2 reverse bend/focusing','M3 >90° final bend','Main supply + additional M3 top-up concept']
   },
   {
+    id:'versa-commissioning',
+    title:'Narayanasamy et al. – Commissioning an Elekta Versa HD linear accelerator',
+    url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC5690217/',
+    type:'peer-reviewed',
+    scope:'Elekta Versa HD / Agility',
+    confidence:'high',
+    claims:['One sculpted diaphragm pair is orthogonal to the Agility MLC','MLC replaces the orthogonal jaw pair','80 interdigitating leaf pairs']
+  },
+  {
     id:'agility-focal',
     title:'Chojnowski et al. – Beam focal spot position determination for Agility',
     url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6036348/',
@@ -127,6 +136,7 @@ export const CLAIMS = Object.freeze({
   bendFields:{confidence:'model',sourceIds:['elekta-patent'],label:'Magnetische veldrespons',note:'Genormaliseerde sector-magnet matrices; geen OEM poolprofielen of veldkaarten.'},
   steeringFeedback:{confidence:'high',sourceIds:['appeldoorn-2020','appeldoorn-2025'],label:'Set + LUT + Servo'},
   agility:{confidence:'high',sourceIds:['agility-focal','agility-model','agility-elekta'],label:'Agility head / MLC'},
+  controlCausality:{confidence:'high',sourceIds:['appeldoorn-2020','elekta-patent','versa-commissioning'],label:'Slider → fysiek subsysteem',note:'Steeringcorrecties beginnen bij hun eigen coils, main bending bij M1, M3 top-up pas bij M3 en field X/Y worden aan MLC/diaphragms gekoppeld. De grootte van de respons blijft een genormaliseerd onderwijsmodel.'},
   photonProfile:{confidence:'model',sourceIds:['fff','agility-focal'],label:'Photon profile koppeling',note:'Kwalitatief educatief profiel; geen dosisberekening.'},
   electronMode:{confidence:'high',sourceIds:['iaea-1196'],label:'Electron window / scattering foils / applicator'},
   epid:{confidence:'medium-high',sourceIds:['epid-focal'],label:'Virtuele EPID/focal-spot QA',note:'Alleen geometrisch principe, geen klinische procedure of tolerantie.'}

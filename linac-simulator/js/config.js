@@ -1,5 +1,5 @@
 export const UI_DEFAULTS = Object.freeze({
-  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:55,spread:25,coarse:0,fine:0,fx:60,fy:60,
+  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:50,spread:25,coarse:0,fine:0,fx:60,fy:60,
   gantry:0
 });
 
@@ -32,7 +32,9 @@ export const MODEL = Object.freeze({
     // Visual-only target/window selector travel. This is a normalized schematic motion,
     // not an OEM mechanical travel specification.
     selectorTravelPx:26,
-    selectorAxisDeg:0
+    selectorAxisDeg:0,
+    beamOffsetPx:560,
+    dispersionVisualScale:28
   }
 });
 

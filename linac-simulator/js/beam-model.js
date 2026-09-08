@@ -1,4 +1,4 @@
-import {MODEL} from './config.js?v=8';
+import {MODEL} from './config.js?v=9';
 
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const DEG=Math.PI/180;
@@ -71,7 +71,7 @@ export function decodeControls(raw){
     r1:raw.r1/100,t1:raw.t1/100,
     f2:.55+(raw.f2/100)*1.35,
     r2:raw.r2/100,t2:raw.t2/100,
-    energy:.72+(raw.energy/100)*1.28,
+    energy:.96+(raw.energy/100)*.08,
     spread:raw.spread/100,
     mainBend:raw.coarse/100,
     m3Topup:raw.fine/100,
@@ -146,19 +146,25 @@ function bending4D(optics,params,disturbance={}){
   const stages=[];
   const maxDisp=[];
 
-  function magnet(index,name,mainKick,topupKick=0){
-    const theta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
+  function magnet(index,name){
+    const nominalTheta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
     const rho=b.rho[index];
-    const M=sectorM(theta,rho);
-    const response=[.10,-.07,.06][index];
-    const topupResponse=index===2?.18:0;
-    const dispersionScale=b.dispersionScale[index]*(1+main*response+topup*topupResponse);
-    const g=sectorDispersion(theta,rho,dispersionScale);
+
+    // The transport coordinates are referenced to the fixed nominal flight-tube path.
+    // A field/momentum mismatch therefore appears as an angular error after the magnet.
+    const mainResponse=1+main*.04;
+    const topupResponse=index===2?(1+topup*.06):1;
+    const actualTheta=nominalTheta*mainResponse*topupResponse/params.energy;
+    const bendError=actualTheta-nominalTheta;
+
+    const M=sectorM(nominalTheta,rho);
+    const dispersionGain=actualTheta/nominalTheta;
+    const g=sectorDispersion(nominalTheta,rho,b.dispersionScale[index]*dispersionGain);
 
     x=addv(mv(M,x),scalev(g,delta));
     S=covProp(S,M);
     D=addv(mv(M,D),g);
-    x=kickState(x,main*mainKick+topup*topupKick,0);
+    x=kickState(x,bendError,0);
     stages.push(makeStage(name,x,S,D,params.spread));
     maxDisp.push(Math.abs(D[0]));
 
@@ -166,9 +172,9 @@ function bending4D(optics,params,disturbance={}){
     x=mv(drift,x);S=covProp(S,drift);D=mv(drift,D);
   }
 
-  magnet(0,'m1',.030,0);
-  magnet(1,'m2',-.022,0);
-  magnet(2,'m3',.035,.040);
+  magnet(0,'m1');
+  magnet(1,'m2');
+  magnet(2,'m3');
 
   const target=makeStage('target',x,S,D,params.spread);
   stages.push(target);
