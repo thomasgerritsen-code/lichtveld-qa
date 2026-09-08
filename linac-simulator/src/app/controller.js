@@ -338,8 +338,8 @@ export function createController(){
 
     $('#photonBtn').onclick=()=>store.dispatch({type:'machine/setMode',mode:'photon'});
     $('#electronBtn').onclick=()=>store.dispatch({type:'machine/setMode',mode:'electron'});
-    $('#ffBtn').onclick=()=>store.dispatch({type:'machine/set',key:'filter',value:'ff'});
-    $('#fffBtn').onclick=()=>store.dispatch({type:'machine/set',key:'filter',value:'fff'});
+    $('#ffBtn').onclick=()=>store.dispatch({type:'machine/setFilter',filter:'ff'});
+    $('#fffBtn').onclick=()=>store.dispatch({type:'machine/setFilter',filter:'fff'});
     $('#dirCw').onclick=()=>store.dispatch({type:'machine/set',key:'direction',value:'cw'});
     $('#dirCcw').onclick=()=>store.dispatch({type:'machine/set',key:'direction',value:'ccw'});
 
