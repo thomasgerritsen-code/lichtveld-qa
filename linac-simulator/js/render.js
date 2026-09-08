@@ -1,3 +1,4 @@
+import {MODEL} from './config.js?v=6';
 const DEG=Math.PI/180;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
@@ -14,15 +15,17 @@ function arc(pts,x,y,a,R,delta,n=22){
 }
 
 export function buildMechanicalPath(){
-  let x=805,y=499,a=-22.5*DEG;
+  const scale=MODEL.visual?.bendAssemblyScale||1;
+  const [x0,y0]=MODEL.visual?.bendPivot||[805,499];
+  let x=x0,y=y0,a=-22.5*DEG;
   const pts=[{x,y}];
-  let s=straight(pts,x,y,a,48,7);x=s.x;y=s.y;a=s.a;
-  s=arc(pts,x,y,a,102,45*DEG,20);x=s.x;y=s.y;a=s.a;
-  s=straight(pts,x,y,a,118,9);x=s.x;y=s.y;a=s.a;
-  s=arc(pts,x,y,a,97,-45*DEG,20);x=s.x;y=s.y;a=s.a;
-  s=straight(pts,x,y,a,115,9);x=s.x;y=s.y;a=s.a;
-  s=arc(pts,x,y,a,126,112.5*DEG,34);x=s.x;y=s.y;a=s.a;
-  s=straight(pts,x,y,a,62,7);
+  let s=straight(pts,x,y,a,48*scale,7);x=s.x;y=s.y;a=s.a;
+  s=arc(pts,x,y,a,102*scale,45*DEG,20);x=s.x;y=s.y;a=s.a;
+  s=straight(pts,x,y,a,118*scale,9);x=s.x;y=s.y;a=s.a;
+  s=arc(pts,x,y,a,97*scale,-45*DEG,20);x=s.x;y=s.y;a=s.a;
+  s=straight(pts,x,y,a,115*scale,9);x=s.x;y=s.y;a=s.a;
+  s=arc(pts,x,y,a,126*scale,112.5*DEG,34);x=s.x;y=s.y;a=s.a;
+  s=straight(pts,x,y,a,62*scale,7);
   return pts;
 }
 
@@ -97,7 +100,7 @@ export function initHardware(){
     }
   }
 
-  const shift='translate(-59 0)';
+  const shift=`translate(${MODEL.visual?.headShiftX??-59} 0)`;
   for(const sel of ['[data-part="head"]','#photonTarget','#electronWindow','#photonHead','#electronHead','[data-part="monitor"]','[data-part="mirror"]','#mlcGroup','#jawsGroup','#electronApplicator','[data-part="patient"]','#treatmentCone','#centralRay']){
     const el=document.querySelector(sel);if(el&&!el.hasAttribute('data-shifted')){el.setAttribute('transform',shift);el.setAttribute('data-shifted','1');}
   }
