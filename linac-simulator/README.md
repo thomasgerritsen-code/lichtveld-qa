@@ -34,7 +34,7 @@ De training injecteert uitsluitend verborgen, dimensieloze modelafwijkingen:
 - transverse bronpositie/hoek
 - bending coarse/fine mismatch
 
-De gebruiker corrigeert deze met de bijbehorende virtuele controls. Scores en instellingen zijn niet te vertalen naar een echte LINAC.
+De gebruiker corrigeert deze met de bijbehorende virtuele controls. Tijdens de oefening tonen twee live meters de target-positie en target-hoek (of target-offset en dispersie bij de bending-oefening), plus een stapsgewijze uitleg van de verschillende response-vectoren van de eerste en tweede corrector. Scores en instellingen zijn niet te vertalen naar een echte LINAC.
 
 ## Modelgrenzen
 
