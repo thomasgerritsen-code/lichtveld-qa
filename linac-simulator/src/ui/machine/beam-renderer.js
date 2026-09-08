@@ -270,9 +270,12 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
   document.querySelector('#flightOuter')?.setAttribute('d',pathD(geometry.points));
   document.querySelector('#flightInner')?.setAttribute('d',pathD(geometry.points));
 
-  const beamActive=Boolean(delivery?.beamActive);
+  const beamActive=Boolean(delivery?.beamActive&&delivery?.sourceActive);
   const particles=document.querySelector('#particles');
-  if(particles)particles.hidden=!beamActive;
+  if(particles){
+    particles.hidden=!beamActive;
+    particles.style.opacity=String(Math.max(.08,Math.min(1,delivery?.sourceFactor??1)));
+  }
 
   if(!beamActive){
     document.querySelector('#beamPath')?.setAttribute('d','');
