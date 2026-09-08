@@ -1,15 +1,21 @@
 import {MODEL} from '../machine/model.js';
 import {DEG,clamp,zeros4,mv,addv,scalev,covProp} from './math/matrix.js';
-import {driftM,rotatedLensM,kickState} from './optics/elements.js';
+import {driftM,kickState,envelopeScaleM} from './optics/elements.js';
 import {sectorM,sectorDispersion} from './bending/elements.js';
 import {makeStage} from './beam-state.js';
+import {evaluateRfSource} from './rf-source.js';
 
 export function decodeControls(raw){
   return {
-    f1:.55+(raw.f1/100)*1.35,
+    gunEmission:clamp((raw.gunEmission??100)/100,0,1.2),
+    gunTiming:clamp((raw.gunTiming??0)/100,-1,1),
+    magPower:clamp((raw.magPower??100)/100,0,1.2),
+    magTune:clamp((raw.magTune??0)/100,-1,1),
+    rfPhase:clamp((raw.rfPhase??0)/100,-1,1),
+    f1:clamp(raw.f1/100,0,1),
     r1:raw.r1/100,
     t1:raw.t1/100,
-    f2:.55+(raw.f2/100)*1.35,
+    f2:clamp(raw.f2/100,0,1),
     r2:raw.r2/100,
     t2:raw.t2/100,
     energy:.96+(raw.energy/100)*.08,
@@ -26,8 +32,12 @@ export function decodeControls(raw){
   };
 }
 
-function initialCovariance(){
-  const [sr,srp,st,stp]=MODEL.optics.sourceSigma;
+function initialCovariance(sourceSigmaScale=1){
+  const [sr0,srp0,st0,stp0]=MODEL.optics.sourceSigma;
+  const sr=sr0*sourceSigmaScale;
+  const srp=srp0*sourceSigmaScale;
+  const st=st0*sourceSigmaScale;
+  const stp=stp0*sourceSigmaScale;
   return [
     [sr*sr,0,0,0],
     [0,srp*srp,0,0],
@@ -45,14 +55,14 @@ function mergeInitial(disturbance={}){
   ];
 }
 
-function optics4D(params,disturbance={},assist={}){
+function optics4D(params,rf,disturbance={},assist={}){
   const o=MODEL.optics;
-  const rigidity=1/params.energy;
+  const rigidity=1/rf.effectiveEnergy;
 
   let state=mergeInitial(disturbance);
-  let covariance=initialCovariance();
+  let covariance=initialCovariance(rf.sourceSigmaScale);
   let dispersion=zeros4();
-  const stages=[makeStage('gun',state,covariance,dispersion,params.spread)];
+  const stages=[makeStage('gun',state,covariance,dispersion,rf.effectiveSpread)];
 
   const apply=matrix=>{
     state=mv(matrix,state);
@@ -61,12 +71,12 @@ function optics4D(params,disturbance={},assist={}){
   };
 
   apply(driftM(o.sourceToF1));
-  apply(rotatedLensM(
-    2.45/params.f1,
-    2.75/params.f1,
-    o.focus1RotationDeg*DEG*params.f1
-  ));
-  stages.push(makeStage('focus1',state,covariance,dispersion,params.spread));
+
+  // Deliberate v14 teaching simplification requested for the UI:
+  // focus controls compress only the beam envelope, never the centroid or angle.
+  const f1Scale=1-params.f1*(1-(o.focus1MinScale??.58));
+  covariance=covProp(covariance,envelopeScaleM(f1Scale,f1Scale));
+  stages.push(makeStage('focus1',state,covariance,dispersion,rf.effectiveSpread));
 
   apply(driftM(o.f1ToSteer1));
   state=kickState(
@@ -74,24 +84,31 @@ function optics4D(params,disturbance={},assist={}){
     params.r1*.020*rigidity,
     params.t1*.020*rigidity
   );
-  stages.push(makeStage('steer1',state,covariance,dispersion,params.spread));
+  stages.push(makeStage('steer1',state,covariance,dispersion,rf.effectiveSpread));
 
-  apply(driftM(o.steer1ToF2));
-  apply(rotatedLensM(
-    2.35/params.f2,
-    2.62/params.f2,
-    o.focus2RotationDeg*DEG*params.f2
-  ));
-  stages.push(makeStage('focus2',state,covariance,dispersion,params.spread));
+  const d1=o.steer1ToF2*.52;
+  apply(driftM(d1));
+  stages.push(makeStage('wgAfter1',state,covariance,dispersion,rf.effectiveSpread));
+  apply(driftM(o.steer1ToF2-d1));
 
-  apply(driftM(o.f2ToSteer2));
+  const f2Scale=1-params.f2*(1-(o.focus2MinScale??.62));
+  covariance=covProp(covariance,envelopeScaleM(f2Scale,f2Scale));
+  stages.push(makeStage('focus2',state,covariance,dispersion,rf.effectiveSpread));
+
+  const d2=o.f2ToSteer2*.50;
+  apply(driftM(d2));
+  stages.push(makeStage('wgAfter2',state,covariance,dispersion,rf.effectiveSpread));
+  apply(driftM(o.f2ToSteer2-d2));
   const r2Kick=params.r2*.026*rigidity+(assist.r2||0);
   const t2Kick=params.t2*.026*rigidity+(assist.t2||0);
   state=kickState(state,r2Kick,t2Kick);
-  stages.push(makeStage('steer2',state,covariance,dispersion,params.spread));
+  stages.push(makeStage('steer2',state,covariance,dispersion,rf.effectiveSpread));
 
-  apply(driftM(o.steer2ToBend));
-  stages.push(makeStage('bendEntry',state,covariance,dispersion,params.spread));
+  const d3=o.steer2ToBend*.58;
+  apply(driftM(d3));
+  stages.push(makeStage('wgExit',state,covariance,dispersion,rf.effectiveSpread));
+  apply(driftM(o.steer2ToBend-d3));
+  stages.push(makeStage('bendEntry',state,covariance,dispersion,rf.effectiveSpread));
 
   return {
     state,
@@ -103,7 +120,7 @@ function optics4D(params,disturbance={},assist={}){
   };
 }
 
-function bending4D(optics,params,disturbance={}){
+function bending4D(optics,params,rf,disturbance={}){
   const bendModel=MODEL.bend;
   const main=params.mainBend+(disturbance.coarseBias||0);
   const topup=params.m3Topup+(disturbance.fineBias||0);
@@ -122,7 +139,7 @@ function bending4D(optics,params,disturbance={}){
 
     const mainResponse=1+main*.04;
     const topupResponse=index===2?(1+topup*.06):1;
-    const actualTheta=nominalTheta*mainResponse*topupResponse/params.energy;
+    const actualTheta=nominalTheta*mainResponse*topupResponse/rf.effectiveEnergy;
     const bendError=actualTheta-nominalTheta;
 
     const matrix=sectorM(nominalTheta,rho);
@@ -143,7 +160,7 @@ function bending4D(optics,params,disturbance={}){
       state,
       covariance,
       dispersion,
-      params.spread
+      rf.effectiveSpread
     ));
     maxDispersion.push(Math.abs(dispersion[0]));
 
@@ -182,8 +199,9 @@ function bending4D(optics,params,disturbance={}){
 }
 
 export function simulate(params,disturbance={},assist={}){
-  const optics=optics4D(params,disturbance,assist);
-  const bend=bending4D(optics,params,disturbance);
+  const rf=evaluateRfSource(params);
+  const optics=optics4D(params,rf,disturbance,assist);
+  const bend=bending4D(optics,params,rf,disturbance);
   const stages=[...optics.stages,...bend.stages];
   const target=bend.target;
 
@@ -194,7 +212,7 @@ export function simulate(params,disturbance={},assist={}){
     target.rp*1.2,
     target.t*2.0,
     target.tp*1.2,
-    target.disp*params.spread*.08
+    target.disp*rf.effectiveSpread*.08
   );
 
   return {
@@ -208,6 +226,9 @@ export function simulate(params,disturbance={},assist={}){
     achromacy:bend.achromacy,
     spot,
     error,
+    rf,
+    effectiveEnergy:rf.effectiveEnergy,
+    effectiveSpread:rf.effectiveSpread,
     effectiveBend:bend.effective,
     effectiveSteering:{
       r2Kick:optics.r2Kick,
