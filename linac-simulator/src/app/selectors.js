@@ -4,6 +4,8 @@ export function selectRawControls(state){
 
 export function selectViewState(state){
   return {
+    powerOn:state.machine.powerOn,
+    beamOn:state.machine.beamOn,
     mode:state.machine.mode,
     filter:state.machine.filter,
     direction:state.machine.direction,
