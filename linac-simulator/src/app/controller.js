@@ -211,7 +211,7 @@ export function createController(){
     $('#transmissionOut').textContent=(result.radiation.transportTransmission*100).toFixed(1)+'%';
     $('#scatterOut').textContent=result.radiation.scatterIndex.toFixed(1)+'%';
     $('#wallHitOut').textContent=result.radiation.firstStrike
-      ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'hard':'partial'))
+      ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
       :'geen';
     $('#doseRateFill').style.width=result.radiation.doseRatePercent+'%';
     $('#doseRateFill').classList.toggle('zero',result.radiation.doseRatePercent===0);
