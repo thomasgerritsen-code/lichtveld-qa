@@ -1,6 +1,6 @@
 export const UI_DEFAULTS = Object.freeze({
-  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:50,spread:25,coarse:0,fine:0,fx:60,fy:60,
-  gantry:0
+  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:50,spread:25,coarse:0,fine:0,fx:10,fy:10,
+  doseRateSet:600,gantry:0
 });
 
 export const MODEL = Object.freeze({
