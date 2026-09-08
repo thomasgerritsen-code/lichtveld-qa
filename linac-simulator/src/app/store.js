@@ -30,6 +30,11 @@ export function reducer(state,action){
         ...state,
         machine:{...state.machine,mode:action.mode,beamOn:false}
       };
+    case 'machine/setFilter':
+      return {
+        ...state,
+        machine:{...state.machine,filter:action.filter,beamOn:false}
+      };
     case 'beamControl/setMode':
       return {...state,beamControl:{...state.beamControl,mode:action.mode}};
     case 'display/set':
