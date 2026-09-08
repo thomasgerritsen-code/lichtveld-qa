@@ -60,6 +60,15 @@ export function createController(){
     outputs.gantry.textContent=Math.round(raw.gantry)+'°';
   }
 
+  function syncDisplayUI(state){
+    $('#dispToggle').checked=state.display.dispersion;
+    $('#envelopeToggle').checked=state.display.envelope;
+    $('#labelsToggle').checked=state.display.labels;
+    $('#badToggle').checked=state.display.mismatch;
+    $('#vectorsToggle').checked=state.display.vectors;
+    $('#pauseBtn').textContent=state.runtime.paused?'Hervat':'Pauzeer';
+  }
+
   function syncModeUI(state){
     const {mode,filter,direction}=state.machine;
     const controlMode=state.beamControl.mode;
@@ -158,6 +167,7 @@ export function createController(){
 
   function renderState(state){
     syncControlInputs(state);
+    syncDisplayUI(state);
     syncModeUI(state);
     syncControlEffect(state);
 
@@ -244,10 +254,9 @@ export function createController(){
 
     $('#resetBtn').onclick=reset;
     $('#faultBtn').onclick=exampleFault;
-    $('#pauseBtn').onclick=e=>{
+    $('#pauseBtn').onclick=()=>{
       const paused=!store.getState().runtime.paused;
       store.dispatch({type:'runtime/set',key:'paused',value:paused});
-      e.target.textContent=paused?'Hervat':'Pauzeer';
     };
     $('#fitBtn').onclick=()=>$('#machineViewport').scrollTo({left:0,top:0,behavior:'smooth'});
 
