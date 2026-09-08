@@ -86,6 +86,7 @@ export function evaluateRadiationTransport(sim,{mode='photon'}={}){
     if(transmission<=1e-4){
       transmission=0;
       if(firstStrike)firstStrike.hard=true;
+      if(events.length)events[events.length-1].hard=true;
       break;
     }
   }
