@@ -16,7 +16,7 @@
 
 <main class="simShell">
   <div class="simToolbar">
-    <a class="backLink" href="../index.html?v=29">← Dashboard</a>
+    <a class="backLink" href="../index.html?v=30">← Dashboard</a>
     <div class="toolbarActions">
       <button id="resetBtn" type="button">Reset</button>
       <button id="faultBtn" type="button">Voorbeeld afwijking</button>
@@ -26,9 +26,9 @@
 
   <section class="hero">
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
-      <p>Elekta-geïnspireerde educatieve console met machine power, afzonderlijke BEAM ON/OFF-bediening, instelbare veldgrootte, continu dose-rate setpoint en gekoppelde 4D beam physics. De layout is gebaseerd op publiek beschikbare Elekta/Integrity/Harmony beelden, maar is geen kopie van OEM-software.</p>
+      <p>Elekta-geïnspireerde educatieve console met machine power, BEAM ON/OFF, magnetron/RF-bron, opeenvolgende focus-compressie, waveguide beam-loss en instelbare veldgrootte. De animatievolgorde volgt Elekta's publieke uitleg: RF versnelt electronen in de waveguide, daarna volgen bending, target/window, dosimetrie en collimatie.</p>
     </div>
-    <div class="heroBadges"><span>Console v13</span><span>Power + Beam gate</span><span>1–40 cm field</span><span>CVDR-style setpoint</span></div>
+    <div class="heroBadges"><span>Physics v14</span><span>Magnetron + RF animation</span><span>Focus 1 → Focus 2</span><span>Waveguide wall loss</span></div>
   </section>
 
 
@@ -90,11 +90,28 @@
 
   <div class="layout">
     <aside class="controls">
+
+      <details open><summary>Electron source / RF</summary><div class="controlBody">
+        <label>Gun emission <output id="gunEmissionv">100%</output><input id="gunEmission" type="range" min="0" max="120" value="100"></label>
+        <label>Gun timing (rel.) <output id="gunTimingv">0.00</output><input id="gunTiming" type="range" min="-100" max="100" value="0"></label>
+        <label>Magnetron RF power <output id="magPowerv">100%</output><input id="magPower" type="range" min="0" max="120" value="100"></label>
+        <label>Magnetron tune / AFC (rel.) <output id="magTunev">0.00</output><input id="magTune" type="range" min="-100" max="100" value="0"></label>
+        <label>RF phase (rel.) <output id="rfPhasev">0.00</output><input id="rfPhase" type="range" min="-100" max="100" value="0"></label>
+        <div class="rfStatusGrid">
+          <span>RF efficiency <b id="rfEfficiencyOut">100.0%</b></span>
+          <span>Capture <b id="rfCaptureOut">100.0%</b></span>
+          <span>Source factor <b id="sourceFactorOut">100.0%</b></span>
+          <span>Effective momentum <b id="rfEnergyOut">1.000 rel.</b></span>
+          <span>Effective spread <b id="rfSpreadOut">0.250</b></span>
+        </div>
+        <p class="controlHelp">Alle RF/gun-waarden zijn genormaliseerde onderwijsparameters. Ze modelleren alleen de richting van het effect op capture, energiespreiding, effectieve momentum, beam loss en dose rate — geen Elekta servicewaarden.</p>
+      </div></details>
+
       <details open><summary>Electron optics</summary><div class="controlBody">
-        <label>Focus 1 <output id="f1v">1.00</output><input id="f1" type="range" min="0" max="100" value="60"></label>
+        <label>Focus 1 – envelope <output id="f1v">60%</output><input id="f1" type="range" min="0" max="100" value="60"></label>
         <label>1R – radial <output id="r1v">0.00</output><input id="r1" type="range" min="-100" max="100" value="0"></label>
         <label>1T – transverse <output id="t1v">0.00</output><input id="t1" type="range" min="-100" max="100" value="0"></label>
-        <label>Focus 2 <output id="f2v">1.00</output><input id="f2" type="range" min="0" max="100" value="62"></label>
+        <label>Focus 2 – vervolgcompressie <output id="f2v">62%</output><input id="f2" type="range" min="0" max="100" value="62"></label>
         <label>2R – radial <output id="r2v">0.00</output><input id="r2" type="range" min="-100" max="100" value="0"></label>
         <label>2T – transverse <output id="t2v">0.00</output><input id="t2" type="range" min="-100" max="100" value="0"></label>
       </div></details>
@@ -137,7 +154,7 @@
         <label class="check"><input id="scatterToggle" type="checkbox" checked> Scatter / beam loss</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. Power/Beam gating en de 1–40 cm Agility-veldweergave volgen publieke systeemkenmerken. Dose-rate/field-output koppeling blijft een onderwijsmodel: geen OEM interlocklogica, commissioningdataset, servicewaarden of klinische calibratie.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. De werking/animatie volgt de publieke Elekta-sequentie RF → travelling waveguide → bending → target/window → monitor → MLC. Focus 1/2 zijn op verzoek bewust als pure opeenvolgende envelope-compressie weergegeven; echte Elekta focuscoils veroorzaken ook trajectrotatie. RF-, gun-, aperture- en dose-responsen blijven genormaliseerde onderwijsmodellen, geen OEM service- of calibratiewaarden.</p></div>
     </aside>
 
     <section>
@@ -158,7 +175,20 @@
               <path class="innerShell" d="M98 794 Q94 707 153 649 L707 421 Q782 391 850 404 L1110 414 Q1190 420 1260 475 L1325 540 L1310 899 L1040 899 L1015 727 L965 650 L822 575 L603 649 L154 837 Z"/>
 
               <g data-part="gun" class="component"><g transform="translate(92 794) rotate(-22.5)"><rect class="hit hardwareBlock" x="0" y="-40" width="96" height="80" rx="14"/><circle cx="58" cy="0" r="15" class="gunCathode"/></g></g>
-              <g data-part="waveguide" class="component"><g transform="translate(183 758) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-40" width="640" height="80" rx="18"/><line x1="20" y1="0" x2="620" y2="0" class="waveguideAxis"/><g id="rfCells"></g></g></g>
+
+              <g id="magnetronAssembly" data-part="magnetron" class="component">
+                <circle id="magnetronGlow" cx="306" cy="881" r="62" class="magnetronGlow"/>
+                <rect class="hit magnetronBody" x="252" y="840" width="108" height="82" rx="16"/>
+                <circle class="magnetronCore" cx="306" cy="881" r="18"/>
+                <g class="magnetronCavities">
+                  <circle cx="306" cy="855" r="8"/><circle cx="329" cy="868" r="8"/>
+                  <circle cx="329" cy="894" r="8"/><circle cx="306" cy="907" r="8"/>
+                  <circle cx="283" cy="894" r="8"/><circle cx="283" cy="868" r="8"/>
+                </g>
+                <path id="rfFeedPath" class="rfFeedPath" d="M356 865 C382 819 381 748 370 679"/>
+              </g>
+
+              <g data-part="waveguide" class="component"><g transform="translate(183 758) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-40" width="640" height="80" rx="18"/><line x1="20" y1="0" x2="620" y2="0" class="waveguideAxis"/><path id="rfAccelWave" class="rfAccelWave" d="M20 0 H620"/><g id="rfCells"></g></g></g>
               <g data-part="focus1" class="component"><g transform="translate(363 683) rotate(-22.5)"><rect class="hit focusBlock" x="-32" y="-50" width="64" height="100" rx="11"/><ellipse cx="0" cy="0" rx="14" ry="28" class="focusAperture"/></g></g>
               <g data-part="steer1" class="component"><g transform="translate(470 639) rotate(-22.5)"><rect class="hit steerBlock" x="-28" y="-49" width="56" height="98" rx="9"/><rect x="-14" y="-30" width="28" height="60" rx="7" class="steerAperture"/></g></g>
               <g data-part="focus2" class="component"><g transform="translate(575 595) rotate(-22.5)"><rect class="hit focusBlock" x="-32" y="-50" width="64" height="100" rx="11"/><ellipse cx="0" cy="0" rx="14" ry="28" class="focusAperture"/></g></g>
@@ -211,7 +241,7 @@
             </g>
 
             <g id="labels">
-              <text x="48" y="872">Electron gun</text><text x="220" y="585" transform="rotate(-22.5 220 585)">Accelerating waveguide</text>
+              <text x="48" y="872">Electron gun</text><text x="247" y="947">Magnetron / RF</text><text x="220" y="585" transform="rotate(-22.5 220 585)">Accelerating waveguide</text>
               <text x="325" y="611">Focus 1</text><text x="429" y="570">1R / 1T</text><text x="536" y="525">Focus 2</text><text x="643" y="482">2R / 2T</text>
               <text x="864" y="527">M1</text><text x="947" y="573">M2</text><text x="1085" y="411">M3</text><text x="1075" y="742">Treatment head</text><text x="1215" y="1097">Patiëntvlak</text>
             </g>
@@ -236,6 +266,8 @@
           <div class="stat radiationStat"><small>Beam interception</small><strong id="wallHitOut">geen</strong></div>
           <div class="stat radiationStat"><small>Field @ iso</small><strong id="fieldOut">10.0 × 10.0 cm</strong></div>
           <div class="stat radiationStat"><small>Field output factor</small><strong id="fieldFactorOut">1.000</strong></div>
+          <div class="stat"><small>RF efficiency</small><strong id="rfStatusCard">100.0%</strong></div>
+          <div class="stat"><small>Effective momentum</small><strong id="effectiveEnergyCard">1.000</strong></div>
         </div>
         <div class="doseRatePanel">
           <div class="doseRateHead"><strong>Useful-beam dose rate</strong><span id="radiationStatus">READY · BEAM OFF</span></div>
