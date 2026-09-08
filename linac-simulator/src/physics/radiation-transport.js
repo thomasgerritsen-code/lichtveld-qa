@@ -42,7 +42,7 @@ function targetCoupling(target,mode){
   };
 }
 
-export function evaluateRadiationTransport(sim,{mode='photon'}={}){
+export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldXcm=10,fieldYcm=10}={}){
   const apertures=MODEL.radiation.apertures;
   const order=['focus1','steer1','focus2','steer2','bendEntry','m1','m2','m3'];
 
@@ -127,8 +127,15 @@ export function evaluateRadiationTransport(sim,{mode='photon'}={}){
   primaryTransmission=clamp(primaryTransmission,0,1);
 
   // A faint normal head-scatter component remains for a useful photon beam.
-  // Wall/interception scatter is tracked separately and rises as primary beam is lost.
-  const normalHeadScatter=mode==='photon' ? primaryTransmission*.025 : 0;
+  // Its field-size dependence is qualitative and normalized around 10×10 cm.
+  const x=Math.max(1,Math.min(40,Number(fieldXcm)||10));
+  const y=Math.max(1,Math.min(40,Number(fieldYcm)||10));
+  const eqSquare=2*x*y/(x+y);
+  const fieldScatterScale=Math.max(.55,Math.min(1.40,.75+.25*(eqSquare/10)));
+  const filterScatterScale=filter==='fff'?.65:1;
+  const normalHeadScatter=mode==='photon'
+    ?primaryTransmission*.025*fieldScatterScale*filterScatterScale
+    :0;
   const missScatter=targetLost*.35;
   const scatterFraction=clamp(wallScatter+missScatter+normalHeadScatter,0,1);
 
