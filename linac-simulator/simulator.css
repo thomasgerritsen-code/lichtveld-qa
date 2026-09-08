@@ -386,3 +386,110 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
   .consolePowerBlock{grid-template-columns:1fr}
   .beamButtons{grid-template-columns:1.4fr .8fr}
 }
+
+
+/* v14 RF source, pure focus envelope and waveguide-loss visuals */
+.rfStatusGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-top:7px;
+}
+.rfStatusGrid span{
+  padding:6px 7px;
+  border:1px solid #d9e4ee;
+  border-radius:7px;
+  background:#f8fbff;
+  color:#65778a;
+  font-size:.64rem;
+}
+.rfStatusGrid b{
+  display:block;
+  margin-top:2px;
+  color:#29415b;
+  font-size:.72rem;
+  font-variant-numeric:tabular-nums;
+}
+
+.magnetronGlow{
+  fill:#53cfff;
+  opacity:0;
+  filter:blur(8px);
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+.magnetronBody{
+  fill:#24394d;
+  stroke:#7894aa;
+  stroke-width:2;
+}
+.magnetronCore{
+  fill:#172533;
+  stroke:#9fb4c4;
+  stroke-width:2;
+}
+.magnetronCavities circle{
+  fill:#314d62;
+  stroke:#9bb0c0;
+  stroke-width:1.2;
+}
+#magnetronAssembly.rfActive .magnetronCore{
+  fill:#1d5265;
+  filter:drop-shadow(0 0 8px rgba(83,207,255,.7));
+}
+#magnetronAssembly.rfActive .magnetronCavities circle{
+  fill:#2c7189;
+  filter:drop-shadow(0 0 4px rgba(83,207,255,.5));
+}
+
+.rfFeedPath,.rfAccelWave{
+  fill:none;
+  stroke:#6fe5ff;
+  stroke-linecap:round;
+  stroke-width:3;
+  stroke-dasharray:12 10;
+  opacity:0;
+  pointer-events:none;
+}
+.rfFeedPath.rfActive,.rfAccelWave.rfActive{
+  animation:rfFlow var(--rf-speed,1s) linear infinite;
+  filter:drop-shadow(0 0 4px rgba(111,229,255,.75));
+}
+.rfAccelWave{
+  stroke-width:2.4;
+  stroke-dasharray:8 12;
+}
+@keyframes rfFlow{
+  to{stroke-dashoffset:-44}
+}
+
+.focusBlock{
+  transition:filter .16s ease;
+}
+.controlActiveHardware[data-part="focus1"] .focusBlock,
+.controlActiveHardware[data-part="focus2"] .focusBlock{
+  filter:drop-shadow(0 0 7px rgba(82,223,153,.8));
+}
+
+@media(max-width:650px){
+  .rfStatusGrid{grid-template-columns:1fr}
+}
+
+
+.targetConversionFlash{
+  fill:#ffd77d;
+  stroke:#fff4c4;
+  stroke-width:2;
+  opacity:0;
+  pointer-events:none;
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.targetConversionFlash.active{
+  animation:targetPulse .52s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 12px rgba(255,215,125,.9));
+}
+@keyframes targetPulse{
+  from{transform:scale(.72)}
+  to{transform:scale(1.15)}
+}

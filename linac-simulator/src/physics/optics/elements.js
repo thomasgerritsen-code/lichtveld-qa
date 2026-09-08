@@ -29,3 +29,13 @@ export function kickState(state,radialKick,transverseKick){
     state[3]+transverseKick
   ];
 }
+
+
+export function envelopeScaleM(scaleR,scaleT){
+  return [
+    [scaleR,0,0,0],
+    [0,scaleR,0,0],
+    [0,0,scaleT,0],
+    [0,0,0,scaleT]
+  ];
+}

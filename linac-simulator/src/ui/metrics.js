@@ -1,5 +1,5 @@
-const LABELS={gun:'Gun',focus1:'Focus 1',steer1:'1R / 1T',focus2:'Focus 2',steer2:'2R / 2T',bendEntry:'Bend entry',m1:'M1',m2:'M2',m3:'M3',target:'Target'};
-const PARTS={gun:'gun',focus1:'focus1',steer1:'steer1',focus2:'focus2',steer2:'steer2',bendEntry:'flightTube',m1:'slalom',m2:'slalom',m3:'slalom',target:'target'};
+const LABELS={gun:'Gun',focus1:'Focus 1',steer1:'1R / 1T',wgAfter1:'WG after 1',focus2:'Focus 2',wgAfter2:'WG after 2',steer2:'2R / 2T',wgExit:'WG exit',bendEntry:'Bend entry',m1:'M1',m2:'M2',m3:'M3',target:'Target'};
+const PARTS={gun:'gun',focus1:'focus1',steer1:'steer1',wgAfter1:'waveguide',focus2:'focus2',wgAfter2:'waveguide',steer2:'steer2',wgExit:'waveguide',bendEntry:'flightTube',m1:'slalom',m2:'slalom',m3:'slalom',target:'target'};
 const fmt=v=>Math.abs(v)<.0005?'0.000':v.toFixed(3);
 
 export function initMetrics(){
@@ -8,7 +8,7 @@ export function initMetrics(){
   card.className='panelCard metricsCard';
   card.innerHTML=`<div class="metricsHead"><div><strong>Live 4D beam state per element</strong><span>Centroid, hoek, D/D′, covariance-envelope en R/T-koppeling</span></div><span class="metricsNote">alle waarden genormaliseerd</span></div>
     <div class="metricsScroll"><table class="metricsTable"><thead><tr><th>Element</th><th>R</th><th>R′</th><th>T</th><th>T′</th><th>D</th><th>D′</th><th>σR</th><th>σT</th><th>corr R/T</th></tr></thead><tbody id="metricsBody"></tbody></table></div>
-    <p class="metricsFoot">De focussectie gebruikt een gekoppeld lineair 4D model en covariance-propagatie. De bendingsectie gebruikt genormaliseerde sector-magnet matrices met een getunede achromatische D/D′-respons. OEM field maps en edge focusing zijn niet gereconstrueerd.</p>`;
+    <p class="metricsFoot">V14 toont Focus 1 en Focus 2 bewust als pure opeenvolgende envelope-compressie: de focus-sliders veranderen σR/σT, niet de centroid of hoek. De echte Elekta focuscoils veroorzaken volgens publicaties ook helical trajectory rotation; die koppeling is hier op verzoek uitgezet. Waveguide-samplings maken wall interception door 1R/1T en 2R/2T zichtbaar.</p>`;
   viewer.appendChild(card);
   const body=card.querySelector('#metricsBody');
 

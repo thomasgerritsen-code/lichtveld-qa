@@ -23,8 +23,9 @@ test('large steering error can intercept a transport wall and reduce primary dos
   const radiation=run({r1:100,r2:100,t1:100,t2:100});
   assert.equal(radiation.doseRatePercent,0);
   assert.ok(radiation.firstStrike);
-  assert.equal(radiation.firstStrike.hard,true);
-  assert.notEqual(radiation.firstStrike.stage,'target');
+  assert.ok(radiation.hardStrike);
+  assert.equal(radiation.hardStrike.hard,true);
+  assert.notEqual(radiation.hardStrike.stage,'target');
   assert.ok(radiation.scatterIndex>50);
 });
 
@@ -32,7 +33,7 @@ test('large bending mismatch can miss the target even when upstream transport re
   const radiation=run({coarse:100,fine:100});
   assert.equal(radiation.transportTransmission,1);
   assert.equal(radiation.doseRatePercent,0);
-  assert.equal(radiation.firstStrike?.stage,'target');
+  assert.equal(radiation.hardStrike?.stage,'target');
   assert.ok(radiation.scatterIndex>20);
 });
 

@@ -6,7 +6,7 @@ const SCENARIOS={
     controls:['r1','r2'],
     axis:['R','R′'],
     hardware:['steer1','steer2','target'],
-    disturbance:{radial:{x:-.00358,xp:.01236}}
+    disturbance:{radial:{x:-.001432,xp:.004944}}
   },
   transverse:{
     label:'Transverse bronfout',
@@ -15,7 +15,7 @@ const SCENARIOS={
     controls:['t1','t2'],
     axis:['T','T′'],
     hardware:['steer1','steer2','target'],
-    disturbance:{transverse:{x:.00358,xp:-.01236}}
+    disturbance:{transverse:{x:.001432,xp:-.004944}}
   },
   bending:{
     label:'Bending mismatch',
@@ -163,10 +163,10 @@ export function initTraining({controls,onChange}){
       panel.querySelector('#step1Title').textContent='Bekijk de beginfout';
       panel.querySelector('#step1Text').textContent=`Let op ${s.axis[0]} én ${s.axis[1]} aan de target.`;
       panel.querySelector('#step2Title').textContent=`Verander ${c1}`;
-      panel.querySelector('#step2Text').textContent='Deze steering-coil geeft lokaal een hoek-kick. Downstream drift en focusing zetten dat om in een verandering van zowel positie als hoek.';
+      panel.querySelector('#step2Text').textContent='Deze steering-coil geeft lokaal een hoek-kick. Downstream drift zet die richtingverandering om in een verandering van zowel positie als hoek; de v14 focus-sliders veranderen alleen de envelope.';
       panel.querySelector('#step3Title').textContent=`Gebruik daarna ${c2}`;
       panel.querySelector('#step3Text').textContent='De tweede corrector staat verder downstream en heeft daarom een andere verhouding tussen target-positie en target-hoek.';
-      whyText.textContent='Een steering-coil verandert lokaal vooral de richting van de elektronenbaan. Omdat de bundel daarna nog door drift- en focuselementen loopt, verschijnt die kick aan de target als een combinatie van positie- en hoekverandering. De tweede corrector staat op een andere longitudinale positie, dus zijn response-vector aan de target is anders. In een lineair model kun je met twee onafhankelijke correctoren twee eindvoorwaarden tegelijk aanpakken.';
+      whyText.textContent='Een steering-coil verandert lokaal vooral de richting van de elektronenbaan. Door de afstand tot de target groeit die hoek-kick downstream uit tot een combinatie van positie- en hoekverandering. De tweede corrector staat op een andere longitudinale positie en heeft daarom een andere response-vector. In v14 veranderen Focus 1 en Focus 2 alleen σR/σT en niet de centroidbaan.';
     }
   }
   function currentStep(score){

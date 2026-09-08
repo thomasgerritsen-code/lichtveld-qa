@@ -13,6 +13,7 @@ function nominal({fx=10,fy=10,doseRateSet=600,filter='ff',powerOn=true,beamOn=fa
     radiation,
     machine:{powerOn,beamOn},
     params,
+    sim,
     mode:'photon',
     filter
   });

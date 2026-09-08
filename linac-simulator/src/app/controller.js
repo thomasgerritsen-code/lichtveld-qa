@@ -12,7 +12,7 @@ import {createStore} from './store.js';
 import {selectRawControls,selectViewState,selectOverlayState} from './selectors.js';
 
 const $=s=>document.querySelector(s);
-const CONTROL_IDS=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','doseRateSet','gantry'];
+const CONTROL_IDS=['gunEmission','gunTiming','magPower','magTune','rfPhase','f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','doseRateSet','gantry'];
 
 function mergeDisturbance(training,environment){
   return {
@@ -53,9 +53,14 @@ export function createController(){
     for(const id of ['r1','t1','r2','t2','coarse','fine']){
       outputs[id].textContent=(raw[id]/100).toFixed(2);
     }
-    outputs.f1.textContent=params.f1.toFixed(2);
-    outputs.f2.textContent=params.f2.toFixed(2);
-    outputs.energy.textContent=params.energy.toFixed(2);
+    outputs.gunEmission.textContent=Math.round(params.gunEmission*100)+'%';
+    outputs.gunTiming.textContent=params.gunTiming.toFixed(2);
+    outputs.magPower.textContent=Math.round(params.magPower*100)+'%';
+    outputs.magTune.textContent=params.magTune.toFixed(2);
+    outputs.rfPhase.textContent=params.rfPhase.toFixed(2);
+    outputs.f1.textContent=Math.round(params.f1*100)+'%';
+    outputs.f2.textContent=Math.round(params.f2*100)+'%';
+    outputs.energy.textContent=params.energy.toFixed(3);
     outputs.spread.textContent=params.spread.toFixed(2);
     outputs.fx.textContent=Number(raw.fx).toFixed(1)+' cm';
     outputs.fy.textContent=Number(raw.fy).toFixed(1)+' cm';
@@ -209,12 +214,13 @@ export function createController(){
       radiation,
       machine:state.machine,
       params,
+      sim,
       mode:view.mode,
       filter:view.filter
     });
 
     const chamberRaw=chamberSignals(sim);
-    const transmission=delivery.beamActive?radiation.primaryTransmission:0;
+    const transmission=delivery.beamActive?delivery.outputFraction:0;
     const tiltScale=Math.sqrt(transmission);
     const chamber={
       ...chamberRaw,
@@ -281,6 +287,14 @@ export function createController(){
     $('#patientOutputConsole').textContent=Math.round(result.delivery.patientOutputProxy)+' rel./min';
     $('#outputFactorConsole').textContent=result.delivery.fieldFactor.toFixed(3);
 
+    $('#rfEfficiencyOut').textContent=(result.sim.rf.rfEfficiency*100).toFixed(1)+'%';
+    $('#rfCaptureOut').textContent=(result.sim.rf.captureFactor*100).toFixed(1)+'%';
+    $('#rfEnergyOut').textContent=result.sim.rf.effectiveEnergy.toFixed(3)+' rel.';
+    $('#rfSpreadOut').textContent=result.sim.rf.effectiveSpread.toFixed(3);
+    $('#sourceFactorOut').textContent=(result.sim.rf.sourceFactor*100).toFixed(1)+'%';
+    $('#rfStatusCard').textContent=(result.sim.rf.rfEfficiency*100).toFixed(1)+'%';
+    $('#effectiveEnergyCard').textContent=result.sim.rf.effectiveEnergy.toFixed(3);
+
     trainer?.update(result.sim);
     metrics?.update(result.sim.stages);
     diagnostics?.update({
@@ -308,7 +322,7 @@ export function createController(){
   function exampleFault(){
     store.dispatch({
       type:'controls/setMany',
-      values:{f1:43,r1:18,t1:-12,f2:50,r2:28,t2:16,energy:42,spread:70,coarse:36,fine:-22,fx:30,fy:18,doseRateSet:450,gantry:238}
+      values:{gunEmission:82,gunTiming:24,magPower:88,magTune:32,rfPhase:-18,f1:35,r1:55,t1:-48,f2:38,r2:-62,t2:58,energy:42,spread:70,coarse:36,fine:-22,fx:30,fy:18,doseRateSet:450,gantry:238}
     });
     store.dispatch({type:'machine/set',key:'direction',value:'ccw'});
     store.dispatch({type:'display/set',key:'mismatch',value:true});

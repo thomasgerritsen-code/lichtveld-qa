@@ -38,6 +38,7 @@ src/
 │   ├── detector.js
 │   ├── radiation-transport.js
 │   ├── delivery-state.js
+│   ├── rf-source.js
 │   ├── math/
 │   │   └── matrix.js
 │   ├── optics/
@@ -52,7 +53,8 @@ src/
 │   │   ├── target-selector.js
 │   │   ├── treatment-head.js
 │   │   ├── hardware.js
-│   │   └── highlight.js
+│   │   ├── highlight.js
+│   │   └── rf-renderer.js
 │   ├── diagnostics.js
 │   ├── metrics.js
 │   └── training.js
@@ -196,3 +198,43 @@ Belangrijk: de 4D optics wordt altijd berekend zodat de gebruiker de potentiële
 `Machine OFF || Beam OFF => geen bundel, geen scatter, dose rate = 0`
 
 De reducer bewaakt de power/beam invarianten en de renderer kan ze niet lokaal overschrijven.
+
+
+## RF source and pure-focus model v14
+
+`physics/rf-source.js` is een pure modelmodule. Hij vertaalt alleen genormaliseerde UI-parameters naar RF/capture-state en schrijft nooit naar de DOM.
+
+Dataflow:
+
+```
+gun / magnetron sliders
+        ↓
+rf-source.js
+        ↓
+effective energy / spread / source factor / capture
+        ↓
+beam-model.js
+        ↓
+radiation-transport.js
+        ↓
+delivery-state.js
+        ↓
+machine renderer + dose readouts
+```
+
+Focus 1 en Focus 2 zijn vanaf v14 anders behandeld dan in eerdere versies:
+- centroid state `[R,R′,T,T′]` wordt door focus niet gewijzigd;
+- alleen covariance/envelope wordt met een scale-matrix gecomprimeerd;
+- Focus 2 voert een tweede compressie uit op de al bestaande downstream covariance.
+
+Dat is een expliciete pedagogische simplificatie en niet bedoeld als volledig solenoid field model.
+
+De steeringsectie bevat drie extra physics samples binnen de accelerating structure. `radiation-transport.js` kan daardoor afzonderlijk vaststellen waar een 1R/1T of 2R/2T afwijking de virtuele waveguide-aperture bereikt.
+
+`ui/machine/rf-renderer.js` bezit uitsluitend de RF-animatie:
+- magnetron glow;
+- RF feed pulse;
+- travelling RF pulse in de accelerating waveguide;
+- photon-target conversion flash.
+
+De animatie volgt de componentvolgorde uit Elekta's publieke 'How the linear accelerator works' materiaal, zonder OEM graphics of timingwaarden te kopiëren.
