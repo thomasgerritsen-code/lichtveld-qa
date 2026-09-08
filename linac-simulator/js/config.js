@@ -28,7 +28,11 @@ export const MODEL = Object.freeze({
     // It is intentionally not presented as an OEM mechanical dimension.
     bendAssemblyScale:.58,
     bendPivot:[805,499],
-    headShiftX:-304
+    headShiftX:-304,
+    // Visual-only target/window selector travel. This is a normalized schematic motion,
+    // not an OEM mechanical travel specification.
+    selectorTravelPx:26,
+    selectorAxisDeg:-22.5
   }
 });
 
