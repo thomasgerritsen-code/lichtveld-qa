@@ -1,4 +1,4 @@
-export function updateRfAnimation(sim,delivery){
+export function updateRfAnimation(sim,delivery,view={mode:'photon'}){
   const rf=sim?.rf;
   if(!rf)return;
 
@@ -10,6 +10,7 @@ export function updateRfAnimation(sim,delivery){
   const feed=document.querySelector('#rfFeedPath');
   const accel=document.querySelector('#rfAccelWave');
   const glow=document.querySelector('#magnetronGlow');
+  const targetFlash=document.querySelector('#targetConversionFlash');
 
   if(magnetron){
     magnetron.classList.toggle('rfActive',active);
@@ -24,4 +25,14 @@ export function updateRfAnimation(sim,delivery){
     element.style.setProperty('--rf-speed',seconds);
   }
   if(glow)glow.style.opacity=String(active?(0.12+0.42*intensity):0);
+
+  const targetActive=Boolean(
+    active&&
+    view.mode==='photon'&&
+    (delivery?.outputFraction??0)>.002
+  );
+  if(targetFlash){
+    targetFlash.classList.toggle('active',targetActive);
+    targetFlash.style.opacity=String(targetActive?Math.max(.08,Math.min(.65,delivery.outputFraction*.65)):0);
+  }
 }
