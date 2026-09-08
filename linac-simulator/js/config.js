@@ -32,7 +32,7 @@ export const MODEL = Object.freeze({
     // Visual-only target/window selector travel. This is a normalized schematic motion,
     // not an OEM mechanical travel specification.
     selectorTravelPx:26,
-    selectorAxisDeg:-22.5
+    selectorAxisDeg:0
   }
 });
 
@@ -43,9 +43,9 @@ export const PART_INFO = Object.freeze({
   steer1:['1R / 1T','Primary steering van de elektronenbundel.'],
   focus2:['Focus 2','Tweede focuselement tussen primary en secondary steering.'],
   steer2:['2R / 2T','Secondary steering vóór de bending assembly. Set, LUT en servo kunnen hier als afzonderlijke bijdragen worden weergegeven.'],
-  bellows:['Centre joint / bellows','Vacuumovergang vóór de flight tube.'],
+  bellows:['Centre joint / bellows','Vacuumovergang die de horizontale target-shift van de flight tube mogelijk maakt terwijl de waveguide en bending magnets op hun plaats blijven.'],
   slalom:['Slalom bending assembly','M1, M2 en M3 vormen samen de achromatische bendingsectie.'],
-  flightTube:['Flight tube','Geëvacueerde flight tube door de drie bendingmagneten.'],
+  flightTube:['Flight tube','Geëvacueerde flight tube die bij Photon ↔ Electron horizontaal door de vaste M1/M2/M3-poolgaps verschuift. De beam trajectory blijft in dit onderwijsmodel vast.'],
   head:['Treatment head','Behandelkop met target/window, monitoring en collimatie.'],
   target:['Target','Photon mode: elektronen produceren bremsstrahlung in de target.'],
   window:['Electron window','Electron mode: de target wordt omzeild.'],

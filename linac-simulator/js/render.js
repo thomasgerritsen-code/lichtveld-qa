@@ -1,11 +1,11 @@
-import {MODEL} from './config.js?v=7';
+import {MODEL} from './config.js?v=8';
 const DEG=Math.PI/180;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
 
 function selectorVector(){
   const travel=MODEL.visual?.selectorTravelPx||0;
-  const a=(MODEL.visual?.selectorAxisDeg??-22.5)*DEG;
+  const a=(MODEL.visual?.selectorAxisDeg??0)*DEG;
   return {x:Math.cos(a)*travel,y:Math.sin(a)*travel};
 }
 

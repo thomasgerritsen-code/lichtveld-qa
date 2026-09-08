@@ -1,4 +1,4 @@
-import {MODEL} from './config.js?v=7';
+import {MODEL} from './config.js?v=8';
 
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const DEG=Math.PI/180;

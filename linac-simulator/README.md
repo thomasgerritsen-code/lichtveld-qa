@@ -128,3 +128,23 @@ Gedrag in de app:
 5. in Electron mode schuift de target uit de baan en het electron window erin.
 
 De weergegeven slag (26 SVG-pixels langs de schematische selector-as) is uitsluitend een visuele, dimensieloze animatie. Dit is geen Elekta OEM-mechanische verplaatsingsmaat en geen service-instelling.
+
+
+## Horizontal target shift v8
+
+De v7 animatie bewoog de selector langs de acceleratorhoek. Dat is gecorrigeerd.
+
+Voor de normale Photon ↔ Electron modewissel beschrijft Elekta's target-shift documentatie dat:
+- een motor/drive de **flight tube en target horizontaal** tussen twee home positions verplaatst;
+- de stainless-steel bellows de flight tube laat bewegen ten opzichte van de waveguide terwijl het vacuum behouden blijft;
+- de flight tube zich tussen de pole pieces van de bending magnet assembly bevindt.
+
+Daarom toont v8:
+- horizontale beweging van flight tube + target/window;
+- progressieve horizontale vervorming van de bellows;
+- vaste M1/M2/M3-hardware tijdens de modewissel;
+- een vaste electron-beam trajectory door de bending magnets.
+
+De bending magnet assembly kan als mechanische assembly bij alignment/maintenance worden verplaatst, maar dat is geen onderdeel van de normale Photon ↔ Electron target-shift animatie.
+
+De visuele slag blijft dimensieloos en is geen OEM mechanische maat.
