@@ -22,6 +22,13 @@ export const MODEL = Object.freeze({
     rho:[1.0,.95,1.18],
     drift:[.85,.90,.55],
     dispersionScale:[1.0,2.0312423,.29325213]
+  },
+  visual:{
+    // Relative visual scale inferred from published Elekta transport schematics.
+    // It is intentionally not presented as an OEM mechanical dimension.
+    bendAssemblyScale:.58,
+    bendPivot:[805,499],
+    headShiftX:-304
   }
 });
 
