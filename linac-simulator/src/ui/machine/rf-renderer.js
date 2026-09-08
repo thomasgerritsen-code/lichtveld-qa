@@ -2,9 +2,10 @@ export function updateRfAnimation(sim,delivery,view={mode:'photon'}){
   const rf=sim?.rf;
   if(!rf)return;
 
-  const active=Boolean(delivery?.beamActive&&delivery?.sourceActive);
-  const intensity=active?Math.max(.04,Math.min(1,rf.rfEfficiency)):0;
-  const capture=active?Math.max(.04,Math.min(1,rf.captureFactor)):0;
+  const sourceActive=Boolean(delivery?.beamActive&&delivery?.sourceActive);
+  const active=Boolean(sourceActive&&rf.powerEfficiency>.002);
+  const intensity=active?Math.max(.01,Math.min(1,rf.rfEfficiency)):0;
+  const capture=sourceActive?Math.max(.01,Math.min(1,rf.captureFactor)):0;
 
   const magnetron=document.querySelector('#magnetronAssembly');
   const feed=document.querySelector('#rfFeedPath');
@@ -27,7 +28,7 @@ export function updateRfAnimation(sim,delivery,view={mode:'photon'}){
   if(glow)glow.style.opacity=String(active?(0.12+0.42*intensity):0);
 
   const targetActive=Boolean(
-    active&&
+    sourceActive&&
     view.mode==='photon'&&
     (delivery?.outputFraction??0)>.002
   );
