@@ -198,7 +198,7 @@ function renderVectors({sim,geometry,incomingBase,bend,fullNominal,targetState,l
   }
 }
 
-export function renderBeam(params,sim,overlays){
+export function renderBeam(params,sim,overlays,radiation=null){
   const geometry=buildMechanicalGeometry();
   const map=stageMap(sim);
 
@@ -236,13 +236,44 @@ export function renderBeam(params,sim,overlays){
     {x:badLast.x,y:760,state:targetState}
   ];
 
+  const incomingStageIndex=name=>{
+    const endIndex=incomingBase.findIndex(point=>point.stageEnd===name);
+    return endIndex>=0
+      ?endIndex
+      :incomingBase.findIndex(point=>point.stageStart===name);
+  };
+  const bendBaseOffset=incoming.length-1;
+  const fullStageIndex=name=>{
+    if(name==='target')return fullNominal.length-1;
+    if(['m1','m2','m3'].includes(name)){
+      return bendBaseOffset+(geometry.marks[name]||0);
+    }
+    return incomingStageIndex(name);
+  };
+
+  const hardStrikeStage=radiation?.firstStrike?.hard
+    ?radiation.firstStrike.stage
+    :null;
+  const hardStrikeIndex=hardStrikeStage
+    ?fullStageIndex(hardStrikeStage)
+    :-1;
+
+  const clip=points=>hardStrikeIndex>=0
+    ?points.slice(0,Math.min(points.length,hardStrikeIndex+1))
+    :points;
+
+  const visibleNominal=clip(fullNominal);
+  const visibleLow=clip(low);
+  const visibleHigh=clip(high);
+  const visibleBad=clip(bad);
+
   document.querySelector('#flightOuter')?.setAttribute('d',pathD(geometry.points));
   document.querySelector('#flightInner')?.setAttribute('d',pathD(geometry.points));
-  document.querySelector('#beamPath')?.setAttribute('d',pathD(fullNominal));
-  document.querySelector('#beamCore')?.setAttribute('d',pathD(fullNominal));
-  document.querySelector('#dispLow')?.setAttribute('d',pathD(low));
-  document.querySelector('#dispHigh')?.setAttribute('d',pathD(high));
-  document.querySelector('#mismatchPath')?.setAttribute('d',pathD(bad));
+  document.querySelector('#beamPath')?.setAttribute('d',pathD(visibleNominal));
+  document.querySelector('#beamCore')?.setAttribute('d',pathD(visibleNominal));
+  document.querySelector('#dispLow')?.setAttribute('d',pathD(visibleLow));
+  document.querySelector('#dispHigh')?.setAttribute('d',pathD(visibleHigh));
+  document.querySelector('#mismatchPath')?.setAttribute('d',pathD(visibleBad));
 
   const dispLow=document.querySelector('#dispLow');
   const dispHigh=document.querySelector('#dispHigh');
@@ -257,8 +288,8 @@ export function renderBeam(params,sim,overlays){
   const env1=document.querySelector('#envelope1');
   const env2=document.querySelector('#envelope2');
   if(env1&&env2){
-    env1.setAttribute('points',envelopePolygon(fullNominal,1));
-    env2.setAttribute('points',envelopePolygon(fullNominal,2));
+    env1.setAttribute('points',envelopePolygon(visibleNominal,1));
+    env2.setAttribute('points',envelopePolygon(visibleNominal,2));
     env1.hidden=!overlays.envelope;
     env2.hidden=!overlays.envelope;
   }
@@ -269,7 +300,7 @@ export function renderBeam(params,sim,overlays){
       geometry,
       incomingBase,
       bend,
-      fullNominal,
+      fullNominal:visibleNominal,
       targetState,
       last
     });
@@ -278,5 +309,5 @@ export function renderBeam(params,sim,overlays){
     if(vectorLayer)vectorLayer.innerHTML='';
   }
 
-  return fullNominal;
+  return visibleNominal;
 }
