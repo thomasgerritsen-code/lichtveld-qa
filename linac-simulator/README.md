@@ -204,3 +204,33 @@ Daarnaast is de monolithische machine-renderer opgesplitst in:
 - highlighting
 
 Een regressietest controleert expliciet dat één slider-input één notification geeft en tegelijk zowel de controlwaarde als de actieve highlight opslaat.
+
+
+## Beam loss, scatter en relatieve dose rate v12
+
+V12 voegt een aparte `radiation-transport.js` laag toe bovenop de bestaande 4D beam physics.
+
+De beam centroid wordt per transportelement vergeleken met een **genormaliseerde virtuele aperture**. Bij toenemende afwijking:
+1. blijft de primary beam eerst volledig door;
+2. ontstaat gedeeltelijke beam interception en wall scatter;
+3. daalt de useful-beam transmissie;
+4. bij een harde wall strike stopt de primaire ray op die positie;
+5. de relatieve dose rate aan het patiëntvlak kan daardoor uiteindelijk 0% worden.
+
+De target/window heeft daarnaast een afzonderlijke genormaliseerde position/angle acceptance. Een bundel kan dus de flight tube volledig passeren maar de target missen; in Photon mode resulteert dat in vrijwel geen useful photon output en extra lokale scatter aan de target/head-regio.
+
+De UI toont:
+- relatieve dose rate 0–100%;
+- transport transmissie;
+- scatter-index;
+- eerste beam interception;
+- een dose-rate balk;
+- scatter-bursts op de positie waar de beam materiaal raakt.
+
+Een klein normaal head-scatter component blijft in Photon mode zichtbaar wanneer de useful beam aanwezig is.
+
+### Belangrijke modelgrens
+
+De apertures, scatter yield, target acceptance en dose-rate respons zijn **dimensieloze onderwijsparameters**. Ze zijn niet afkomstig uit Elekta OEM bore-afmetingen, leakage-specificaties of klinische calibraties. De output is daarom relatief ten opzichte van de nominale output van de geselecteerde modus en wordt niet in Gy/min weergegeven.
+
+De bron-audit koppelt dit model aan literatuur over het onderscheid tussen primary radiation, head/collimator scatter, leakage en overige secondary radiation, maar de numerieke v12-respons is bewust een simulatorproxy.
