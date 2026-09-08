@@ -16,10 +16,15 @@ function stageByName(sim,name){
 
 function normalizedRadius(stage,aperture){
   if(!stage||!aperture)return 0;
-  return Math.hypot(
+  const centroid=Math.hypot(
     stage.r/aperture.r,
     stage.t/aperture.t
   );
+  const envelope=Math.max(
+    (stage.sigmaR||0)/aperture.r,
+    (stage.sigmaT||0)/aperture.t
+  );
+  return centroid+envelope*1.25;
 }
 
 function targetCoupling(target,mode){
@@ -44,12 +49,36 @@ function targetCoupling(target,mode){
 
 export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldXcm=10,fieldYcm=10}={}){
   const apertures=MODEL.radiation.apertures;
-  const order=['focus1','steer1','focus2','steer2','bendEntry','m1','m2','m3'];
+  const order=['focus1','steer1','wgAfter1','focus2','wgAfter2','steer2','wgExit','bendEntry','m1','m2','m3'];
 
   let transmission=1;
   let wallScatter=0;
   let firstStrike=null;
   const events=[];
+
+  const rf=sim.rf||null;
+  if(rf&&rf.emissionFactor>.002&&rf.captureFactor<.995){
+    const lostFraction=clamp((1-rf.captureFactor)*Math.min(1,rf.emissionFactor),0,1);
+    if(lostFraction>.002){
+      const hard=rf.captureFactor<.03;
+      events.push({
+        stage:'wgAfter1',
+        type:'rf-loss',
+        strength:clamp(lostFraction*.85,0,1),
+        lostFraction,
+        normalizedRadius:1-rf.captureFactor,
+        hard
+      });
+      wallScatter+=lostFraction*.45;
+      if(hard){
+        firstStrike={
+          stage:'wgAfter1',
+          normalizedRadius:1-rf.captureFactor,
+          hard:true
+        };
+      }
+    }
+  }
 
   for(const name of order){
     const stage=stageByName(sim,name);
@@ -82,6 +111,11 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     }
 
     transmission*=local;
+
+    if(firstStrike?.hard&&firstStrike.stage==='wgAfter1'){
+      transmission=0;
+      break;
+    }
 
     if(transmission<=1e-4){
       transmission=0;
