@@ -25,20 +25,23 @@ export function photonOutputFactorProxy(xCm,yCm,filter='ff'){
   return 1+(highAt40-1)*Math.pow(clamp(u,0,1),.82);
 }
 
-export function evaluateDelivery({radiation,machine,params,mode='photon',filter='ff'}){
+export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon',filter='ff'}){
   const powerOn=Boolean(machine?.powerOn);
   const beamRequested=Boolean(machine?.beamOn);
   const beamActive=powerOn&&beamRequested;
   const setpoint=clamp(params?.doseRateSet??600,37,600);
   const beamQuality=clamp(radiation?.primaryTransmission??0,0,1);
+  const sourceFactor=clamp(sim?.rf?.sourceFactor??1,0,1.1);
+  const sourceActive=(sim?.rf?.emissionFactor??1)>.002;
 
   const fieldFactor=mode==='photon'
     ?photonOutputFactorProxy(params?.fieldXcm??10,params?.fieldYcm??10,filter)
     :1;
 
-  const usefulDoseRate=beamActive?setpoint*beamQuality:0;
+  const outputFraction=beamQuality*sourceFactor;
+  const usefulDoseRate=beamActive?setpoint*outputFraction:0;
   const patientOutputProxy=beamActive?usefulDoseRate*fieldFactor:0;
-  const relativePatientOutput=beamActive?beamQuality*fieldFactor:0;
+  const relativePatientOutput=beamActive?outputFraction*fieldFactor:0;
 
   let status='Machine OFF';
   if(powerOn&&!beamActive)status='READY · BEAM OFF';
@@ -50,6 +53,9 @@ export function evaluateDelivery({radiation,machine,params,mode='photon',filter=
     beamActive,
     setpoint,
     beamQuality,
+    sourceFactor,
+    sourceActive,
+    outputFraction,
     fieldFactor,
     usefulDoseRate,
     patientOutputProxy,
