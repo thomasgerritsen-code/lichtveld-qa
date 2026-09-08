@@ -198,7 +198,7 @@ function renderVectors({sim,geometry,incomingBase,bend,fullNominal,targetState,l
   }
 }
 
-export function renderBeam(params,sim,overlays,radiation=null){
+export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
   const geometry=buildMechanicalGeometry();
   const map=stageMap(sim);
 
@@ -269,6 +269,28 @@ export function renderBeam(params,sim,overlays,radiation=null){
 
   document.querySelector('#flightOuter')?.setAttribute('d',pathD(geometry.points));
   document.querySelector('#flightInner')?.setAttribute('d',pathD(geometry.points));
+
+  const beamActive=Boolean(delivery?.beamActive);
+  const particles=document.querySelector('#particles');
+  if(particles)particles.hidden=!beamActive;
+
+  if(!beamActive){
+    document.querySelector('#beamPath')?.setAttribute('d','');
+    document.querySelector('#beamCore')?.setAttribute('d','');
+    document.querySelector('#dispLow')?.setAttribute('d','');
+    document.querySelector('#dispHigh')?.setAttribute('d','');
+    document.querySelector('#mismatchPath')?.setAttribute('d','');
+    const env1=document.querySelector('#envelope1');
+    const env2=document.querySelector('#envelope2');
+    if(env1){env1.setAttribute('points','');env1.hidden=true;}
+    if(env2){env2.setAttribute('points','');env2.hidden=true;}
+    const vectorLayer=document.querySelector('#vectorLayer');
+    if(vectorLayer)vectorLayer.innerHTML='';
+    const labels=document.querySelector('#labels');
+    if(labels)labels.style.display=overlays.labels?'block':'none';
+    return [];
+  }
+
   document.querySelector('#beamPath')?.setAttribute('d',pathD(visibleNominal));
   document.querySelector('#beamCore')?.setAttribute('d',pathD(visibleNominal));
   document.querySelector('#dispLow')?.setAttribute('d',pathD(visibleLow));
