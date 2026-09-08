@@ -38,13 +38,15 @@ export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon
     ?photonOutputFactorProxy(params?.fieldXcm??10,params?.fieldYcm??10,filter)
     :1;
 
-  const outputFraction=beamQuality*sourceFactor;
-  const usefulDoseRate=beamActive?setpoint*outputFraction:0;
-  const patientOutputProxy=beamActive?usefulDoseRate*fieldFactor:0;
-  const relativePatientOutput=beamActive?outputFraction*fieldFactor:0;
+  const outputFraction=clamp(beamQuality*sourceFactor,0,1);
+  const radiationActive=beamActive&&sourceActive;
+  const usefulDoseRate=radiationActive?setpoint*outputFraction:0;
+  const patientOutputProxy=radiationActive?usefulDoseRate*fieldFactor:0;
+  const relativePatientOutput=radiationActive?outputFraction*fieldFactor:0;
 
   let status='Machine OFF';
   if(powerOn&&!beamActive)status='READY · BEAM OFF';
+  else if(beamActive&&!sourceActive)status='BEAM ON · electron source uit';
   else if(beamActive&&usefulDoseRate<=.5)status='BEAM ON · geen useful output';
   else if(beamActive)status='BEAM ON';
 
@@ -55,6 +57,7 @@ export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon
     beamQuality,
     sourceFactor,
     sourceActive,
+    radiationActive,
     outputFraction,
     fieldFactor,
     usefulDoseRate,
