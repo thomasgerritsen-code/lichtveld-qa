@@ -150,7 +150,10 @@ function bending4D(optics,params,disturbance={}){
     const theta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
     const rho=b.rho[index];
     const M=sectorM(theta,rho);
-    const g=sectorDispersion(theta,rho,b.dispersionScale[index]);
+    const response=[.10,-.07,.06][index];
+    const topupResponse=index===2?.18:0;
+    const dispersionScale=b.dispersionScale[index]*(1+main*response+topup*topupResponse);
+    const g=sectorDispersion(theta,rho,dispersionScale);
 
     x=addv(mv(M,x),scalev(g,delta));
     S=covProp(S,M);
