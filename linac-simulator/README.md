@@ -23,7 +23,7 @@ De simulator gebruikt nu één gekoppelde toestand:
 
 `[R, R′, T, T′]`
 
-De electron-optics vóór de bend gebruikt 4×4 lineaire transportmatrices. Focus 1 en Focus 2 zijn als geroteerde anisotrope thin-lens elementen gemodelleerd zodat R/T-koppeling zichtbaar wordt zonder te doen alsof publieke OEM solenoid-fieldmaps beschikbaar zijn.
+De electron-optics vóór de bend gebruikt 4×4 lineaire transportmatrices. In v5 waren Focus 1 en Focus 2 nog geroteerde thin-lens elementen; **v14 vervangt dit bewust door pure opeenvolgende envelope-compressie** zodat de focus-sliders alleen σR/σT versmallen en de centroidbaan niet verplaatsen.
 
 De bundelbreedte wordt niet meer met een losse schaalfactor getekend. Een 4×4 covariance-matrix `Σ` wordt per element gepropageerd met:
 
@@ -167,7 +167,7 @@ Causale mapping:
 - Veld Y → beweegt zichtbaar de diaphragms
 - Gantry → globale genormaliseerde disturbance + optionele LUT/servo response
 
-De machine-side-view is een radiale projectie. Een 1T/2T-correctie kan daarom vooral in de transverse diagnostic view zichtbaar zijn; R/T-koppeling door de vereenvoudigde focusmatrices kan downstream wel een klein radiaal effect geven.
+De machine-side-view is een radiale projectie. Een 1T/2T-correctie is daarom vooral in de transverse diagnostic view zichtbaar. Vanaf v14 geven Focus 1/2 geen centroid R/T-koppeling meer; zij veranderen alleen de envelope.
 
 De bending- en momentumrespons is gerefereerd aan de vaste nominale flight-tube orbit. Daardoor geeft een bending-field/momentum mismatch een lokale hoekfout op de juiste magneetpositie in plaats van een kunstmatige verplaatsing over de volledige bend.
 
