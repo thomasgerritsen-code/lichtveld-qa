@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=5">
+  <link rel="stylesheet" href="./simulator.css?v=6">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -75,7 +75,7 @@
         <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Exacte Elekta currents, poolprofielen, veldkaarten en servicekalibraties zijn bewust niet gemodelleerd.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. De relatieve grootte van de bending assembly is nu afgestemd op gepubliceerde Elekta-transportfiguren; exacte OEM-afmetingen in millimeters zijn niet publiek en worden daarom niet verzonnen.</p></div>
     </aside>
 
     <section>
@@ -103,7 +103,7 @@
               <g data-part="steer2" class="component"><g transform="translate(682 551) rotate(-22.5)"><rect class="hit steerBlock" x="-28" y="-49" width="56" height="98" rx="9"/><rect x="-14" y="-30" width="28" height="60" rx="7" class="steerAperture"/></g></g>
               <g data-part="bellows" class="component"><g id="bellowsLines"></g></g>
 
-              <g data-part="slalom" class="component">
+              <g id="slalomHardware" data-part="slalom" class="component">
                 <path class="hit bendHousing" d="M820 268 L1255 268 L1360 452 L1338 711 L1030 711 L825 533 Z"/>
                 <path class="magnetPole" d="M862 318 L1029 318 L1008 526 L938 526 Z"/>
                 <path class="magnetPole" d="M1026 374 L1137 374 L1192 599 L991 599 Z"/>
@@ -139,7 +139,7 @@
             <g id="labels">
               <text x="48" y="872">Electron gun</text><text x="220" y="585" transform="rotate(-22.5 220 585)">Accelerating waveguide</text>
               <text x="325" y="611">Focus 1</text><text x="429" y="570">1R / 1T</text><text x="536" y="525">Focus 2</text><text x="643" y="482">2R / 2T</text>
-              <text x="906" y="548">M1</text><text x="1050" y="626">M2</text><text x="1287" y="347">M3</text><text x="1340" y="742">Treatment head</text><text x="1518" y="1097">Patiëntvlak</text>
+              <text x="864" y="527">M1</text><text x="947" y="573">M2</text><text x="1085" y="411">M3</text><text x="1075" y="742">Treatment head</text><text x="1215" y="1097">Patiëntvlak</text>
             </g>
           </svg>
         </div>
@@ -164,6 +164,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=5"></script>
+<script type="module" src="./js/main.js?v=6"></script>
 </body>
 </html>
