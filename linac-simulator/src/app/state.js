@@ -4,6 +4,8 @@ export function createInitialState(){
   return {
     controls:{...UI_DEFAULTS},
     machine:{
+      powerOn:true,
+      beamOn:false,
       mode:'photon',
       filter:'ff',
       direction:'cw'
