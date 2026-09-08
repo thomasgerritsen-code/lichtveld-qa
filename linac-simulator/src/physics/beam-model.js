@@ -174,7 +174,7 @@ function bending4D(optics,params,rf,disturbance={}){
   transportMagnet(1,'m2');
   transportMagnet(2,'m3');
 
-  const target=makeStage('target',state,covariance,dispersion,params.spread);
+  const target=makeStage('target',state,covariance,dispersion,rf.effectiveSpread);
   stages.push(target);
 
   const maxD=Math.max(...maxDispersion,1e-6);
