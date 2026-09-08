@@ -6,7 +6,7 @@ const SCENARIOS={
     controls:['r1','r2'],
     axis:['R','R′'],
     hardware:['steer1','steer2','target'],
-    disturbance:{radial:{x:.012,xp:.026}}
+    disturbance:{radial:{x:-.00358,xp:.01236}}
   },
   transverse:{
     label:'Transverse bronfout',
@@ -15,7 +15,7 @@ const SCENARIOS={
     controls:['t1','t2'],
     axis:['T','T′'],
     hardware:['steer1','steer2','target'],
-    disturbance:{transverse:{x:-.018,xp:.022}}
+    disturbance:{transverse:{x:.00358,xp:-.01236}}
   },
   bending:{
     label:'Bending mismatch',
@@ -24,7 +24,7 @@ const SCENARIOS={
     controls:['coarse','fine'],
     axis:['Target R','Disp.'],
     hardware:['slalom','slalom','target'],
-    disturbance:{coarseBias:.22,fineBias:-.15,energyOffset:.035}
+    disturbance:{coarseBias:.22,fineBias:-.15}
   }
 };
 
@@ -36,14 +36,14 @@ function scoreFor(scenario,sim){
   let e=0;
   if(scenario==='radial') e=Math.hypot(t.r*2.5,t.rp*1.5);
   else if(scenario==='transverse') e=Math.hypot(t.t*2.5,t.tp*1.5);
-  else e=Math.hypot(t.r*2,t.rp*1.2,sim.mismatch*.45,t.disp*.10);
+  else e=Math.hypot(t.r*2,t.rp*1.2,sim.mismatch*.45,(t.disp*sim.mismatch)*.10);
   return Math.max(0,Math.min(100,Math.round(100-e*900)));
 }
 
 function targetValues(scenario,sim){
   if(scenario==='radial') return [sim.target.r,sim.target.rp];
   if(scenario==='transverse') return [sim.target.t,sim.target.tp];
-  if(scenario==='bending') return [sim.target.r,sim.target.disp*.10];
+  if(scenario==='bending') return [sim.target.r,(sim.target.disp*sim.mismatch)*.10];
   return [0,0];
 }
 
@@ -158,7 +158,7 @@ export function initTraining({controls,onChange}){
       panel.querySelector('#step3Text').textContent='Fine werkt later in de lijn en geeft daarom een andere eindrespons.';
       whyText.textContent='Coarse en Fine zijn in dit educatieve model twee verschillende response-richtingen. Coarse beïnvloedt de gehele M1/M2/M3-keten; Fine voegt een extra M3-trim toe. Twee verschillende response-richtingen geven meer vrijheid om de eindtoestand te centreren.';
     }else{
-      const [c1,c2]=s.controls.map(id=>id.toUpperCase());
+      const names={r1:'1R',r2:'2R',t1:'1T',t2:'2T'};\n      const [c1,c2]=s.controls.map(id=>names[id]||id);
       panel.querySelector('#step1Title').textContent='Bekijk de beginfout';
       panel.querySelector('#step1Text').textContent=`Let op ${s.axis[0]} én ${s.axis[1]} aan de target.`;
       panel.querySelector('#step2Title').textContent=`Verander ${c1}`;
