@@ -43,3 +43,33 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
   .metricsHead{align-items:flex-start;flex-direction:column}
   .metricsNote{white-space:normal}
 }
+
+/* Visual training guide */
+.targetMeters{display:grid;gap:9px;padding:10px;border:1px solid #dce4ec;border-radius:10px;background:#f8fbff}
+.targetMeter{display:grid;gap:5px}
+.meterTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.76rem;color:#4b5d70}
+.meterTitle strong{font-variant-numeric:tabular-nums;color:#1b3653}
+.zeroMeter{position:relative;height:16px;background:linear-gradient(90deg,#ffe9e9 0,#eef5fd 40%,#e8f6ec 48%,#e8f6ec 52%,#eef5fd 60%,#ffe9e9 100%);border:1px solid #cfdbe7;border-radius:999px}
+.zeroLine{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:#1961ab;transform:translateX(-1px)}
+.zeroMeter b{position:absolute;top:50%;left:50%;width:13px;height:13px;border-radius:50%;background:#d07a28;border:2px solid #fff;box-shadow:0 0 0 1px #a95d18;transform:translate(-50%,-50%);transition:left .14s ease,background .14s ease}
+.zeroMeter b.nearZero{background:#27933e;box-shadow:0 0 0 1px #19752d}
+.meterHelp{margin:0;color:var(--muted);font-size:.7rem;line-height:1.35}
+.trainingSteps{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.trainingSteps li{display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start;padding:8px;border:1px solid #e0e7ef;border-radius:9px;background:#fff}
+.trainingSteps li>span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e9eff6;color:#66798d;font-weight:900;font-size:.76rem}
+.trainingSteps li strong{display:block;font-size:.78rem;color:#334155}
+.trainingSteps li small{display:block;margin-top:2px;color:var(--muted);font-size:.69rem;line-height:1.35}
+.trainingSteps li.activeStep{border-color:#8db9df;background:#f0f7fd;box-shadow:0 0 0 1px #c8e0f3 inset}
+.trainingSteps li.activeStep>span{background:#1961ab;color:#fff}
+.trainingSteps li.doneStep{border-color:#acd9b5;background:#f1faf3}
+.trainingSteps li.doneStep>span{background:#27933e;color:#fff}
+.whyBox{padding:9px 10px;border-left:4px solid #1961ab;background:#eef5fd;border-radius:8px}
+.whyBox strong{font-size:.78rem;color:#1b3653}
+.whyBox p{margin:4px 0 0;color:#536679;font-size:.72rem;line-height:1.45}
+.trainingHardware .hit{stroke:#52df99!important;stroke-width:5!important;filter:drop-shadow(0 0 8px #52df99)}
+.trainingHardware .magnetPole,.trainingHardware.magnetPole{stroke:#52df99!important;filter:drop-shadow(0 0 7px #52df99)}
+@media(max-width:650px){
+  .targetMeters{padding:9px}
+  .trainingSteps li{grid-template-columns:25px 1fr;padding:7px}
+  .trainingSteps li>span{width:23px;height:23px}
+}
