@@ -86,10 +86,19 @@ export function renderScatter(sim,radiation,{visible=true}={}){
   group.innerHTML='';
   group.hidden=!visible;
 
-  document.querySelector('#flightOuter')?.classList.toggle(
-    'wallStrikeActive',
-    Boolean(visible&&radiation.firstStrike&&radiation.firstStrike.stage!=='target')
-  );
+  document.querySelectorAll('.beamLossSurface').forEach(element=>element.classList.remove('beamLossSurface'));
+
+  if(visible&&radiation.firstStrike){
+    const stage=radiation.firstStrike.stage;
+    if(['bendEntry','m1','m2','m3'].includes(stage)){
+      document.querySelector('#flightOuter')?.classList.add('beamLossSurface');
+    }else if(stage==='target'){
+      document.querySelector('#photonTarget')?.classList.add('beamLossSurface');
+      document.querySelector('#electronWindow')?.classList.add('beamLossSurface');
+    }else{
+      document.querySelector('[data-part="waveguide"]')?.classList.add('beamLossSurface');
+    }
+  }
 
   if(!visible)return;
 
