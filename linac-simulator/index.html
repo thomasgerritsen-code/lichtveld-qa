@@ -82,18 +82,18 @@
       <article class="panelCard">
         <div class="viewerHead"><div><strong>Complete machine</strong><span>Begin tot eind van de bundel in één beeld</span></div><button id="fitBtn" type="button">Pas in beeld</button></div>
         <div id="machineViewport" class="machineViewport">
-          <svg id="machineSvg" viewBox="0 0 1800 1120" role="img" aria-label="Volledige medische lineaire versneller">
+          <svg id="machineSvg" viewBox="0 0 1500 1120" role="img" aria-label="Volledige medische lineaire versneller">
             <defs>
               <filter id="beamGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <linearGradient id="waveguideFill" x1="0" x2="1"><stop offset="0%" stop-color="#11263c"/><stop offset="55%" stop-color="#1b3855"/><stop offset="100%" stop-color="#0d1b2b"/></linearGradient>
               <linearGradient id="photonCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ffd66b" stop-opacity=".46"/><stop offset="100%" stop-color="#ffd66b" stop-opacity=".05"/></linearGradient>
               <linearGradient id="electronCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#63ddff" stop-opacity=".42"/><stop offset="100%" stop-color="#63ddff" stop-opacity=".05"/></linearGradient>
             </defs>
-            <rect width="1800" height="1120" fill="#06101a"/>
+            <rect width="1500" height="1120" fill="#06101a"/>
 
             <g id="machineHardware">
-              <path class="gantryShell" d="M48 825 Q42 690 115 610 L690 370 Q790 326 878 342 L1304 362 Q1425 370 1515 444 L1614 540 L1590 916 Q1570 968 1518 982 L1292 982 L1266 758 L1154 675 L826 614 L622 690 L160 892 Z"/>
-              <path class="innerShell" d="M98 794 Q94 707 153 649 L707 421 Q782 391 850 404 L1280 419 Q1364 425 1437 484 L1535 566 L1516 899 L1288 899 L1260 727 L1134 633 L822 575 L603 649 L154 837 Z"/>
+              <path class="gantryShell" d="M48 825 Q42 690 115 610 L690 370 Q790 326 878 342 L1128 354 Q1245 362 1325 430 L1395 505 L1375 916 Q1355 965 1305 982 L1040 982 L1018 758 L970 690 L826 614 L622 690 L160 892 Z"/>
+              <path class="innerShell" d="M98 794 Q94 707 153 649 L707 421 Q782 391 850 404 L1110 414 Q1190 420 1260 475 L1325 540 L1310 899 L1040 899 L1015 727 L965 650 L822 575 L603 649 L154 837 Z"/>
 
               <g data-part="gun" class="component"><g transform="translate(92 794) rotate(-22.5)"><rect class="hit hardwareBlock" x="0" y="-40" width="96" height="80" rx="14"/><circle cx="58" cy="0" r="15" class="gunCathode"/></g></g>
               <g data-part="waveguide" class="component"><g transform="translate(183 758) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-40" width="640" height="80" rx="18"/><line x1="20" y1="0" x2="620" y2="0" class="waveguideAxis"/><g id="rfCells"></g></g></g>
