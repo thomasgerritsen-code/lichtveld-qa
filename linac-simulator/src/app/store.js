@@ -4,6 +4,12 @@ export function reducer(state,action){
   switch(action.type){
     case 'control/set':
       return {...state,controls:{...state.controls,[action.id]:action.value}};
+    case 'control/input':
+      return {
+        ...state,
+        controls:{...state.controls,[action.id]:action.value},
+        runtime:{...state.runtime,activeControlId:action.id}
+      };
     case 'controls/setMany':
       return {...state,controls:{...state.controls,...action.values}};
     case 'machine/set':
