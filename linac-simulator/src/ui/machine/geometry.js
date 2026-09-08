@@ -10,8 +10,11 @@ export const WAVE_ANCHORS=[
   {stage:'gun',x:135,y:778},
   {stage:'focus1',x:363,y:683},
   {stage:'steer1',x:470,y:639},
+  {stage:'wgAfter1',x:524,y:616},
   {stage:'focus2',x:575,y:595},
+  {stage:'wgAfter2',x:628,y:573},
   {stage:'steer2',x:682,y:551},
+  {stage:'wgExit',x:753,y:521},
   {stage:'bendEntry',x:805,y:499}
 ];
 
