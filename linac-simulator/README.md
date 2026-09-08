@@ -2,20 +2,20 @@
 
 Onderdeel van het RT-VTech / Linac Techniek Dashboard.
 
-## Bestandsstructuur
+## Bestandsstructuur v10
 
-- `index.html` — responsive UI + volledige SVG-machine
-- `simulator.css` — telefoon/tablet/desktop layout
-- `js/config.js` — defaults, geometrische modelconfiguratie en onderdeelteksten
-- `js/beam-model.js` — gekoppeld 4D R/R′/T/T′-model, covariance-transport en D/D′-dispersie
-- `js/feedback.js` — gantry-afhankelijke verstoring, LUT en chamber-servo onderwijsmodel
-- `js/detector.js` — relatieve FF/FFF photonprofielen, electron fluence en virtuele EPID-geometrie
-- `js/render.js` — machinegeometrie, 1σ/2σ envelope, slalompad, electron scattering en Agility leaf-tip visualisatie
-- `js/diagnostics.js` — dual-plane views, profiles, chamber readouts, EPID QA en source-audit
-- `js/training.js` — dimensieloze oefenscenario's en scorelogica
-- `js/metrics.js` — live 4D beam state / D / D′ / σR / σT / R-T correlatie
-- `js/sources.js` — bronmetadata, machinefamilie en confidence per claim
-- `js/main.js` — state, twee-pass LUT/servo-loop, events en animatie
+De live applicatie gebruikt nu de `src/`-boom:
+
+- `src/app/` — centrale state, reducer/store, selectors en controller
+- `src/machine/` — machineconfiguratie en control → hardware mapping
+- `src/physics/` — 4D beam physics, covariance, bending, feedback en detector
+- `src/ui/` — SVG-renderer, diagnostics, metrics en training
+- `src/data/` — bron-audit
+- `tests/` — automatische regressietests
+- `ARCHITECTURE.md` — volledige dataflow en ontwikkelregels
+
+De oude `js/`-map blijft tijdelijk alleen als v9 rollbackreferentie aanwezig. `index.html` laadt hem niet meer.
+
 
 ## Physics v5
 
@@ -170,3 +170,20 @@ Causale mapping:
 De machine-side-view is een radiale projectie. Een 1T/2T-correctie kan daarom vooral in de transverse diagnostic view zichtbaar zijn; R/T-koppeling door de vereenvoudigde focusmatrices kan downstream wel een klein radiaal effect geven.
 
 De bending- en momentumrespons is gerefereerd aan de vaste nominale flight-tube orbit. Daardoor geeft een bending-field/momentum mismatch een lokale hoekfout op de juiste magneetpositie in plaats van een kunstmatige verplaatsing over de volledige bend.
+
+
+## Architecture v10
+
+V10 is bewust een interne refactor: de zichtbare functies en de v9 beam-control causality blijven behouden, maar de code is opgesplitst in application state, physics, machine, data en UI.
+
+Belangrijkste wijzigingen:
+- één centrale store in plaats van losse globale variabelen;
+- één controller als orchestratielaag;
+- physics bevat geen DOM-code;
+- matrix-, optics- en bending-elementen zijn aparte modules;
+- renderers ontvangen een berekend simulation result;
+- interne handmatige `?v=...` moduleversies zijn verwijderd;
+- dependency-free Node regressietests;
+- GitHub Actions test iedere relevante pull request.
+
+Zie [ARCHITECTURE.md](./ARCHITECTURE.md) voor de ontwikkelstructuur.

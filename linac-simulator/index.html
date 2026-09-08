@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=9">
+  <link rel="stylesheet" href="./simulator.css">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -16,7 +16,7 @@
 
 <main class="simShell">
   <div class="simToolbar">
-    <a class="backLink" href="../index.html?v=25">← Dashboard</a>
+    <a class="backLink" href="../index.html?v=26">← Dashboard</a>
     <div class="toolbarActions">
       <button id="resetBtn" type="button">Reset</button>
       <button id="faultBtn" type="button">Voorbeeld afwijking</button>
@@ -26,9 +26,9 @@
 
   <section class="hero">
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
-      <p>Modulaire GitHub Pages-versie met gekoppelde 4D R/R′/T/T′-optics, covariance/envelope transport, D/D′-dispersie, gantry-afhankelijke Set/LUT/Servo-regeling, treatment profiles en virtuele QA. Alle instellingen blijven dimensieloos.</p>
+      <p>Modulaire GitHub Pages-versie met een centrale application state, losgekoppelde physics-, machine- en UI-lagen, gekoppelde 4D R/R′/T/T′-optics en automatische regressietests. De gebruikersinterface en het v9-physicsgedrag blijven bewust behouden.</p>
     </div>
-    <div class="heroBadges"><span>4D optics</span><span>1σ/2σ envelope</span><span>LUT + Servo</span><span>EPID QA</span></div>
+    <div class="heroBadges"><span>Architecture v10</span><span>Central store</span><span>Physics isolated</span><span>Regression tests</span></div>
   </section>
 
   <div class="layout">
@@ -180,6 +180,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=9"></script>
+<script type="module" src="./src/app/bootstrap.js"></script>
 </body>
 </html>
