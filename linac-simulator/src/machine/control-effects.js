@@ -9,7 +9,8 @@ export const CONTROL_EFFECTS=Object.freeze({
   spread:{part:'slalom',plane:'energy',start:'m1',label:'Energiespreiding',text:'Verandert de chromatische bundelenvelop en de lage/hoge-energie rays vanaf M1. De centrale nominale ray blijft door spread alleen onveranderd.'},
   coarse:{part:'slalom',plane:'radial',start:'m1',label:'Main bending supply',text:'Werkt als gezamenlijke bending-respons op M1, M2 en M3. Het zichtbare effect begint daarom pas bij M1.'},
   fine:{part:'slalom',plane:'radial',start:'m3',label:'M3 top-up',text:'Extra laatste-magneettrim. De visualisatie laat vóór M3 geen effect van deze slider zien.'},
-  fx:{part:'mlc',plane:'field',start:'mlc',label:'Veld X',text:'Stuurt de opening van de Agility MLC-leaf banks. De electron transportsectie vóór de treatment head blijft onveranderd.'},
-  fy:{part:'jaws',plane:'field',start:'jaws',label:'Veld Y',text:'Stuurt de Y-diaphragms. De MLC- en electrontransportposities worden door deze slider niet verplaatst.'},
+  fx:{part:'mlc',plane:'field',start:'mlc',label:'Veld X',text:'Stelt de Agility MLC-opening in centimeters op isocenter in. De electrontransportsectie vóór de treatment head blijft onveranderd.'},
+  fy:{part:'jaws',plane:'field',start:'jaws',label:'Veld Y',text:'Stelt de Y-diaphragms in centimeters op isocenter in. De MLC- en electrontransportposities worden niet verplaatst.'},
+  doseRateSet:{part:'monitor',plane:'feedback',start:'monitor',label:'Dose-rate setpoint',text:'Continu dose-rate commando in de educatieve Integrity-style deliverylaag. Het useful outputniveau wordt daarna beperkt door beam transmission; dit is geen machinecalibratie.'},
   gantry:{part:['steer2','monitor'],plane:'feedback',start:'gun',label:'Gantry angle',text:'Verandert de genormaliseerde gantry-afhankelijke beam disturbance en, indien actief, LUT/servo-correctie. Dit is een globale omgevings-/feedbackrespons, geen lokale magneetverplaatsing.'}
 });

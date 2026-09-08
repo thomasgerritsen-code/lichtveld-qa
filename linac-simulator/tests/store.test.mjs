@@ -46,3 +46,36 @@ test('slider input updates value and active highlight in one renderable state',(
   assert.equal(state.runtime.activeControlId,'r1');
   assert.equal(notifications,1);
 });
+
+
+test('machine power off always drops beam on state',()=>{
+  const store=createStore();
+  store.dispatch({type:'machine/setBeam',value:true});
+  assert.equal(store.getState().machine.beamOn,true);
+
+  store.dispatch({type:'machine/setPower',value:false});
+  assert.equal(store.getState().machine.powerOn,false);
+  assert.equal(store.getState().machine.beamOn,false);
+
+  store.dispatch({type:'machine/setBeam',value:true});
+  assert.equal(store.getState().machine.beamOn,false);
+});
+
+test('changing photon electron mode forces beam off',()=>{
+  const store=createStore();
+  store.dispatch({type:'machine/setBeam',value:true});
+  store.dispatch({type:'machine/setMode',mode:'electron'});
+
+  assert.equal(store.getState().machine.mode,'electron');
+  assert.equal(store.getState().machine.beamOn,false);
+});
+
+
+test('changing FF FFF configuration forces beam off',()=>{
+  const store=createStore();
+  store.dispatch({type:'machine/setBeam',value:true});
+  store.dispatch({type:'machine/setFilter',filter:'fff'});
+
+  assert.equal(store.getState().machine.filter,'fff');
+  assert.equal(store.getState().machine.beamOn,false);
+});

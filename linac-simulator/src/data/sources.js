@@ -1,5 +1,41 @@
 export const SOURCES = Object.freeze([
   {
+    id:'integrity-fda',
+    title:'FDA 510(k) K102200 – Elekta Integrity R1.0',
+    url:'https://www.accessdata.fda.gov/cdrh_docs/pdf10/K102200.pdf',
+    type:'regulatory-manufacturer-submission',
+    scope:'Elekta Integrity control system',
+    confidence:'high',
+    claims:['Integrity is the graphical interface and machine-control software for Elekta digital linacs','Continuously Variable Dose Rate is an Integrity control-system feature']
+  },
+  {
+    id:'integrity-cvdr',
+    title:'Boylan et al. – Continuously-variable dose rate VMAT on Elekta Integrity',
+    url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC5718531/',
+    type:'peer-reviewed',
+    scope:'Elekta Integrity VMAT delivery',
+    confidence:'high',
+    claims:['Integrity provides a much larger dose-rate selection range than older binned delivery','Published nominal Integrity range 37–600 MU/min in the studied system','Dose rate, gantry and MLC motion are coupled during dynamic delivery']
+  },
+  {
+    id:'versa-brochure',
+    title:'Elekta Versa HD brochure',
+    url:'https://www.elekta.com/products/radiation-therapy/versa-hd/assets/versa-hd-brochure.pdf',
+    type:'manufacturer',
+    scope:'Elekta Versa HD / Agility',
+    confidence:'high',
+    claims:['Agility supports a full 40 × 40 cm field','Versa HD integrates Agility treatment delivery']
+  },
+  {
+    id:'elekta-public-ui',
+    title:'Elekta Radiation Therapy Image Bank',
+    url:'https://www.elekta.com/company/newsroom/image-bank/radiation-therapy/',
+    type:'manufacturer-image-bank',
+    scope:'Public Elekta Harmony / Versa HD interface and hardware imagery',
+    confidence:'medium-high',
+    claims:['Public Elekta imagery shows dark information panels, compact status presentation and green active-state cues on current product interfaces']
+  },
+  {
     id:'elekta-how',
     title:'Elekta – How the linear accelerator works',
     url:'https://www.elekta.com/company/newsroom/videos/how-the-linear-accelerator-works-ff4ecjuoqeat1mh6ievmrg/',
@@ -78,7 +114,7 @@ export const SOURCES = Object.freeze([
     type:'peer-reviewed',
     scope:'Elekta Versa HD / Agility',
     confidence:'high',
-    claims:['One sculpted diaphragm pair is orthogonal to the Agility MLC','MLC replaces the orthogonal jaw pair','80 interdigitating leaf pairs']
+    claims:['One sculpted diaphragm pair is orthogonal to the Agility MLC','MLC replaces the orthogonal jaw pair','80 interdigitating leaf pairs','Maximum field size 40 × 40 cm','Photon output factors and head-scatter factors vary with field size and FF/FFF mode']
   },
   {
     id:'agility-focal',
@@ -148,6 +184,10 @@ export const CLAIMS = Object.freeze({
   controlCausality:{confidence:'high',sourceIds:['appeldoorn-2020','elekta-patent','versa-commissioning'],label:'Slider → fysiek subsysteem',note:'Steeringcorrecties beginnen bij hun eigen coils, main bending bij M1, M3 top-up pas bij M3 en field X/Y worden aan MLC/diaphragms gekoppeld. De grootte van de respons blijft een genormaliseerd onderwijsmodel.'},
   photonProfile:{confidence:'model',sourceIds:['fff','agility-focal'],label:'Photon profile koppeling',note:'Kwalitatief educatief profiel; geen dosisberekening.'},
   beamLossScatter:{confidence:'model',sourceIds:['out-of-field-review','iaea-1196','appeldoorn-2025'],label:'Beam loss, scatter en relatieve dose rate',note:'V12 koppelt genormaliseerde beam-interception aan verlies van useful-beam transmissie en een relatieve scatter-index. Dit is geen shieldingberekening, geen leakage-specificatie en geen klinische dose-rate calibratie.'},
+  treatmentConsole:{confidence:'medium-high',sourceIds:['integrity-fda','elekta-public-ui'],label:'Treatment-console look & state model',note:'V13 gebruikt publiek zichtbare Elekta/Integrity/Harmony designkenmerken als inspiratie. De layout, knoppen en state-machine zijn een RT-VTech trainingsinterface en geen pixel-exacte OEM-reconstructie.'},
+  cvdrSetpoint:{confidence:'high',sourceIds:['integrity-fda','integrity-cvdr'],label:'Continuously Variable Dose Rate',note:'De UI biedt een 37–600 MU/min Integrity-style setpoint. De simulator koppelt dit aan een genormaliseerde useful-beam transmissie; dit is geen klinische machinecalibratie.'},
+  agilityFieldSize:{confidence:'high',sourceIds:['versa-brochure','versa-commissioning'],label:'Agility veldgrootte',note:'X wordt door de MLC en Y door de orthogonale diaphragms weergegeven; de simulator begrenst de educatieve veldinstelling op 1–40 cm per richting.'},
+  fieldOutputFactor:{confidence:'model',sourceIds:['versa-commissioning'],label:'Field-output proxy',note:'De 10×10 cm referentie is op 1.000 genormaliseerd. De kromme is een glad educatief model binnen de publiek gerapporteerde Versa HD output-factortrend; het is geen commissioningdataset.'},
   electronMode:{confidence:'high',sourceIds:['iaea-1196'],label:'Electron window / scattering foils / applicator'},
   epid:{confidence:'medium-high',sourceIds:['epid-focal'],label:'Virtuele EPID/focal-spot QA',note:'Alleen geometrisch principe, geen klinische procedure of tolerantie.'}
 });

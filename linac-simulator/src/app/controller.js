@@ -3,6 +3,7 @@ import {CONTROL_EFFECTS} from '../machine/control-effects.js';
 import {decodeControls,simulate} from '../physics/beam-model.js';
 import {gantryEnvironment,buildControlContext,chamberSignals} from '../physics/feedback.js';
 import {evaluateRadiationTransport} from '../physics/radiation-transport.js';
+import {evaluateDelivery} from '../physics/delivery-state.js';
 import {initHardware,render,setActiveControlEffect} from '../ui/machine-renderer.js';
 import {initTraining} from '../ui/training.js';
 import {initMetrics} from '../ui/metrics.js';
@@ -11,7 +12,7 @@ import {createStore} from './store.js';
 import {selectRawControls,selectViewState,selectOverlayState} from './selectors.js';
 
 const $=s=>document.querySelector(s);
-const CONTROL_IDS=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','gantry'];
+const CONTROL_IDS=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','doseRateSet','gantry'];
 
 function mergeDisturbance(training,environment){
   return {
@@ -56,8 +57,9 @@ export function createController(){
     outputs.f2.textContent=params.f2.toFixed(2);
     outputs.energy.textContent=params.energy.toFixed(2);
     outputs.spread.textContent=params.spread.toFixed(2);
-    outputs.fx.textContent=raw.fx+'%';
-    outputs.fy.textContent=raw.fy+'%';
+    outputs.fx.textContent=Number(raw.fx).toFixed(1)+' cm';
+    outputs.fy.textContent=Number(raw.fy).toFixed(1)+' cm';
+    outputs.doseRateSet.textContent=Math.round(params.doseRateSet)+' MU/min';
     outputs.gantry.textContent=Math.round(raw.gantry)+'°';
   }
 
@@ -69,6 +71,42 @@ export function createController(){
     $('#vectorsToggle').checked=state.display.vectors;
     $('#scatterToggle').checked=state.display.scatter;
     $('#pauseBtn').textContent=state.runtime.paused?'Hervat':'Pauzeer';
+  }
+
+  function syncConsoleUI(state){
+    const {powerOn,beamOn,mode,filter}=state.machine;
+    const raw=selectRawControls(state);
+
+    $('#machineStateText').textContent=!powerOn?'OFF':(beamOn?'BEAM ON':'READY');
+    $('#machineLamp').classList.toggle('ready',powerOn);
+    $('#machineLamp').classList.toggle('off',!powerOn);
+
+    $('#beamStateText').textContent=beamOn&&powerOn?'ON':'OFF';
+    $('#beamLamp').classList.toggle('beamActive',beamOn&&powerOn);
+
+    $('#machinePowerBtn').classList.toggle('on',powerOn);
+    $('#machinePowerBtn').classList.toggle('off',!powerOn);
+    $('#machinePowerBtn').querySelector('b').textContent=powerOn?'ON':'OFF';
+
+    $('#beamOnBtn').disabled=!powerOn;
+    $('#beamOffBtn').disabled=!powerOn;
+    $('#beamOnBtn').classList.toggle('active',beamOn&&powerOn);
+
+    $('#consoleModeOut').textContent=mode==='photon'
+      ?'Photon '+filter.toUpperCase()
+      :'Electron';
+
+    const fx=Number(raw.fx),fy=Number(raw.fy);
+    const fieldText=fx.toFixed(1)+' × '+fy.toFixed(1)+' cm';
+    $('#fieldConsoleOut').textContent=fieldText;
+    $('#fieldPresetOut').textContent=fieldText;
+    $('#fieldXConsole').textContent=fx.toFixed(1)+' cm';
+    $('#fieldYConsole').textContent=fy.toFixed(1)+' cm';
+
+    document.querySelectorAll('[data-field]').forEach(button=>{
+      const field=Number(button.dataset.field);
+      button.classList.toggle('active',Math.abs(fx-field)<.001&&Math.abs(fy-field)<.001);
+    });
   }
 
   function syncModeUI(state){
@@ -161,10 +199,22 @@ export function createController(){
       t2:control.lut.t2+control.servo.t2
     };
     const sim=simulate(params,disturbance,assist);
-    const radiation=evaluateRadiationTransport(sim,{mode:view.mode});
+    const radiation=evaluateRadiationTransport(sim,{
+      mode:view.mode,
+      filter:view.filter,
+      fieldXcm:params.fieldXcm,
+      fieldYcm:params.fieldYcm
+    });
+    const delivery=evaluateDelivery({
+      radiation,
+      machine:state.machine,
+      params,
+      mode:view.mode,
+      filter:view.filter
+    });
 
     const chamberRaw=chamberSignals(sim);
-    const transmission=radiation.primaryTransmission;
+    const transmission=delivery.beamActive?radiation.primaryTransmission:0;
     const tiltScale=Math.sqrt(transmission);
     const chamber={
       ...chamberRaw,
@@ -175,12 +225,13 @@ export function createController(){
     };
     control.chamber=chamber;
 
-    return {raw,params,view,disturbance,control,sim,chamber,radiation};
+    return {raw,params,view,disturbance,control,sim,chamber,radiation,delivery};
   }
 
   function renderState(state){
     syncControlInputs(state);
     syncDisplayUI(state);
+    syncConsoleUI(state);
     syncModeUI(state);
     syncControlEffect(state);
 
@@ -192,7 +243,8 @@ export function createController(){
       result.sim,
       selectOverlayState(state),
       result.view,
-      result.radiation
+      result.radiation,
+      result.delivery
     );
 
     $('#achOut').textContent=Math.round(result.sim.achromacy*100)+'%';
@@ -207,15 +259,27 @@ export function createController(){
         ?'Set + LUT'
         :'Set + LUT + Servo';
     $('#dispOut').textContent=result.sim.target.disp.toFixed(3)+' / '+result.sim.target.dispPrime.toFixed(3);
-    $('#doseRateOut').textContent=result.radiation.doseRatePercent.toFixed(1)+'%';
-    $('#transmissionOut').textContent=(result.radiation.transportTransmission*100).toFixed(1)+'%';
-    $('#scatterOut').textContent=result.radiation.scatterIndex.toFixed(1)+'%';
-    $('#wallHitOut').textContent=result.radiation.firstStrike
-      ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
-      :'geen';
-    $('#doseRateFill').style.width=result.radiation.doseRatePercent+'%';
-    $('#doseRateFill').classList.toggle('zero',result.radiation.doseRatePercent===0);
-    $('#radiationStatus').textContent=result.radiation.status;
+    $('#doseRateOut').textContent=Math.round(result.delivery.usefulDoseRate)+' MU/min';
+    $('#transmissionOut').textContent=(result.radiation.primaryTransmission*100).toFixed(1)+'%';
+    $('#scatterOut').textContent=(result.delivery.beamActive?result.radiation.scatterIndex:0).toFixed(1)+'%';
+    $('#wallHitOut').textContent=!result.delivery.beamActive
+      ?'—'
+      :result.radiation.firstStrike
+        ?(result.radiation.firstStrike.stage+' · '+(result.radiation.firstStrike.hard?'volledig':'gedeeltelijk'))
+        :'geen';
+    const qualityPercent=result.delivery.beamActive
+      ?Math.min(100,result.delivery.beamQuality*100)
+      :0;
+    $('#doseRateFill').style.width=qualityPercent+'%';
+    $('#doseRateFill').classList.toggle('zero',qualityPercent===0);
+    $('#radiationStatus').textContent=result.delivery.status;
+
+    $('#fieldOut').textContent=result.params.fieldXcm.toFixed(1)+' × '+result.params.fieldYcm.toFixed(1)+' cm';
+    $('#fieldFactorOut').textContent=result.delivery.fieldFactor.toFixed(3);
+    $('#doseCommandConsole').textContent=Math.round(result.delivery.setpoint)+' MU/min';
+    $('#doseActualConsole').textContent=Math.round(result.delivery.usefulDoseRate)+' MU/min';
+    $('#patientOutputConsole').textContent=Math.round(result.delivery.patientOutputProxy)+' rel./min';
+    $('#outputFactorConsole').textContent=result.delivery.fieldFactor.toFixed(3);
 
     trainer?.update(result.sim);
     metrics?.update(result.sim.stages);
@@ -244,7 +308,7 @@ export function createController(){
   function exampleFault(){
     store.dispatch({
       type:'controls/setMany',
-      values:{f1:43,r1:18,t1:-12,f2:50,r2:28,t2:16,energy:42,spread:70,coarse:36,fine:-22,fx:72,fy:44,gantry:238}
+      values:{f1:43,r1:18,t1:-12,f2:50,r2:28,t2:16,energy:42,spread:70,coarse:36,fine:-22,fx:30,fy:18,doseRateSet:450,gantry:238}
     });
     store.dispatch({type:'machine/set',key:'direction',value:'ccw'});
     store.dispatch({type:'display/set',key:'mismatch',value:true});
@@ -258,10 +322,24 @@ export function createController(){
       });
     });
 
-    $('#photonBtn').onclick=()=>store.dispatch({type:'machine/set',key:'mode',value:'photon'});
-    $('#electronBtn').onclick=()=>store.dispatch({type:'machine/set',key:'mode',value:'electron'});
-    $('#ffBtn').onclick=()=>store.dispatch({type:'machine/set',key:'filter',value:'ff'});
-    $('#fffBtn').onclick=()=>store.dispatch({type:'machine/set',key:'filter',value:'fff'});
+    $('#machinePowerBtn').onclick=()=>{
+      const next=!store.getState().machine.powerOn;
+      store.dispatch({type:'machine/setPower',value:next});
+    };
+    $('#beamOnBtn').onclick=()=>store.dispatch({type:'machine/setBeam',value:true});
+    $('#beamOffBtn').onclick=()=>store.dispatch({type:'machine/setBeam',value:false});
+
+    document.querySelectorAll('[data-field]').forEach(button=>{
+      button.addEventListener('click',()=>{
+        const field=Number(button.dataset.field);
+        store.dispatch({type:'controls/setMany',values:{fx:field,fy:field}});
+      });
+    });
+
+    $('#photonBtn').onclick=()=>store.dispatch({type:'machine/setMode',mode:'photon'});
+    $('#electronBtn').onclick=()=>store.dispatch({type:'machine/setMode',mode:'electron'});
+    $('#ffBtn').onclick=()=>store.dispatch({type:'machine/setFilter',filter:'ff'});
+    $('#fffBtn').onclick=()=>store.dispatch({type:'machine/setFilter',filter:'fff'});
     $('#dirCw').onclick=()=>store.dispatch({type:'machine/set',key:'direction',value:'cw'});
     $('#dirCcw').onclick=()=>store.dispatch({type:'machine/set',key:'direction',value:'ccw'});
 

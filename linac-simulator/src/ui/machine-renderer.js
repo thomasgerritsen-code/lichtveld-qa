@@ -8,10 +8,14 @@ import {renderScatter} from './machine/scatter-renderer.js';
 export {initHardware,setActiveControlEffect};
 export {buildMechanicalGeometry,buildMechanicalPath} from './machine/geometry.js';
 
-export function render(params,sim,overlays,view={mode:'photon',filter:'ff'},radiation=null){
-  const beamPath=renderBeam(params,sim,overlays,radiation);
+export function render(params,sim,overlays,view={mode:'photon',filter:'ff'},radiation=null,delivery=null){
+  const beamPath=renderBeam(params,sim,overlays,radiation,delivery);
   applySelectorMotion(view.mode);
-  updateTreatmentHead(params,view,radiation);
-  if(radiation)renderScatter(sim,radiation,{visible:overlays.scatter!==false});
+  updateTreatmentHead(params,view,delivery);
+  if(radiation){
+    renderScatter(sim,radiation,{
+      visible:Boolean(delivery?.beamActive)&&overlays.scatter!==false
+    });
+  }
   return beamPath;
 }

@@ -37,6 +37,7 @@ src/
 │   ├── feedback.js
 │   ├── detector.js
 │   ├── radiation-transport.js
+│   ├── delivery-state.js
 │   ├── math/
 │   │   └── matrix.js
 │   ├── optics/
@@ -168,3 +169,30 @@ De UI-laag gebruikt dit resultaat vervolgens op drie plaatsen:
 - `treatment-head.js` schaalt de treatment cone met de useful-beam transmissie.
 
 Zo blijft de beam-loss/dose-rate logica testbaar zonder SVG of DOM-afhankelijkheid.
+
+
+## Delivery state v13
+
+`physics/delivery-state.js` is een aparte pure laag tussen radiation transport en UI.
+
+Input:
+- radiation-transport result;
+- machine power / beam state;
+- photon/electron mode en FF/FFF;
+- field X/Y;
+- dose-rate setpoint.
+
+Output:
+- `beamActive`;
+- `beamQuality`;
+- `setpoint`;
+- `usefulDoseRate`;
+- `fieldFactor`;
+- `patientOutputProxy`;
+- operatorstatus.
+
+Belangrijk: de 4D optics wordt altijd berekend zodat de gebruiker de potentiële beam alignment kan bestuderen. De deliverylaag bepaalt vervolgens of er daadwerkelijk straling zichtbaar/actief is. Hierdoor geldt softwarematig één harde regel:
+
+`Machine OFF || Beam OFF => geen bundel, geen scatter, dose rate = 0`
+
+De reducer bewaakt de power/beam invarianten en de renderer kan ze niet lokaal overschrijven.
