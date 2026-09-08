@@ -80,7 +80,8 @@ export const SOURCES = Object.freeze([
     confidence:'high',
     claims:['One sculpted diaphragm pair is orthogonal to the Agility MLC','MLC replaces the orthogonal jaw pair','80 interdigitating leaf pairs']
   },
-
+  {
+    id:'agility-focal',
     title:'Chojnowski et al. – Beam focal spot position determination for Agility',
     url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC6036348/',
     type:'peer-reviewed',
