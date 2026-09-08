@@ -160,3 +160,227 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
 @media(max-width:650px){
   .doseRateHead{align-items:flex-start;flex-direction:column;gap:2px}
 }
+
+
+/* v13 Integrity-style educational treatment console */
+.integrityConsole{
+  margin:0 0 12px;
+  border:1px solid #21364a;
+  border-radius:12px;
+  overflow:hidden;
+  background:#111c28;
+  color:#edf5fb;
+  box-shadow:0 8px 24px rgba(12,28,44,.16);
+}
+.consoleTop{
+  display:grid;
+  grid-template-columns:minmax(220px,.8fr) minmax(520px,1.7fr);
+  gap:14px;
+  align-items:stretch;
+  padding:12px 14px;
+  border-bottom:1px solid #2b4054;
+  background:linear-gradient(180deg,#223448,#182635);
+}
+.consoleBrand{display:grid;align-content:center;gap:2px}
+.consoleEyebrow{
+  color:#7fa3bd;
+  font-size:.64rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.consoleBrand strong{font-size:1.02rem;letter-spacing:.01em}
+.consoleBrand small{color:#8ea4b7;font-size:.67rem}
+.consoleStateStrip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(105px,1fr));
+  gap:7px;
+}
+.consoleState{
+  min-height:51px;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto;
+  column-gap:7px;
+  align-content:center;
+  padding:7px 9px;
+  border:1px solid #344d63;
+  background:#0d1721;
+  border-radius:5px;
+}
+.consoleState .stateLamp{grid-row:1/3;align-self:center}
+.consoleState span{
+  color:#7f97aa;
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.consoleState b{
+  margin-top:2px;
+  color:#e8f2f9;
+  font-size:.78rem;
+  font-variant-numeric:tabular-nums;
+}
+.stateLamp{
+  width:11px;height:11px;border-radius:50%;
+  background:#465463;
+  box-shadow:inset 0 0 0 1px #687784;
+}
+.stateLamp.ready{
+  background:#42c76a;
+  box-shadow:0 0 9px rgba(66,199,106,.8),inset 0 0 0 1px #a7f0b9;
+}
+.stateLamp.off{background:#69727b;box-shadow:none}
+.stateLamp.beamActive{
+  background:#56dd76;
+  box-shadow:0 0 11px rgba(86,221,118,.95),inset 0 0 0 1px #d5ffdf;
+}
+
+.consoleGrid{
+  display:grid;
+  grid-template-columns:minmax(230px,.78fr) minmax(330px,1.2fr) minmax(270px,1fr);
+  gap:10px;
+  padding:10px 12px 12px;
+}
+.consolePowerBlock,.consoleFieldBlock,.consoleDoseBlock{
+  border:1px solid #2d4458;
+  background:#0c151f;
+  border-radius:6px;
+  padding:10px;
+}
+.consolePowerBlock{display:grid;grid-template-columns:.85fr 1.15fr;gap:9px}
+.machinePowerBtn,.beamOnBtn,.beamOffBtn{
+  min-height:48px;
+  border-radius:5px;
+  border:1px solid #40576a;
+  background:#1c2b39;
+  color:#dce8f0;
+  letter-spacing:.04em;
+}
+.machinePowerBtn{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:7px;
+  text-align:left;
+}
+.machinePowerBtn i{
+  width:11px;height:11px;border-radius:50%;background:#68747e;
+}
+.machinePowerBtn.on i{background:#42c76a;box-shadow:0 0 8px rgba(66,199,106,.7)}
+.machinePowerBtn.off{opacity:.72}
+.machinePowerBtn span{font-size:.64rem}
+.machinePowerBtn b{font-size:.75rem}
+.beamButtons{display:grid;grid-template-columns:1.25fr .75fr;gap:7px}
+.beamOnBtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:#174528;
+  border-color:#2a9150;
+  color:#dfffea;
+  text-shadow:0 1px 0 rgba(0,0,0,.3);
+}
+.beamOnBtn i{
+  width:13px;height:13px;border-radius:50%;
+  background:#47d66f;
+  box-shadow:0 0 10px rgba(71,214,111,.72);
+}
+.beamOnBtn:hover:not(:disabled){background:#1d5933}
+.beamOnBtn.active{
+  background:#208d45;
+  border-color:#65e485;
+  box-shadow:0 0 0 1px #65e485 inset,0 0 16px rgba(70,219,111,.35);
+}
+.beamOnBtn.active i{background:#b6ffc8;box-shadow:0 0 14px rgba(182,255,200,1)}
+.beamOnBtn:disabled,.beamOffBtn:disabled{opacity:.32;cursor:not-allowed}
+.beamOffBtn{background:#273440;color:#bfcbd5;font-size:.68rem}
+
+.consoleSectionTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.consoleSectionTitle span{
+  color:#7893a8;
+  font-size:.61rem;
+  font-weight:900;
+  letter-spacing:.09em;
+}
+.consoleSectionTitle b{
+  color:#e8f4fb;
+  font-size:.76rem;
+  font-variant-numeric:tabular-nums;
+}
+.fieldPresets{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.fieldPresets button{
+  min-width:0;
+  padding:7px 4px;
+  border-radius:4px;
+  border-color:#3a5267;
+  background:#162330;
+  color:#aac0d1;
+  font-size:.68rem;
+}
+.fieldPresets button.active{
+  background:#244c6b!important;
+  color:#e9f7ff!important;
+  border-color:#6b9cc2!important;
+}
+.fieldReadout,.doseConsoleReadouts{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:8px;
+}
+.fieldReadout span,.doseConsoleReadouts span{
+  padding:6px 7px;
+  background:#111f2b;
+  border:1px solid #263d50;
+  border-radius:4px;
+  color:#7791a6;
+  font-size:.61rem;
+}
+.fieldReadout b,.doseConsoleReadouts b{
+  display:block;
+  margin-top:2px;
+  color:#e6f1f8;
+  font-size:.72rem;
+  font-variant-numeric:tabular-nums;
+}
+.consoleDoseSlider{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  gap:5px 8px;
+  color:#90a7b9;
+  font-size:.66rem;
+}
+.consoleDoseSlider output{
+  justify-self:end;
+  color:#e9f6fd;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+}
+.consoleDoseSlider input{
+  grid-column:1/-1;
+  width:100%;
+  accent-color:#4fbf72;
+}
+
+@media(max-width:1050px){
+  .consoleTop{grid-template-columns:1fr}
+  .consoleGrid{grid-template-columns:1fr 1fr}
+  .consoleDoseBlock{grid-column:1/-1}
+}
+@media(max-width:700px){
+  .consoleStateStrip{grid-template-columns:1fr 1fr}
+  .consoleGrid{grid-template-columns:1fr}
+  .consoleDoseBlock{grid-column:auto}
+  .consolePowerBlock{grid-template-columns:1fr}
+  .beamButtons{grid-template-columns:1.4fr .8fr}
+}
