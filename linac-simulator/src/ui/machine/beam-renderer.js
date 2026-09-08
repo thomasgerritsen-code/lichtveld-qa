@@ -180,7 +180,7 @@ function renderVectors({sim,geometry,incomingBase,bend,fullNominal,targetState,l
       ?bendIndex(name)
       :incomingEndIndex(name);
 
-    if(index<0)continue;
+    if(index<0||index>=fullNominal.length-1)continue;
 
     const p=fullNominal[Math.min(fullNominal.length-2,index)];
     const q=fullNominal[Math.min(fullNominal.length-1,index+1)];
