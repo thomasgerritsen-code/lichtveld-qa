@@ -150,7 +150,7 @@ export function evaluateRadiationTransport(sim,{mode='photon'}={}){
     status:doseRatePercent===0
       ?'Geen primaire output'
       :firstStrike
-        ?'Beam interception'
+        ?'Bundel onderschept'
         :doseRatePercent<85
           ?'Lage transmissie'
           :'Normale transmissie'
