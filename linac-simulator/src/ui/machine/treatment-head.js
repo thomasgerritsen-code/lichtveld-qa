@@ -55,7 +55,7 @@ export function updateTreatmentHead(params,view,delivery=null){
     `M ${center-4} 774 L ${center+4} 774 L ${center+half} ${patientY} L ${center-half} ${patientY} Z`
   );
 
-  const useful=delivery?.beamActive?Math.max(0,Math.min(1,delivery.beamQuality)):0;
+  const useful=delivery?.beamActive?Math.max(0,Math.min(1,delivery.outputFraction??delivery.beamQuality)):0;
   if(cone) cone.style.opacity=String(Math.max(0,Math.min(1,useful)));
   const central=document.querySelector('#centralRay');
   if(central) central.style.opacity=String(Math.max(0,Math.min(1,useful)));
