@@ -1,4 +1,5 @@
 export const UI_DEFAULTS = Object.freeze({
+  gunEmission:100,gunTiming:0,magPower:100,magTune:0,rfPhase:0,
   f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:50,spread:25,coarse:0,fine:0,fx:10,fy:10,
   doseRateSet:600,gantry:0
 });
@@ -13,7 +14,9 @@ export const MODEL = Object.freeze({
     steer2ToBend:1.4,
     focus1RotationDeg:18,
     focus2RotationDeg:-14,
-    sourceSigma:[.018,.009,.018,.009]
+    sourceSigma:[.018,.009,.018,.009],
+    focus1MaxCompression:.58,
+    focus2MaxCompression:.64
   },
   bend:{
     m1Deg:45,
@@ -42,8 +45,11 @@ export const MODEL = Object.freeze({
     apertures:{
       focus1:{r:.13,t:.13},
       steer1:{r:.12,t:.12},
+      wgAfter1:{r:.034,t:.034},
       focus2:{r:.11,t:.11},
+      wgAfter2:{r:.031,t:.031},
       steer2:{r:.10,t:.10},
+      wgExit:{r:.028,t:.028},
       bendEntry:{r:.105,t:.105},
       m1:{r:.11,t:.12},
       m2:{r:.095,t:.17},
@@ -58,7 +64,8 @@ export const MODEL = Object.freeze({
 });
 
 export const PART_INFO = Object.freeze({
-  gun:['Electron gun','Start van de elektronenbundel.'],
+  gun:['Electron gun','Start van de elektronenbundel. Emission en timing zijn in v14 alleen genormaliseerde onderwijsparameters.'],
+  magnetron:['Magnetron / RF source','Microwave/RF-bron die de travelling-wave accelerating structure voedt. Vermogen, tune/AFC-offset en RF phase zijn genormaliseerde simulatorparameters; geen OEM servicewaarden.'],
   waveguide:['Accelerating waveguide','Travelling-wave versnellingsstructuur.'],
   focus1:['Focus 1','Eerste focuselement vóór primary steering. In het 4D onderwijsmodel bevat het ook een kleine gekoppelde R/T-rotatie.'],
   steer1:['1R / 1T','Primary steering van de elektronenbundel.'],
