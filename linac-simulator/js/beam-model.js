@@ -189,7 +189,7 @@ export function simulate(params,disturbance={},assist={}){
   const mismatch=clamp(1-bend.achromacy,0,1);
   const error=Math.hypot(
     target.r*2.0,target.rp*1.2,target.t*2.0,target.tp*1.2,
-    target.disp*.params?.spread||0
+    target.disp*params.spread*.08
   );
 
   return {
@@ -201,7 +201,7 @@ export function simulate(params,disturbance={},assist={}){
     mismatch,
     achromacy:bend.achromacy,
     spot,
-    error:Math.hypot(target.r*2,target.rp*1.2,target.t*2,target.tp*1.2,target.disp*params.spread*.08),
+    error,
     effectiveBend:bend.effective,
     effectiveSteering:{r2Kick:optics.r2Kick,t2Kick:optics.t2Kick},
     covariance:bend.S,
