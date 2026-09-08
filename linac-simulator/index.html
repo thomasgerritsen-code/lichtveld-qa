@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=6">
+  <link rel="stylesheet" href="./simulator.css?v=7">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -75,7 +75,7 @@
         <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. De relatieve grootte van de bending assembly is nu afgestemd op gepubliceerde Elekta-transportfiguren; exacte OEM-afmetingen in millimeters zijn niet publiek en worden daarom niet verzonnen.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. De flight tube beweegt bij Photon ↔ Electron schematisch via de bellows tussen target- en electron-windowpositie. De visuele slag is genormaliseerd; exacte OEM-afmetingen worden niet gepresenteerd.</p></div>
     </aside>
 
     <section>
@@ -109,11 +109,23 @@
                 <path class="magnetPole" d="M1026 374 L1137 374 L1192 599 L991 599 Z"/>
                 <path class="magnetPole" d="M1170 294 L1450 418 L1260 600 L1161 555 Z"/>
               </g>
-              <g data-part="flightTube" class="component"><path id="flightOuter" class="hit flightOuter" d=""/><path id="flightInner" class="flightInner" d=""/></g>
+              <g id="flightTubeCarriage" data-part="flightTube" class="component selectorMoving">
+                <path id="flightOuter" class="hit flightOuter" d=""/><path id="flightInner" class="flightInner" d=""/>
+              </g>
 
               <g data-part="head" class="component"><path class="hit headShell" d="M1295 717 L1590 717 L1612 972 L1272 972 Z"/><path class="headInner" d="M1325 750 L1562 750 L1576 945 L1309 945 Z"/></g>
-              <g id="photonTarget" data-part="target" class="component"><rect class="hit target" x="1410" y="760" width="78" height="14" rx="3"/></g>
-              <g id="electronWindow" data-part="window" class="component" hidden><line class="hit electronWindow" x1="1412" y1="768" x2="1488" y2="768"/></g>
+
+              <g id="selectorBase">
+                <g id="selectorCarriage" class="selectorMoving">
+                  <g id="photonTarget" data-part="target" class="component"><rect class="hit target" x="1410" y="760" width="78" height="14" rx="3"/></g>
+                  <g id="electronWindow" data-part="window" class="component" hidden><line class="hit electronWindow" x1="1412" y1="768" x2="1488" y2="768"/></g>
+                </g>
+              </g>
+              <g id="selectorGuide" class="selectorGuide">
+                <line x1="1098" y1="726" x2="1164" y2="699"/>
+                <circle cx="1098" cy="726" r="4"/><circle cx="1164" cy="699" r="4"/>
+                <text x="1045" y="696">target/window selector</text>
+              </g>
 
               <g id="photonHead">
                 <path class="primaryColl" d="M1364 792 H1408 L1422 835 H1352 Z"/><path class="primaryColl" d="M1490 792 H1534 L1546 835 H1477 Z"/>
@@ -164,6 +176,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=6"></script>
+<script type="module" src="./js/main.js?v=7"></script>
 </body>
 </html>
