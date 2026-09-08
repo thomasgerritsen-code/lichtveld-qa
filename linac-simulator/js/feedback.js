@@ -19,8 +19,8 @@ export function gantryEnvironment(angleDeg,direction='cw'){
 export function lutAssist(environment,angleDeg){
   const g=angleDeg*DEG;
   return {
-    r2:-(environment.radial.xp*.72 + environment.radial.x*.12) + .00045*Math.sin(3*g),
-    t2:-(environment.transverse.xp*.72 + environment.transverse.x*.12) + .00040*Math.cos(3*g)
+    r2:(environment.radial.xp*.72 + environment.radial.x*.12) + .00045*Math.sin(3*g),
+    t2:(environment.transverse.xp*.72 + environment.transverse.x*.12) + .00040*Math.cos(3*g)
   };
 }
 
@@ -37,8 +37,8 @@ export function chamberSignals(sim){
 
 export function servoAssist(chamber){
   return {
-    r2:-clamp(chamber.radialTilt*.58,-.035,.035),
-    t2:-clamp(chamber.transverseTilt*.58,-.035,.035)
+    r2:clamp(chamber.radialTilt*.34,-.025,.025),
+    t2:clamp(chamber.transverseTilt*.18,-.018,.018)
   };
 }
 
