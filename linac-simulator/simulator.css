@@ -99,3 +99,12 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
   .signalPane{grid-column:auto}
   .qaGrid{padding:9px}
 }
+
+.agilityGrid{display:grid;grid-template-columns:minmax(320px,1fr) .8fr;gap:12px;padding:12px}
+.agilityGrid svg{width:100%;background:#07121e;border-radius:10px}
+.agilityBg{fill:#07121e}.agilityAxis{stroke:#36516d;stroke-dasharray:6 5}
+.agilityLeaves path{fill:#586674;stroke:#93a6b8;stroke-width:1.2}
+.agilityNotes{display:grid;gap:8px;align-content:start}
+.agilityNotes>div{background:#f8fbff;border:1px solid #dce6ef;border-radius:9px;padding:9px}
+.agilityNotes strong{display:block;color:#29415b;font-size:.78rem}.agilityNotes span{display:block;margin-top:3px;color:var(--muted);font-size:.71rem;line-height:1.4}
+@media(max-width:800px){.agilityGrid{grid-template-columns:1fr}}
