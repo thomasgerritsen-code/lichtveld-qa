@@ -148,3 +148,25 @@ Daarom toont v8:
 De bending magnet assembly kan als mechanische assembly bij alignment/maintenance worden verplaatst, maar dat is geen onderdeel van de normale Photon ↔ Electron target-shift animatie.
 
 De visuele slag blijft dimensieloos en is geen OEM mechanische maat.
+
+
+## Control causality v9
+
+De slider-visualisatie is vanaf v9 per fysiek element gesegmenteerd. Dit voorkomt dat een correctie zichtbaar vóór het element optreedt.
+
+Causale mapping:
+- Focus 1 → verandert centroidhoek/envelope pas vanaf Focus 1
+- 1R / 1T → lokale steering-kick bij primary steering; upstream ongewijzigd
+- Focus 2 → pas downstream van Focus 2
+- 2R / 2T → pas downstream van secondary steering
+- Electron momentum → verandert relatieve magnetische rigiditeit; nominale waarde = 1.00
+- Energiespreiding → centrale ray blijft gelijk; chromatische separation/envelope ontstaat vanaf M1
+- Main bending supply → beïnvloedt M1, M2 en M3 vanaf M1
+- M3 top-up → geen effect vóór M3
+- Veld X → beweegt zichtbaar de Agility MLC leaf banks
+- Veld Y → beweegt zichtbaar de diaphragms
+- Gantry → globale genormaliseerde disturbance + optionele LUT/servo response
+
+De machine-side-view is een radiale projectie. Een 1T/2T-correctie kan daarom vooral in de transverse diagnostic view zichtbaar zijn; R/T-koppeling door de vereenvoudigde focusmatrices kan downstream wel een klein radiaal effect geven.
+
+De bending- en momentumrespons is gerefereerd aan de vaste nominale flight-tube orbit. Daardoor geeft een bending-field/momentum mismatch een lokale hoekfout op de juiste magneetpositie in plaats van een kunstmatige verplaatsing over de volledige bend.
