@@ -108,3 +108,23 @@ Bronnen die voor de relatieve schaal zijn gebruikt:
 De visuele bendingsectie is daarom teruggebracht naar ongeveer 0,58 van de vorige SVG-schaal. De verhouding van de complete bendingsectie tot de getekende waveguide komt daarmee ongeveer in het bereik van de gepubliceerde transportfiguren.
 
 Dit is nadrukkelijk een **relatieve bron-geankerde visualisatie**. Publieke bronnen geven geen betrouwbare OEM-maatvoering van de afzonderlijke pole pieces/coils waarmee een exacte mechanische tekening in millimeters kan worden gereconstrueerd.
+
+
+## Photon ↔ Electron target selector v7
+
+De target/window selectie is nu zichtbaar in de machineweergave.
+
+Bronbasis:
+- de AAPM/Waldron Elekta-slalomfiguur beschrijft dat de vacuum bellows beweging van de flight tube mogelijk maakt;
+- de flight tube selecteert verschillende uitgangsposities;
+- één uitgang bevat de X-ray target en een andere uitgang het electron window;
+- Paynter beschrijft de flight tube als het deel dat de elektronen na M1/M2/M3 op target of exit window focust.
+
+Gedrag in de app:
+1. de elektronenbaan door de magneten blijft bij de moduswissel geometrisch vast;
+2. de corrugaties van de bellows bewegen progressief;
+3. de flight-tube carriage verschuift;
+4. in Photon mode staat de target in de vaste elektronenbaan;
+5. in Electron mode schuift de target uit de baan en het electron window erin.
+
+De weergegeven slag (26 SVG-pixels langs de schematische selector-as) is uitsluitend een visuele, dimensieloze animatie. Dit is geen Elekta OEM-mechanische verplaatsingsmaat en geen service-instelling.

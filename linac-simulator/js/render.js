@@ -1,7 +1,40 @@
-import {MODEL} from './config.js?v=6';
+import {MODEL} from './config.js?v=7';
 const DEG=Math.PI/180;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+
+function selectorVector(){
+  const travel=MODEL.visual?.selectorTravelPx||0;
+  const a=(MODEL.visual?.selectorAxisDeg??-22.5)*DEG;
+  return {x:Math.cos(a)*travel,y:Math.sin(a)*travel};
+}
+
+function applySelectorMotion(mode){
+  const v=selectorVector();
+  const electron=mode==='electron';
+  const dx=electron?v.x:0,dy=electron?v.y:0;
+
+  const tube=document.querySelector('#flightTubeCarriage');
+  const carriage=document.querySelector('#selectorCarriage');
+  if(tube) tube.style.transform=`translate(${dx}px,${dy}px)`;
+  if(carriage) carriage.style.transform=`translate(${dx}px,${dy}px)`;
+
+  // Electron window is the second port on the moving carriage. Its static offset
+  // is cancelled when the carriage moves to the electron position.
+  const window=document.querySelector('#electronWindow');
+  if(window) window.setAttribute('transform',`translate(${-v.x.toFixed(2)} ${-v.y.toFixed(2)})`);
+
+  // Progressively move the bellows corrugations: upstream end almost fixed,
+  // downstream end follows the flight tube. This creates a visible accordion motion.
+  const lines=[...document.querySelectorAll('#bellowsLines line')];
+  lines.forEach((line,i)=>{
+    const f=(i+1)/(lines.length+1);
+    line.style.transform=`translate(${(dx*f).toFixed(2)}px,${(dy*f).toFixed(2)}px)`;
+  });
+
+  const guide=document.querySelector('#selectorGuide');
+  if(guide) guide.classList.toggle('electronSelected',electron);
+}
 
 function straight(pts,x,y,a,L,n=10){
   for(let i=1;i<=n;i++){const t=i/n;pts.push({x:x+Math.cos(a)*L*t,y:y+Math.sin(a)*L*t});}
@@ -108,10 +141,31 @@ export function initHardware(){
     }
   }
 
-  const shift=`translate(${MODEL.visual?.headShiftX??-59} 0)`;
-  for(const sel of ['[data-part="head"]','#photonTarget','#electronWindow','#photonHead','#electronHead','[data-part="monitor"]','[data-part="mirror"]','#mlcGroup','#jawsGroup','#electronApplicator','[data-part="patient"]','#treatmentCone','#centralRay']){
+  const shiftX=MODEL.visual?.headShiftX??-59;
+  const shift=`translate(${shiftX} 0)`;
+  for(const sel of ['[data-part="head"]','#photonHead','#electronHead','[data-part="monitor"]','[data-part="mirror"]','#mlcGroup','#jawsGroup','#electronApplicator','[data-part="patient"]','#treatmentCone','#centralRay']){
     const el=document.querySelector(sel);if(el&&!el.hasAttribute('data-shifted')){el.setAttribute('transform',shift);el.setAttribute('data-shifted','1');}
   }
+
+  const selectorBase=document.querySelector('#selectorBase');
+  if(selectorBase) selectorBase.setAttribute('transform',shift);
+
+  const tubeCarriage=document.querySelector('#flightTubeCarriage');
+  const selectorCarriage=document.querySelector('#selectorCarriage');
+  for(const el of [tubeCarriage,selectorCarriage]){
+    if(el){
+      el.style.transition='transform .55s cubic-bezier(.2,.8,.2,1)';
+      el.style.transformBox='fill-box';
+      el.style.transformOrigin='center';
+    }
+  }
+  [...document.querySelectorAll('#bellowsLines line')].forEach(line=>{
+    line.style.transition='transform .55s cubic-bezier(.2,.8,.2,1)';
+    line.style.transformBox='fill-box';
+    line.style.transformOrigin='center';
+  });
+
+  applySelectorMotion('photon');
 }
 
 export function render(params,sim,overlays,view={mode:'photon',filter:'ff'}){
@@ -162,6 +216,8 @@ export function render(params,sim,overlays,view={mode:'photon',filter:'ff'}){
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',4);c.setAttribute('class','vectorDot');vectorLayer.appendChild(c);
     }
   }
+
+  applySelectorMotion(view.mode);
 
   const center=1450,patientY=1080;
   const electronBroad=.82+(.18*(1-params.energy/2));
