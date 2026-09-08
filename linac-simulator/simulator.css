@@ -474,3 +474,22 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
 @media(max-width:650px){
   .rfStatusGrid{grid-template-columns:1fr}
 }
+
+
+.targetConversionFlash{
+  fill:#ffd77d;
+  stroke:#fff4c4;
+  stroke-width:2;
+  opacity:0;
+  pointer-events:none;
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.targetConversionFlash.active{
+  animation:targetPulse .52s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 12px rgba(255,215,125,.9));
+}
+@keyframes targetPulse{
+  from{transform:scale(.72)}
+  to{transform:scale(1.15)}
+}
