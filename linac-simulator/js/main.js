@@ -1,5 +1,5 @@
 import {UI_DEFAULTS,PART_INFO} from './config.js?v=7';
-import {decodeControls,simulate} from './beam-model.js?v=5';
+import {decodeControls,simulate} from './beam-model.js?v=7';
 import {initHardware,render} from './render.js?v=7';
 import {initTraining} from './training.js?v=5';
 import {initMetrics} from './metrics.js?v=5';
