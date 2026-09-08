@@ -42,6 +42,8 @@ export function initDiagnostics(){
         <div><small>Dose B</small><strong id="doseB">1.000</strong></div>
         <div><small>Radial tilt</small><strong id="radialTilt">0.000</strong></div>
         <div><small>Transverse tilt</small><strong id="transverseTilt">0.000</strong></div>
+        <div><small>Field center R/T</small><strong id="fieldCenter">0.000 / 0.000</strong></div>
+        <div><small>Symmetry R/T</small><strong id="fieldSymmetry">0.0 / 0.0</strong></div>
       </div>
       <div class="controlBreakdown">
         <strong>2R/2T control breakdown</strong>
@@ -132,12 +134,16 @@ export function initDiagnostics(){
         renderProfile(profileCard.querySelector('#profileT'),p.transverse);
         profileCard.querySelector('#profileTitleR').textContent=`Radial photon profile · ${filter.toUpperCase()}`;
         profileCard.querySelector('#profileTitleT').textContent=`Transverse photon profile · ${filter.toUpperCase()}`;
+        profileCard.querySelector('#fieldCenter').textContent=`${p.centerR.toFixed(3)} / ${p.centerT.toFixed(3)}`;
+        profileCard.querySelector('#fieldSymmetry').textContent=`${p.symmetryR.toFixed(1)} / ${p.symmetryT.toFixed(1)}`;
       }else{
         const e=electronProfile(sim,params);
         renderProfile(profileCard.querySelector('#profileR'),e.profile);
         renderProfile(profileCard.querySelector('#profileT'),e.profile);
         profileCard.querySelector('#profileTitleR').textContent='Electron fluence · scattering model';
         profileCard.querySelector('#profileTitleT').textContent='Electron fluence · applicator model';
+        profileCard.querySelector('#fieldCenter').textContent=`0.000 / ${e.center.toFixed(3)}`;
+        profileCard.querySelector('#fieldSymmetry').textContent='n.v.t.';
       }
 
       profileCard.querySelector('#doseA').textContent=chamber.doseA.toFixed(3);
