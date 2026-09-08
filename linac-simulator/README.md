@@ -94,3 +94,17 @@ Belangrijkste bronfamilies:
 ## Modelgrenzen
 
 De simulator is educatief. Alle sliders, scores, LUT/servo correcties, magnetische response-coefficients, profile shifts en QA readouts zijn dimensieloos. Exacte Elekta currents, service-items, tolerantiegrenzen, poolprofielen, field maps, calibration procedures en klinische dose data zijn niet gereconstrueerd.
+
+
+## Geometry scale v6
+
+De hoofdtekening gebruikt vanaf v6 een compactere bending-assembly. De eerdere SVG liet M1/M2/M3 visueel bijna even groot worden als de complete acceleratorsectie. Dat past niet bij de gepubliceerde Elekta-transportfiguren.
+
+Bronnen die voor de relatieve schaal zijn gebruikt:
+- Paynter (University of Leeds), Figure 16: Elekta electron transport system
+- Waldron / AAPM refresher course: conceptual 22° → 45° down → 45° up → 112.5° down slalom layout
+- Elekta patent: bevestigt de compacte triple-magnet array rond de flight tube en de functies van M1, M2 en M3
+
+De visuele bendingsectie is daarom teruggebracht naar ongeveer 0,58 van de vorige SVG-schaal. De verhouding van de complete bendingsectie tot de getekende waveguide komt daarmee ongeveer in het bereik van de gepubliceerde transportfiguren.
+
+Dit is nadrukkelijk een **relatieve bron-geankerde visualisatie**. Publieke bronnen geven geen betrouwbare OEM-maatvoering van de afzonderlijke pole pieces/coils waarmee een exacte mechanische tekening in millimeters kan worden gereconstrueerd.
