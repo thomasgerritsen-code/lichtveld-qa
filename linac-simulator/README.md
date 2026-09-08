@@ -234,3 +234,43 @@ Een klein normaal head-scatter component blijft in Photon mode zichtbaar wanneer
 De apertures, scatter yield, target acceptance en dose-rate respons zijn **dimensieloze onderwijsparameters**. Ze zijn niet afkomstig uit Elekta OEM bore-afmetingen, leakage-specificaties of klinische calibraties. De output is daarom relatief ten opzichte van de nominale output van de geselecteerde modus en wordt niet in Gy/min weergegeven.
 
 De bron-audit koppelt dit model aan literatuur over het onderscheid tussen primary radiation, head/collimator scatter, leakage en overige secondary radiation, maar de numerieke v12-respons is bewust een simulatorproxy.
+
+
+## Treatment console / machine state v13
+
+V13 voegt een afzonderlijke operatorlaag toe bovenop de bestaande beam-physics.
+
+### Machine state
+- Machine Power heeft een expliciete ON/OFF-state.
+- BEAM ON kan alleen worden geactiveerd wanneer Machine Power ON is.
+- Machine Power OFF forceert onmiddellijk BEAM OFF.
+- Photon ↔ Electron modewissel forceert BEAM OFF.
+- Wanneer BEAM OFF is, worden electron particles, primary beam, treatment cone, scatter en monitor-chamber dose-signalen niet gerenderd.
+
+De store bewaakt deze invarianten, zodat de UI ze niet per ongeluk kan omzeilen.
+
+### Integrity-style dose rate
+De console biedt een continu dose-rate setpoint van 37–600 MU/min, gebaseerd op publiek beschreven Integrity/CVDR-functionaliteit. Het getoonde useful dose-rate model is:
+
+`useful rate = setpoint × normalized beam transmission`
+
+De machine kan dus bijvoorbeeld op 600 MU/min ingesteld staan terwijl een slecht gestuurde beam minder useful output levert of volledig wordt onderschept.
+
+Dit is een onderwijsproxy. Het simuleert geen echte Elekta dose servo, PRF-code, calibration response of clinical interlock thresholds.
+
+### Veldgrootte
+Veld X en Y worden vanaf v13 in centimeter op isocenter ingevoerd:
+- X = Agility MLC-richting
+- Y = orthogonale diaphragms
+- instelbaar 1–40 cm
+- presets 5×5, 10×10, 20×20, 30×30 en 40×40 cm
+
+De 40×40 cm bovengrens en Agility-architectuur zijn publiek gedocumenteerd.
+
+### Field-output proxy
+Voor photon mode wordt de rechthoekige opening via een equivalent-square benadering samengevat. Het output-factor model is exact 1.000 bij 10×10 cm en volgt alleen de brede publiek gerapporteerde Versa HD trend tussen kleine en grote velden. FF en FFF hebben verschillende curves.
+
+Dit is nadrukkelijk geen commissioning table en mag niet als dose-calibratiedata worden gebruikt.
+
+### UI
+De donkere console, statusblokken en groene active-state cues zijn geïnspireerd op publiek beschikbare Elekta Integrity/Harmony/Versa HD beelden. Er zijn geen OEM screenshots, assets of pixel-exacte interface-elementen gekopieerd.
