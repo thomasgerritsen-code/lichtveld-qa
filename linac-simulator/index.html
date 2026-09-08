@@ -16,7 +16,7 @@
 
 <main class="simShell">
   <div class="simToolbar">
-    <a class="backLink" href="../index.html?v=27">← Dashboard</a>
+    <a class="backLink" href="../index.html?v=28">← Dashboard</a>
     <div class="toolbarActions">
       <button id="resetBtn" type="button">Reset</button>
       <button id="faultBtn" type="button">Voorbeeld afwijking</button>
@@ -26,9 +26,9 @@
 
   <section class="hero">
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
-      <p>Modulaire GitHub Pages-versie met centrale application state, losgekoppelde physics en een opgesplitste machine-renderer voor geometrie, beam, target-selector, treatment head en hardware. Slider-input wordt atomisch verwerkt zodat de bediening niet meer terugschiet.</p>
+      <p>Modulaire GitHub Pages-versie met centrale application state, gekoppelde 4D beam physics, genormaliseerde transport-aperturen, beam-loss/scatter en een relatieve dose rate die afneemt wanneer de bundel slechter door de machine wordt getransporteerd.</p>
     </div>
-    <div class="heroBadges"><span>Architecture v11</span><span>Central store</span><span>Renderer split</span><span>Regression tests</span></div>
+    <div class="heroBadges"><span>Physics v12</span><span>Central store</span><span>Beam loss + scatter</span><span>Variable dose rate</span></div>
   </section>
 
   <div class="layout">
@@ -77,9 +77,10 @@
         <label class="check"><input id="labelsToggle" type="checkbox" checked> Labels</label>
         <label class="check"><input id="badToggle" type="checkbox"> Mismatchpad</label>
         <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
+        <label class="check"><input id="scatterToggle" type="checkbox" checked> Scatter / beam loss</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. De visuele slag is genormaliseerd; exacte OEM-afmetingen worden niet gepresenteerd.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. Beam-loss, scatter en dose rate zijn vanaf v12 als genormaliseerde onderwijsmodellen toegevoegd: geen OEM-aperturen, shieldingberekening of klinische Gy/min-calibratie.</p></div>
     </aside>
 
     <section>
@@ -147,7 +148,7 @@
             <g id="beamLayer">
               <polygon id="envelope2" class="envelope2" points=""></polygon><polygon id="envelope1" class="envelope1" points=""></polygon>
               <path id="dispLow" class="dispLow" d=""/><path id="dispHigh" class="dispHigh" d=""/><path id="mismatchPath" class="mismatchPath" d="" hidden/>
-              <path id="beamPath" class="beamPath" d=""/><path id="beamCore" class="beamCore" d=""/><g id="particles"></g><g id="vectorLayer"></g>
+              <path id="beamPath" class="beamPath" d=""/><path id="beamCore" class="beamCore" d=""/><g id="particles"></g><g id="vectorLayer"></g><g id="scatterLayer"></g>
               <path id="treatmentCone" d="M1446 774 L1454 774 L1558 1080 L1342 1080 Z" fill="url(#photonCone)"/>
               <path id="centralRay" d="M1450 774 L1450 1080" class="centralRay"/>
             </g>
@@ -172,6 +173,15 @@
           <div class="stat"><small>Gantry</small><strong id="gantryOut">0° CW</strong></div>
           <div class="stat"><small>Beam control</small><strong id="controlModeOut">Set only</strong></div>
           <div class="stat"><small>Target D / D′</small><strong id="dispOut">0.000 / 0.000</strong></div>
+          <div class="stat radiationStat"><small>Relatieve dose rate</small><strong id="doseRateOut">100.0%</strong></div>
+          <div class="stat radiationStat"><small>Transport transmissie</small><strong id="transmissionOut">100.0%</strong></div>
+          <div class="stat radiationStat"><small>Scatter index</small><strong id="scatterOut">2.5%</strong></div>
+          <div class="stat radiationStat"><small>Beam interception</small><strong id="wallHitOut">geen</strong></div>
+        </div>
+        <div class="doseRatePanel">
+          <div class="doseRateHead"><strong>Useful-beam dose rate</strong><span id="radiationStatus">Normale transmissie</span></div>
+          <div class="doseRateTrack"><i id="doseRateFill"></i></div>
+          <p>Relatief t.o.v. de nominale output van de gekozen modus. Beam interception in de waveguide/flight tube verhoogt de visuele scatter en kan de primaire output tot 0% reduceren.</p>
         </div>
         <div class="info"><h3 id="partTitle">Volledige bundellijn</h3><p id="partText">Klik op een onderdeel in het overzicht voor uitleg.</p><span id="partPill" class="pill">interactief schema</span></div>
       </article>
