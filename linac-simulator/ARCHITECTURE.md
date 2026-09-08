@@ -36,6 +36,7 @@ src/
 │   ├── beam-state.js
 │   ├── feedback.js
 │   ├── detector.js
+│   ├── radiation-transport.js
 │   ├── math/
 │   │   └── matrix.js
 │   ├── optics/
@@ -146,3 +147,24 @@ Een slider-input moet atomisch worden verwerkt. De action `control/input` schrij
 2. het id van de actieve control voor highlighting.
 
 Er mag niet eerst een aparte highlight-action worden verstuurd en daarna pas de controlwaarde. Dat veroorzaakte in v10 een render tussen beide updates, waardoor de DOM-slider naar de vorige storewaarde terug kon springen.
+
+
+## Radiation transport layer v12
+
+`physics/radiation-transport.js` ontvangt alleen het berekende `sim`-resultaat plus de geselecteerde mode. Het verandert de 4D electron optics niet.
+
+Output:
+- `transportTransmission`
+- `targetCoupling`
+- `primaryTransmission`
+- `doseRatePercent`
+- `scatterIndex`
+- `events[]`
+- `firstStrike`
+
+De UI-laag gebruikt dit resultaat vervolgens op drie plaatsen:
+- `beam-renderer.js` stopt de primary ray bij een harde interceptie;
+- `scatter-renderer.js` visualiseert secundaire straling op de impactpositie;
+- `treatment-head.js` schaalt de treatment cone met de useful-beam transmissie.
+
+Zo blijft de beam-loss/dose-rate logica testbaar zonder SVG of DOM-afhankelijkheid.
