@@ -14,6 +14,22 @@ export function reducer(state,action){
       return {...state,controls:{...state.controls,...action.values}};
     case 'machine/set':
       return {...state,machine:{...state.machine,[action.key]:action.value}};
+    case 'machine/setPower':{
+      const powerOn=Boolean(action.value);
+      return {
+        ...state,
+        machine:{...state.machine,powerOn,beamOn:powerOn?state.machine.beamOn:false}
+      };
+    }
+    case 'machine/setBeam':{
+      const beamOn=Boolean(action.value)&&state.machine.powerOn;
+      return {...state,machine:{...state.machine,beamOn}};
+    }
+    case 'machine/setMode':
+      return {
+        ...state,
+        machine:{...state.machine,mode:action.mode,beamOn:false}
+      };
     case 'beamControl/setMode':
       return {...state,beamControl:{...state.beamControl,mode:action.mode}};
     case 'display/set':
