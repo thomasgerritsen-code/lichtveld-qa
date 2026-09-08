@@ -32,8 +32,15 @@ function wavePosition(name,sim){
 function bendPosition(name,sim){
   const geometry=buildMechanicalGeometry();
   if(name==='target'){
-    const point=geometry.points[geometry.marks.target];
-    return {x:point.x,y:760};
+    const index=geometry.marks.target;
+    const point=geometry.points[index];
+    const normal=tangentNormal(geometry.points,index);
+    const stage=stageMap(sim).get('target');
+    const offset=(stage?.r||0)*(MODEL.visual?.beamOffsetPx||560);
+    return {
+      x:point.x+normal.nx*offset,
+      y:760
+    };
   }
 
   const index=geometry.marks[name];
