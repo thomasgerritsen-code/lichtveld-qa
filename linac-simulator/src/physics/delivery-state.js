@@ -29,7 +29,7 @@ export function evaluateDelivery({radiation,machine,params,mode='photon',filter=
   const powerOn=Boolean(machine?.powerOn);
   const beamRequested=Boolean(machine?.beamOn);
   const beamActive=powerOn&&beamRequested;
-  const setpoint=clamp(params?.doseRateSet??600,30,600);
+  const setpoint=clamp(params?.doseRateSet??600,37,600);
   const beamQuality=clamp(radiation?.primaryTransmission??0,0,1);
 
   const fieldFactor=mode==='photon'
