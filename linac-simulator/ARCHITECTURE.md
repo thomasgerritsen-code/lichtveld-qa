@@ -44,6 +44,13 @@ src/
 │       └── elements.js
 ├── ui/
 │   ├── machine-renderer.js
+│   ├── machine/
+│   │   ├── geometry.js
+│   │   ├── beam-renderer.js
+│   │   ├── target-selector.js
+│   │   ├── treatment-head.js
+│   │   ├── hardware.js
+│   │   └── highlight.js
 │   ├── diagnostics.js
 │   ├── metrics.js
 │   └── training.js
@@ -117,3 +124,25 @@ De service worker gebruikt een nieuwe cache-name per release en haalt tijdens no
 De map `linac-simulator/js/` bevat tijdelijk de v9-modules als rollbackreferentie. De live v10-pagina importeert uitsluitend `src/app/bootstrap.js` en de nieuwe `src/` boom.
 
 Na één stabiele release kan de oude `js/` map in een afzonderlijke cleanup-PR worden verwijderd.
+
+
+## Renderer split v11
+
+De machine-renderer is vanaf v11 alleen nog een facade.
+
+- `ui/machine/geometry.js` — pure SVG/machinegeometrie
+- `ui/machine/beam-renderer.js` — centroid, envelope, dispersie en vectors
+- `ui/machine/target-selector.js` — horizontal target/window carriage + bellows
+- `ui/machine/treatment-head.js` — MLC, diaphragms en treatment cone
+- `ui/machine/hardware.js` — eenmalige SVG hardware-initialisatie
+- `ui/machine/highlight.js` — control → hardware highlighting
+
+Hierdoor kan een visuele wijziging aan bijvoorbeeld de bellows niet meer ongemerkt de beam-path interpolatie of MLC-rendering aanpassen.
+
+## Slider event rule
+
+Een slider-input moet atomisch worden verwerkt. De action `control/input` schrijft daarom in één reducer-pass:
+1. de nieuwe controlwaarde;
+2. het id van de actieve control voor highlighting.
+
+Er mag niet eerst een aparte highlight-action worden verstuurd en daarna pas de controlwaarde. Dat veroorzaakte in v10 een render tussen beide updates, waardoor de DOM-slider naar de vorige storewaarde terug kon springen.
