@@ -54,7 +54,15 @@ export const SOURCES = Object.freeze([
     claims:['22° accelerator entry','45° down / 45° up / 112.5° down','Compact bending/flight-tube geometry','Vacuum bellows permits flight-tube movement','Separate photon-target and electron-window positions']
   },
   {
-    id:'elekta-patent',
+    id:'elekta-target-shift-2023',
+    title:'Elekta Corrective Maintenance – target shift system (public mirror)',
+    url:'https://www.scribd.com/document/842977102/Linac-Corrective-Maintenance-Beam-Physics-and-Dosimetry-1564743-01',
+    type:'manufacturer-manual-public-mirror',
+    scope:'Elekta medical linac target shift / beam bending system',
+    confidence:'high',
+    claims:['Flight tube and target move horizontally between photon and electron home positions','Stainless-steel bellows permits motion relative to the waveguide','Bending magnet assembly is adjacent to the target-shift drive and is not described as moving during normal mode selection']
+  },
+
     title:'Elekta patent – achromatic triple-magnet beam transport',
     url:'https://patents.google.com/patent/EP4010073B1/en',
     type:'patent',
@@ -114,7 +122,7 @@ export const CLAIMS = Object.freeze({
   focusCoupling:{confidence:'medium',sourceIds:['appeldoorn-2020'],label:'Helicale/coupled focusrespons',note:'De app gebruikt een vereenvoudigde gekoppelde 4D matrix, geen OEM solenoid field map.'},
   slalom:{confidence:'high',sourceIds:['elekta-patent','iaea-1196','elekta-how'],label:'M1/M2/M3 slalomfunctie'},
   bendGeometryScale:{confidence:'medium',sourceIds:['paynter-2019','waldron-2002','elekta-patent'],label:'Relatieve bending-assembly schaal',note:'De v6 hoofdtekening gebruikt gepubliceerde schematische verhoudingen. Exacte OEM-afmetingen van coils/pole pieces zijn publiek niet beschikbaar; daarom wordt de schaal als relatieve geometrie en niet als millimetermaat gepresenteerd.'},
-  targetWindowSelector:{confidence:'medium-high',sourceIds:['waldron-2002','paynter-2019'],label:'Bellows / flight-tube target-window selectie',note:'De flight tube beweegt schematisch tussen photon-target en electron-window positie. De app toont de beweging brongetrouw als principe, maar gebruikt geen OEM mechanische slag of timing.'},
+  targetWindowSelector:{confidence:'high',sourceIds:['elekta-target-shift-2023','waldron-2002','paynter-2019'],label:'Bellows / flight-tube target-window selectie',note:'De flight tube + target/window bewegen horizontaal ten opzichte van de waveguide en binnen de vaste bending-magnet assembly. De app gebruikt geen OEM mechanische slag of timing.'},
   bendFields:{confidence:'model',sourceIds:['elekta-patent'],label:'Magnetische veldrespons',note:'Genormaliseerde sector-magnet matrices; geen OEM poolprofielen of veldkaarten.'},
   steeringFeedback:{confidence:'high',sourceIds:['appeldoorn-2020','appeldoorn-2025'],label:'Set + LUT + Servo'},
   agility:{confidence:'high',sourceIds:['agility-focal','agility-model','agility-elekta'],label:'Agility head / MLC'},
