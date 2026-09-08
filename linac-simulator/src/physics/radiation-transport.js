@@ -58,6 +58,8 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
   const events=[];
 
   const rf=sim.rf||null;
+  const emissionIntensity=clamp(rf?.emissionFactor??1,0,1);
+  const capturedIntensity=clamp(rf?.sourceFactor??1,0,1);
   if(rf&&rf.emissionFactor>.002&&rf.captureFactor<.995){
     const lostFraction=clamp((1-rf.captureFactor)*Math.min(1,rf.emissionFactor),0,1);
     if(lostFraction>.002){
@@ -107,7 +109,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
         hard
       };
       events.push(event);
-      wallScatter+=lost*(.70+.20*Math.min(1,q));
+      wallScatter+=lost*(.70+.20*Math.min(1,q))*emissionIntensity;
 
       if(!firstStrike){
         firstStrike={
@@ -199,9 +201,9 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
   const fieldScatterScale=Math.max(.55,Math.min(1.40,.75+.25*(eqSquare/10)));
   const filterScatterScale=filter==='fff'?.65:1;
   const normalHeadScatter=mode==='photon'
-    ?primaryTransmission*.025*fieldScatterScale*filterScatterScale
+    ?primaryTransmission*.025*fieldScatterScale*filterScatterScale*capturedIntensity
     :0;
-  const missScatter=targetLost*.35;
+  const missScatter=targetLost*.35*capturedIntensity;
   const scatterFraction=clamp(wallScatter+missScatter+normalHeadScatter,0,1);
 
   const doseRatePercent=primaryTransmission<.005
