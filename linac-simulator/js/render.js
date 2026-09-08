@@ -195,7 +195,8 @@ export function setActiveControlEffect(effect){
   document.querySelectorAll('.planeAttention').forEach(el=>el.classList.remove('planeAttention'));
   if(!effect)return;
 
-  document.querySelectorAll(`[data-part="${effect.part}"]`).forEach(el=>el.classList.add('controlActiveHardware'));
+  const parts=Array.isArray(effect.part)?effect.part:[effect.part];
+  parts.forEach(part=>document.querySelectorAll(`[data-part="${part}"]`).forEach(el=>el.classList.add('controlActiveHardware')));
 
   if(effect.plane==='radial') document.querySelector('#radialPlane')?.closest('div')?.classList.add('planeAttention');
   if(effect.plane==='transverse') document.querySelector('#transversePlane')?.closest('div')?.classList.add('planeAttention');
@@ -287,10 +288,11 @@ export function render(params,sim,overlays,view={mode:'photon',filter:'ff'}){
   const exitTarget={x:last.x,y:760,state:targetState};
   const fullNominal=[...incoming,...bend.nominal.slice(1),exitTarget];
 
-  // Build state-preserving low/high paths only for the bending section.
-  const low=[...incoming,...bend.low.slice(1),exitTarget];
-  const high=[...incoming,...bend.high.slice(1),exitTarget];
-  const bad=[...incoming,...bend.bad.slice(1),exitTarget];
+  // Preserve residual chromatic separation all the way to the target plane.
+  const lowLast=bend.low[bend.low.length-1],highLast=bend.high[bend.high.length-1],badLast=bend.bad[bend.bad.length-1];
+  const low=[...incoming,...bend.low.slice(1),{x:lowLast.x,y:760,state:targetState}];
+  const high=[...incoming,...bend.high.slice(1),{x:highLast.x,y:760,state:targetState}];
+  const bad=[...incoming,...bend.bad.slice(1),{x:badLast.x,y:760,state:targetState}];
 
   document.querySelector('#flightOuter').setAttribute('d',pathD(geometry.points));
   document.querySelector('#flightInner').setAttribute('d',pathD(geometry.points));
