@@ -42,7 +42,7 @@ export const SOURCES = Object.freeze([
     type:'manufacturer',
     scope:'Elekta linacs – high-level architecture',
     confidence:'high',
-    claims:['Travelling-wave acceleration','Flight-tube magnets','Slalom bending','Target and MLC treatment chain']
+    claims:['Radiofrequency waves accelerate electrons inside the waveguide','Tungsten target converts electron energy into high-energy X-rays','Flight-tube magnets provide Elekta slalom bending','MLC shapes the treatment beam','Independent ionization chambers monitor delivery']
   },
   {
     id:'appeldoorn-2020',
@@ -78,7 +78,16 @@ export const SOURCES = Object.freeze([
     type:'academic-thesis',
     scope:'Elekta Versa HD / Synergy transport schematics',
     confidence:'medium-high',
-    claims:['Relative waveguide-to-bending-section proportions','44° / 44° / 112° transport layout','Compact slalom assembly after the waveguide']
+    claims:['Relative waveguide-to-bending-section proportions','44° / 44° / 112° transport layout','Compact slalom assembly after the waveguide','Magnetron produces high-frequency microwaves injected into the travelling waveguide','Electron gun injects electron pulses','Focusing and steering coils surround the waveguide']
+  },
+  {
+    id:'cashmore-2013',
+    title:'Cashmore – Operation and physical modelling of unflattened medical linac beams',
+    url:'https://etheses.bham.ac.uk/id/eprint/4616/1/Cashmore13PhD.pdf',
+    type:'academic-thesis',
+    scope:'Medical linac / Elekta travelling-wave context',
+    confidence:'medium-high',
+    claims:['Elekta uses a travelling-wave accelerating structure','Magnetron frequency/tuning affects accelerator output','Electron injection must be synchronized with RF','Focusing and steering coils constrain the electron beam and reduce loss in the guide']
   },
   {
     id:'waldron-2002',
@@ -174,14 +183,16 @@ export const SOURCES = Object.freeze([
 
 export const CLAIMS = Object.freeze({
   opticsOrder:{confidence:'high',sourceIds:['appeldoorn-2020'],label:'Focus/steering volgorde'},
-  focusCoupling:{confidence:'medium',sourceIds:['appeldoorn-2020'],label:'Helicale/coupled focusrespons',note:'De app gebruikt een vereenvoudigde gekoppelde 4D matrix, geen OEM solenoid field map.'},
+  focusCoupling:{confidence:'model',sourceIds:['appeldoorn-2020'],label:'Focus 1 / Focus 2 visualisatie',note:'Appeldoorn beschrijft echte Elekta focuscoils als bronnen van helical trajectory rotation. V14 zet die centroid/angle-koppeling op verzoek bewust uit en gebruikt de focus-sliders alleen als opeenvolgende σR/σT-envelopecompressie.'},
+  rfSource:{confidence:'medium-high',sourceIds:['elekta-how','paynter-2019','cashmore-2013'],label:'Magnetron / RF → travelling waveguide',note:'De volgorde RF-bron → waveguide → electron acceleration is brongebaseerd. RF power, tune/AFC, phase en gun timing zijn in de simulator uitsluitend genormaliseerde parameters; geen echte frequenties, vermogens, pulse widths of servicewaarden.'},
+  waveguideInterception:{confidence:'model',sourceIds:['appeldoorn-2020','cashmore-2013','iaea-1196'],label:'Waveguide beam loss / wall interception',note:'Steering kan de gesimuleerde centroid en envelope tegen een virtuele waveguide-aperture sturen. De aperture-afmetingen en scatter yield zijn genormaliseerde onderwijswaarden, geen OEM bores of damage/interlock thresholds.'},
   slalom:{confidence:'high',sourceIds:['elekta-patent','iaea-1196','elekta-how'],label:'M1/M2/M3 slalomfunctie'},
   bendGeometryScale:{confidence:'medium',sourceIds:['paynter-2019','waldron-2002','elekta-patent'],label:'Relatieve bending-assembly schaal',note:'De v6 hoofdtekening gebruikt gepubliceerde schematische verhoudingen. Exacte OEM-afmetingen van coils/pole pieces zijn publiek niet beschikbaar; daarom wordt de schaal als relatieve geometrie en niet als millimetermaat gepresenteerd.'},
   targetWindowSelector:{confidence:'high',sourceIds:['elekta-target-shift-2023','waldron-2002','paynter-2019'],label:'Bellows / flight-tube target-window selectie',note:'De flight tube + target/window bewegen horizontaal ten opzichte van de waveguide en binnen de vaste bending-magnet assembly. De app gebruikt geen OEM mechanische slag of timing.'},
   bendFields:{confidence:'model',sourceIds:['elekta-patent'],label:'Magnetische veldrespons',note:'Genormaliseerde sector-magnet matrices; geen OEM poolprofielen of veldkaarten.'},
   steeringFeedback:{confidence:'high',sourceIds:['appeldoorn-2020','appeldoorn-2025'],label:'Set + LUT + Servo'},
   agility:{confidence:'high',sourceIds:['agility-focal','agility-model','agility-elekta'],label:'Agility head / MLC'},
-  controlCausality:{confidence:'high',sourceIds:['appeldoorn-2020','elekta-patent','versa-commissioning'],label:'Slider → fysiek subsysteem',note:'Steeringcorrecties beginnen bij hun eigen coils, main bending bij M1, M3 top-up pas bij M3 en field X/Y worden aan MLC/diaphragms gekoppeld. De grootte van de respons blijft een genormaliseerd onderwijsmodel.'},
+  controlCausality:{confidence:'high',sourceIds:['appeldoorn-2020','elekta-patent','versa-commissioning','cashmore-2013'],label:'Slider → fysiek subsysteem',note:'Steeringcorrecties beginnen bij hun eigen coils, RF-bronparameters werken vanaf gun/waveguide, main bending bij M1, M3 top-up pas bij M3 en field X/Y worden aan MLC/diaphragms gekoppeld. De grootte van alle responsen blijft een genormaliseerd onderwijsmodel.'},
   photonProfile:{confidence:'model',sourceIds:['fff','agility-focal'],label:'Photon profile koppeling',note:'Kwalitatief educatief profiel; geen dosisberekening.'},
   beamLossScatter:{confidence:'model',sourceIds:['out-of-field-review','iaea-1196','appeldoorn-2025'],label:'Beam loss, scatter en relatieve dose rate',note:'V12 koppelt genormaliseerde beam-interception aan verlies van useful-beam transmissie en een relatieve scatter-index. Dit is geen shieldingberekening, geen leakage-specificatie en geen klinische dose-rate calibratie.'},
   treatmentConsole:{confidence:'medium-high',sourceIds:['integrity-fda','elekta-public-ui'],label:'Treatment-console look & state model',note:'V13 gebruikt publiek zichtbare Elekta/Integrity/Harmony designkenmerken als inspiratie. De layout, knoppen en state-machine zijn een RT-VTech trainingsinterface en geen pixel-exacte OEM-reconstructie.'},
