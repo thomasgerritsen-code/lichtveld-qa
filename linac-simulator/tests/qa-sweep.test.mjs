@@ -102,7 +102,7 @@ function assertHealthy(result,label='case'){
   assert.ok(sim.rf.captureFactor>=-EPS&&sim.rf.captureFactor<=1+EPS,label+' capture range');
   assert.ok(sim.rf.sourceFactor>=-EPS&&sim.rf.sourceFactor<=1.1+EPS,label+' source factor range');
 
-  for(const key of ['primaryTransmission','alignmentFactor','transportTransmission','targetCoupling','scatterFraction','scatterIndex','wallScatterFraction']){
+  for(const key of ['primaryTransmission','alignmentFactor','transportTransmission','targetCoupling','scatterFraction','scatterIndex','wallScatterFraction','normalHeadScatterFraction','missScatterFraction']){
     assertFiniteNumber(radiation[key],label+'.radiation.'+key);
   }
   assert.ok(radiation.primaryTransmission>=-EPS&&radiation.primaryTransmission<=1+EPS,label+' primary transmission range');
@@ -249,6 +249,13 @@ test('focus controls never move centroid and focus 2 can continue focus 1 compre
   );
 });
 
+test('spot readout follows the transported envelope instead of a fixed floor',()=>{
+  const loose=run({f1:0,f2:0});
+  const focused=run({f1:100,f2:100});
+  assert.ok(focused.sim.spot<loose.sim.spot,'focused target spot did not get smaller');
+  assert.ok(focused.sim.spot<.2,'old fixed 0.200 spot floor is still present');
+});
+
 test('each steering axis can create a hard waveguide interception with zero useful rate',()=>{
   for(const id of ['r1','t1','r2','t2']){
     for(const value of [-100,100]){
@@ -339,6 +346,16 @@ test('UI wiring has unique IDs and every controller selector/control exists',()=
   for(const id of controlIds){
     assert.ok(html.includes(`id="${id}"`),'missing input '+id);
     assert.ok(html.includes(`id="${id}v"`),'missing output '+id+'v');
+
+    const tagMatch=html.match(new RegExp('<input[^>]*id="'+id+'"[^>]*>'));
+    assert.ok(tagMatch,'missing input tag '+id);
+    const tag=tagMatch[0];
+    const value=Number((tag.match(/value="([^"]+)"/)||[])[1]);
+    const min=Number((tag.match(/min="([^"]+)"/)||[])[1]);
+    const max=Number((tag.match(/max="([^"]+)"/)||[])[1]);
+    assert.equal(value,UI_DEFAULTS[id],'HTML default differs from model default for '+id);
+    if(Number.isFinite(min))assert.ok(value>=min,id+' default below min');
+    if(Number.isFinite(max))assert.ok(value<=max,id+' default above max');
   }
 });
 
