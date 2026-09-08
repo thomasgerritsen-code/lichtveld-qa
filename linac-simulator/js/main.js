@@ -1,10 +1,10 @@
-import {UI_DEFAULTS,PART_INFO} from './config.js';
-import {decodeControls,simulate} from './beam-model.js';
-import {initHardware,render} from './render.js';
-import {initTraining} from './training.js';
-import {initMetrics} from './metrics.js';
-import {gantryEnvironment,buildControlContext,chamberSignals} from './feedback.js';
-import {initDiagnostics} from './diagnostics.js';
+import {UI_DEFAULTS,PART_INFO} from './config.js?v=5';
+import {decodeControls,simulate} from './beam-model.js?v=5';
+import {initHardware,render} from './render.js?v=5';
+import {initTraining} from './training.js?v=5';
+import {initMetrics} from './metrics.js?v=5';
+import {gantryEnvironment,buildControlContext,chamberSignals} from './feedback.js?v=5';
+import {initDiagnostics} from './diagnostics.js?v=5';
 
 const $=s=>document.querySelector(s);
 const ids=['f1','r1','t1','f2','r2','t2','energy','spread','coarse','fine','fx','fy','gantry'];
