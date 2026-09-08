@@ -95,8 +95,9 @@ export function renderScatter(sim,radiation,{visible=true}={}){
 
   document.querySelectorAll('.beamLossSurface').forEach(element=>element.classList.remove('beamLossSurface'));
 
-  if(visible&&radiation.firstStrike){
-    const stage=radiation.firstStrike.stage;
+  const strike=radiation.hardStrike||radiation.firstStrike;
+  if(visible&&strike){
+    const stage=strike.stage;
     if(['bendEntry','m1','m2','m3'].includes(stage)){
       document.querySelector('#flightOuter')?.classList.add('beamLossSurface');
     }else if(stage==='target'){
@@ -125,7 +126,7 @@ export function renderScatter(sim,radiation,{visible=true}={}){
       point.y,
       5+8*strength,
       .35+.5*strength,
-      event.type==='wall'?'scatterCore wallScatterCore':'scatterCore targetScatterCore'
+      (event.type==='wall'||event.type==='rf-loss')?'scatterCore wallScatterCore':'scatterCore targetScatterCore'
     );
 
     makeCircle(
