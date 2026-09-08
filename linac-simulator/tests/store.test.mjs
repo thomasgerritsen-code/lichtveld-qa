@@ -69,3 +69,13 @@ test('changing photon electron mode forces beam off',()=>{
   assert.equal(store.getState().machine.mode,'electron');
   assert.equal(store.getState().machine.beamOn,false);
 });
+
+
+test('changing FF FFF configuration forces beam off',()=>{
+  const store=createStore();
+  store.dispatch({type:'machine/setBeam',value:true});
+  store.dispatch({type:'machine/setFilter',filter:'fff'});
+
+  assert.equal(store.getState().machine.filter,'fff');
+  assert.equal(store.getState().machine.beamOn,false);
+});
