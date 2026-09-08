@@ -54,6 +54,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
   let transmission=1;
   let wallScatter=0;
   let firstStrike=null;
+  let hardStrike=null;
   const events=[];
 
   const rf=sim.rf||null;
@@ -70,8 +71,15 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
         hard
       });
       wallScatter+=lostFraction*.45;
-      if(hard){
+      if(!firstStrike){
         firstStrike={
+          stage:'wgAfter1',
+          normalizedRadius:1-rf.captureFactor,
+          hard
+        };
+      }
+      if(hard&&!hardStrike){
+        hardStrike={
           stage:'wgAfter1',
           normalizedRadius:1-rf.captureFactor,
           hard:true
@@ -108,19 +116,35 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
           hard
         };
       }
+      if(hard&&!hardStrike){
+        hardStrike={
+          stage:name,
+          normalizedRadius:q,
+          hard:true
+        };
+      }
     }
 
     transmission*=local;
 
-    if(firstStrike?.hard&&firstStrike.stage==='wgAfter1'){
+    if(hardStrike?.stage==='wgAfter1'&&hardStrike.hard){
       transmission=0;
       break;
     }
 
     if(transmission<=1e-4){
       transmission=0;
-      if(firstStrike)firstStrike.hard=true;
-      if(events.length)events[events.length-1].hard=true;
+      if(events.length){
+        const event=events[events.length-1];
+        event.hard=true;
+        if(!hardStrike){
+          hardStrike={
+            stage:event.stage,
+            normalizedRadius:event.normalizedRadius,
+            hard:true
+          };
+        }
+      }
       break;
     }
   }
@@ -146,6 +170,13 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
         hard:true
       };
     }
+    if(coupling.transmission===0&&!hardStrike){
+      hardStrike={
+        stage:'target',
+        normalizedRadius:coupling.combined,
+        hard:true
+      };
+    }
   }
 
   const targetTransmission=transmission*coupling.transmission;
@@ -155,7 +186,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
   const alignmentFactor=Math.exp(-Math.pow(sim.error/.28,2));
 
   let primaryTransmission=targetTransmission*alignmentFactor;
-  if(firstStrike?.hard&&firstStrike.stage!=='target'){
+  if(hardStrike?.hard&&hardStrike.stage!=='target'){
     primaryTransmission=0;
   }
   primaryTransmission=clamp(primaryTransmission,0,1);
@@ -187,6 +218,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     scatterIndex:Math.round(scatterFraction*1000)/10,
     wallScatterFraction:clamp(wallScatter,0,1),
     firstStrike,
+    hardStrike,
     events,
     status:doseRatePercent===0
       ?'Geen primaire output'
