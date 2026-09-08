@@ -103,7 +103,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
       const event={
         stage:name,
         type:'wall',
-        strength:clamp(lost*1.35,0,1),
+        strength:clamp(lost*1.35*emissionIntensity,0,1),
         lostFraction:lost,
         normalizedRadius:q,
         hard
@@ -159,7 +159,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     events.push({
       stage:'target',
       type:mode==='photon'?'target-miss':'window-miss',
-      strength:clamp(targetLost*1.1,0,1),
+      strength:clamp(targetLost*1.1*capturedIntensity,0,1),
       lostFraction:targetLost,
       normalizedRadius:coupling.combined,
       hard:coupling.transmission===0
@@ -219,6 +219,8 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     scatterFraction,
     scatterIndex:Math.round(scatterFraction*1000)/10,
     wallScatterFraction:clamp(wallScatter,0,1),
+    normalHeadScatterFraction:clamp(normalHeadScatter,0,1),
+    missScatterFraction:clamp(missScatter,0,1),
     firstStrike,
     hardStrike,
     events,
