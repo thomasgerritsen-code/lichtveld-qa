@@ -292,6 +292,8 @@ export function createController(){
     $('#rfEnergyOut').textContent=result.sim.rf.effectiveEnergy.toFixed(3)+' rel.';
     $('#rfSpreadOut').textContent=result.sim.rf.effectiveSpread.toFixed(3);
     $('#sourceFactorOut').textContent=(result.sim.rf.sourceFactor*100).toFixed(1)+'%';
+    $('#rfStatusCard').textContent=(result.sim.rf.rfEfficiency*100).toFixed(1)+'%';
+    $('#effectiveEnergyCard').textContent=result.sim.rf.effectiveEnergy.toFixed(3);
 
     trainer?.update(result.sim);
     metrics?.update(result.sim.stages);
