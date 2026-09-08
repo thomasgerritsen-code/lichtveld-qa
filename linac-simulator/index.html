@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=3">
+  <link rel="stylesheet" href="./simulator.css?v=5">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -26,9 +26,9 @@
 
   <section class="hero">
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
-      <p>Modulaire GitHub Pages-versie met live R/R′/T/T′-status per element, een paraxiaal transfer-matrixmodel voor focus/steering, een genormaliseerd sector-magnet model voor de slalom-bendingsectie en een visuele stap-voor-stap oefenmodus. Instellingen zijn dimensieloos.</p>
+      <p>Modulaire GitHub Pages-versie met gekoppelde 4D R/R′/T/T′-optics, covariance/envelope transport, D/D′-dispersie, gantry-afhankelijke Set/LUT/Servo-regeling, treatment profiles en virtuele QA. Alle instellingen blijven dimensieloos.</p>
     </div>
-    <div class="heroBadges"><span>Mobiel</span><span>Desktop</span><span>Live beam state</span><span>Training</span></div>
+    <div class="heroBadges"><span>4D optics</span><span>1σ/2σ envelope</span><span>LUT + Servo</span><span>EPID QA</span></div>
   </section>
 
   <div class="layout">
@@ -42,11 +42,22 @@
         <label>2T – transverse <output id="t2v">0.00</output><input id="t2" type="range" min="-100" max="100" value="0"></label>
       </div></details>
 
+      <details open><summary>Gantry & beam control</summary><div class="controlBody">
+        <label>Gantry angle <output id="gantryv">0°</output><input id="gantry" type="range" min="0" max="360" value="0"></label>
+        <div class="segmented"><button id="dirCw" class="selected" type="button">CW</button><button id="dirCcw" type="button">CCW</button></div>
+        <div class="controlModeGrid">
+          <button id="controlManual" class="selected" type="button">Set only</button>
+          <button id="controlLut" type="button">Set + LUT</button>
+          <button id="controlServo" type="button">Set + LUT + Servo</button>
+        </div>
+        <p class="controlHelp">De LUT en servo gebruiken alleen genormaliseerde modelcorrecties. Geen echte Elekta steering currents of gantry-LUT waarden.</p>
+      </div></details>
+
       <details open><summary>Bending assembly</summary><div class="controlBody">
         <label>Relatieve energie <output id="energyv">1.00</output><input id="energy" type="range" min="0" max="100" value="55"></label>
         <label>Energiespreiding <output id="spreadv">0.25</output><input id="spread" type="range" min="0" max="100" value="25"></label>
-        <label>Bending coarse <output id="coarsev">0.00</output><input id="coarse" type="range" min="-100" max="100" value="0"></label>
-        <label>Bending fine (M3) <output id="finev">0.00</output><input id="fine" type="range" min="-100" max="100" value="0"></label>
+        <label>Main bending supply <output id="coarsev">0.00</output><input id="coarse" type="range" min="-100" max="100" value="0"></label>
+        <label>M3 top-up / fine channel <output id="finev">0.00</output><input id="fine" type="range" min="-100" max="100" value="0"></label>
       </div></details>
 
       <details><summary>Behandelkop</summary><div class="controlBody">
@@ -58,6 +69,7 @@
 
       <details><summary>Overlays</summary><div class="controlBody">
         <label class="check"><input id="dispToggle" type="checkbox" checked> Energiedispersie</label>
+        <label class="check"><input id="envelopeToggle" type="checkbox" checked> 1σ / 2σ envelope</label>
         <label class="check"><input id="labelsToggle" type="checkbox" checked> Labels</label>
         <label class="check"><input id="badToggle" type="checkbox"> Mismatchpad</label>
         <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
@@ -117,6 +129,7 @@
             </g>
 
             <g id="beamLayer">
+              <polygon id="envelope2" class="envelope2" points=""></polygon><polygon id="envelope1" class="envelope1" points=""></polygon>
               <path id="dispLow" class="dispLow" d=""/><path id="dispHigh" class="dispHigh" d=""/><path id="mismatchPath" class="mismatchPath" d="" hidden/>
               <path id="beamPath" class="beamPath" d=""/><path id="beamCore" class="beamCore" d=""/><g id="particles"></g><g id="vectorLayer"></g>
               <path id="treatmentCone" d="M1446 774 L1454 774 L1558 1080 L1342 1080 Z" fill="url(#photonCone)"/>
@@ -140,6 +153,9 @@
           <div class="stat"><small>Modus</small><strong id="modeOut">Photon FF</strong></div>
           <div class="stat"><small>Radial drift</small><strong id="radOut">0.00</strong></div>
           <div class="stat"><small>Transverse drift</small><strong id="traOut">0.00</strong></div>
+          <div class="stat"><small>Gantry</small><strong id="gantryOut">0° CW</strong></div>
+          <div class="stat"><small>Beam control</small><strong id="controlModeOut">Set only</strong></div>
+          <div class="stat"><small>Target D / D′</small><strong id="dispOut">0.000 / 0.000</strong></div>
         </div>
         <div class="info"><h3 id="partTitle">Volledige bundellijn</h3><p id="partText">Klik op een onderdeel in het overzicht voor uitleg.</p><span id="partPill" class="pill">interactief schema</span></div>
       </article>
@@ -148,6 +164,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=4"></script>
+<script type="module" src="./js/main.js?v=5"></script>
 </body>
 </html>
