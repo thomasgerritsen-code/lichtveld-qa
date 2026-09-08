@@ -251,9 +251,7 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
     return incomingStageIndex(name);
   };
 
-  const hardStrikeStage=radiation?.firstStrike?.hard
-    ?radiation.firstStrike.stage
-    :null;
+  const hardStrikeStage=radiation?.hardStrike?.stage||null;
   const hardStrikeIndex=hardStrikeStage
     ?fullStageIndex(hardStrikeStage)
     :-1;
