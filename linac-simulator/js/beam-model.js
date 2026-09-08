@@ -71,7 +71,7 @@ export function decodeControls(raw){
     r1:raw.r1/100,t1:raw.t1/100,
     f2:.55+(raw.f2/100)*1.35,
     r2:raw.r2/100,t2:raw.t2/100,
-    energy:.90+(raw.energy/100)*.20,
+    energy:.96+(raw.energy/100)*.08,
     spread:raw.spread/100,
     mainBend:raw.coarse/100,
     m3Topup:raw.fine/100,
@@ -150,18 +150,21 @@ function bending4D(optics,params,disturbance={}){
     const nominalTheta=b[['m1Deg','m2Deg','m3Deg'][index]]*DEG;
     const rho=b.rho[index];
 
-    // Normalized educational response: at fixed field a higher momentum bends less.
-    // Main supply affects all three magnets; M3 top-up affects M3 only.
-    const mainResponse=1+main*.10;
-    const topupResponse=index===2?(1+topup*.10):1;
-    const theta=nominalTheta*mainResponse*topupResponse/params.energy;
+    // The transport coordinates are referenced to the fixed nominal flight-tube path.
+    // A field/momentum mismatch therefore appears as an angular error after the magnet.
+    const mainResponse=1+main*.04;
+    const topupResponse=index===2?(1+topup*.06):1;
+    const actualTheta=nominalTheta*mainResponse*topupResponse/params.energy;
+    const bendError=actualTheta-nominalTheta;
 
-    const M=sectorM(theta,rho);
-    const g=sectorDispersion(theta,rho,b.dispersionScale[index]);
+    const M=sectorM(nominalTheta,rho);
+    const dispersionGain=actualTheta/nominalTheta;
+    const g=sectorDispersion(nominalTheta,rho,b.dispersionScale[index]*dispersionGain);
 
     x=addv(mv(M,x),scalev(g,delta));
     S=covProp(S,M);
     D=addv(mv(M,D),g);
+    x=kickState(x,bendError,0);
     stages.push(makeStage(name,x,S,D,params.spread));
     maxDisp.push(Math.abs(D[0]));
 
