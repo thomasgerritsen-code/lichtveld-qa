@@ -19,8 +19,8 @@ const SCENARIOS={
   },
   bending:{
     label:'Bending mismatch',
-    description:'De bending-array heeft een verborgen coarse/fine-offset. Breng target-offset en de resterende dispersie terug richting de nominale toestand.',
-    hint:'Coarse werkt in dit model op de volledige M1/M2/M3-array. Fine is een extra M3-trim. Omdat die twee ingrepen niet op dezelfde plek werken, kun je de eindtoestand met beide verfijnen.',
+    description:'De bending-array heeft een verborgen main-supply/M3-top-up-offset. Breng target-offset en de resterende dispersie terug richting de nominale toestand.',
+    hint:'Main bending supply werkt in dit model op de volledige M1/M2/M3-array. M3 top-up is de extra laatste-magneettrim. Omdat die twee ingrepen niet op dezelfde plek werken, kun je de eindtoestand met beide verfijnen.',
     controls:['coarse','fine'],
     axis:['Target R','Disp.'],
     hardware:['slalom','slalom','target'],
@@ -152,11 +152,11 @@ export function initTraining({controls,onChange}){
     if(active==='bending'){
       panel.querySelector('#step1Title').textContent='Bekijk de bending-fout';
       panel.querySelector('#step1Text').textContent='Target-offset en dispersie staan niet tegelijk nominaal.';
-      panel.querySelector('#step2Title').textContent='Corrigeer met Coarse';
-      panel.querySelector('#step2Text').textContent='Coarse verschuift de respons van de volledige slalom-array.';
-      panel.querySelector('#step3Title').textContent='Trim met Fine';
-      panel.querySelector('#step3Text').textContent='Fine werkt later in de lijn en geeft daarom een andere eindrespons.';
-      whyText.textContent='Coarse en Fine zijn in dit educatieve model twee verschillende response-richtingen. Coarse beïnvloedt de gehele M1/M2/M3-keten; Fine voegt een extra M3-trim toe. Twee verschillende response-richtingen geven meer vrijheid om de eindtoestand te centreren.';
+      panel.querySelector('#step2Title').textContent='Corrigeer met Main supply';
+      panel.querySelector('#step2Text').textContent='Main supply verschuift de respons van de volledige slalom-array.';
+      panel.querySelector('#step3Title').textContent='Trim met M3 top-up';
+      panel.querySelector('#step3Text').textContent='M3 top-up werkt alleen op de laatste modelsectie en geeft daarom een andere eindrespons.';
+      whyText.textContent='Main supply en M3 top-up zijn in dit educatieve model twee verschillende response-richtingen. Main supply beïnvloedt de gehele M1/M2/M3-keten; M3 top-up voegt een extra laatste-magneettrim toe. Twee verschillende response-richtingen geven meer vrijheid om de eindtoestand te centreren.';
     }else{
       const names={r1:'1R',r2:'2R',t1:'1T',t2:'2T'};
       const [c1,c2]=s.controls.map(id=>names[id]||id);
