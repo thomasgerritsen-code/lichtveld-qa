@@ -119,3 +119,16 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
 .selectorGuide text{stroke:none;fill:#8fa6bb;font-size:10px;font-weight:700}
 .selectorGuide.electronSelected{stroke:#81e7d6;fill:#81e7d6;opacity:.9}
 #bellowsLines line{will-change:transform}
+
+/* v9 control causality */
+.effectBanner{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border-bottom:1px solid #dce4ec;background:#f7fbff}
+.effectBanner strong{min-width:118px;color:#1961ab;font-size:.76rem}
+.effectBanner span{color:#536679;font-size:.75rem;line-height:1.4}
+.controlActiveLabel{padding:7px!important;border-radius:8px;background:#eef6ff;outline:2px solid #7db8ff}
+.controlActiveHardware .hit,.controlActiveHardware .magnetPole{stroke:#52df99!important;stroke-width:5!important;filter:drop-shadow(0 0 8px #52df99)}
+.planeAttention{outline:3px solid #52df99;outline-offset:2px;box-shadow:0 0 0 4px #52df9922}
+#mlcLeft,#mlcRight{will-change:transform}
+@media(max-width:650px){
+  .effectBanner{display:grid;gap:3px}
+  .effectBanner strong{min-width:0}
+}
