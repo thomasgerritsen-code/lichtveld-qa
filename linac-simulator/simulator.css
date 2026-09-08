@@ -132,3 +132,29 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
   .effectBanner{display:grid;gap:3px}
   .effectBanner strong{min-width:0}
 }
+
+
+/* v12 beam loss / scatter / relative dose rate */
+.radiationStat strong{font-variant-numeric:tabular-nums}
+.doseRatePanel{margin:10px 12px 0;padding:10px 12px;border:1px solid #dce6ef;border-radius:10px;background:#f8fbff}
+.doseRateHead{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.doseRateHead strong{font-size:.8rem;color:#29415b}
+.doseRateHead span{font-size:.72rem;color:#536679}
+.doseRateTrack{height:12px;margin-top:8px;border-radius:999px;background:#e4ebf2;overflow:hidden;border:1px solid #cfd9e3}
+.doseRateTrack i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#d76b3f,#e0b34d,#3d9f58);transition:width .18s ease}
+.doseRateTrack i.zero{width:0!important}
+.doseRatePanel p{margin:7px 0 0;color:var(--muted);font-size:.7rem;line-height:1.4}
+
+.scatterRay{stroke:#ff9d57;stroke-linecap:round;filter:drop-shadow(0 0 2px rgba(255,157,87,.45))}
+.scatterCore{fill:#ff9d57;stroke:#ffe0bf;stroke-width:1.2;filter:drop-shadow(0 0 6px rgba(255,123,54,.8))}
+.wallScatterCore{fill:#ff754c}
+.targetScatterCore{fill:#ffc15a}
+.scatterHalo{fill:none;stroke:#ffad66;stroke-width:2;stroke-dasharray:5 6;filter:drop-shadow(0 0 4px rgba(255,173,102,.35))}
+.normalHeadScatter{stroke-width:1.2;stroke-dasharray:3 8}
+.wallStrikeActive{stroke:#ff744d!important;filter:drop-shadow(0 0 8px rgba(255,116,77,.85))}
+#scatterLayer{pointer-events:none}
+#treatmentCone,#centralRay{transition:opacity .18s ease}
+
+@media(max-width:650px){
+  .doseRateHead{align-items:flex-start;flex-direction:column;gap:2px}
+}
