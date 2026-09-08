@@ -12,8 +12,6 @@ export const MODEL = Object.freeze({
     steer1ToF2:1.2,
     f2ToSteer2:1.0,
     steer2ToBend:1.4,
-    focus1RotationDeg:18,
-    focus2RotationDeg:-14,
     sourceSigma:[.018,.009,.018,.009],
     focus1MinScale:.55,
     focus2MinScale:.30
