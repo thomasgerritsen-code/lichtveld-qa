@@ -1,5 +1,6 @@
 export const UI_DEFAULTS = Object.freeze({
-  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:55,spread:25,coarse:0,fine:0,fx:60,fy:60
+  f1:60,r1:0,t1:0,f2:62,r2:0,t2:0,energy:55,spread:25,coarse:0,fine:0,fx:60,fy:60,
+  gantry:0
 });
 
 export const MODEL = Object.freeze({
@@ -9,32 +10,38 @@ export const MODEL = Object.freeze({
     f1ToSteer1:1.0,
     steer1ToF2:1.2,
     f2ToSteer2:1.0,
-    steer2ToBend:1.4
+    steer2ToBend:1.4,
+    focus1RotationDeg:18,
+    focus2RotationDeg:-14,
+    sourceSigma:[.018,.009,.018,.009]
   },
   bend:{
     m1Deg:45,
     m2Deg:-45,
-    m3Deg:112.5
+    m3Deg:112.5,
+    rho:[1.0,.95,1.18],
+    drift:[.85,.90,.55],
+    dispersionScale:[1.0,2.0312423,.29325213]
   }
 });
 
 export const PART_INFO = Object.freeze({
   gun:['Electron gun','Start van de elektronenbundel.'],
   waveguide:['Accelerating waveguide','Travelling-wave versnellingsstructuur.'],
-  focus1:['Focus 1','Eerste focuselement vóór primary steering.'],
+  focus1:['Focus 1','Eerste focuselement vóór primary steering. In het 4D onderwijsmodel bevat het ook een kleine gekoppelde R/T-rotatie.'],
   steer1:['1R / 1T','Primary steering van de elektronenbundel.'],
   focus2:['Focus 2','Tweede focuselement tussen primary en secondary steering.'],
-  steer2:['2R / 2T','Secondary steering vóór de bending assembly.'],
+  steer2:['2R / 2T','Secondary steering vóór de bending assembly. Set, LUT en servo kunnen hier als afzonderlijke bijdragen worden weergegeven.'],
   bellows:['Centre joint / bellows','Vacuumovergang vóór de flight tube.'],
   slalom:['Slalom bending assembly','M1, M2 en M3 vormen samen de achromatische bendingsectie.'],
   flightTube:['Flight tube','Geëvacueerde flight tube door de drie bendingmagneten.'],
   head:['Treatment head','Behandelkop met target/window, monitoring en collimatie.'],
   target:['Target','Photon mode: elektronen produceren bremsstrahlung in de target.'],
   window:['Electron window','Electron mode: de target wordt omzeild.'],
-  filter:['FF / FFF','Flattening filter aanwezig in FF en uit de bundel in FFF.'],
-  monitor:['Monitor chamber','Bewaking van de uitgezonden bundel.'],
+  filter:['FF / FFF','FF en FFF worden als verschillende relatieve profielmodellen weergegeven; niet alleen als filter zichtbaar/onzichtbaar.'],
+  monitor:['Monitor chamber','In het model levert de chamber relatieve dose- en tilt-signalen voor de virtuele servo.'],
   mirror:['Mirror','Optische lichtveld-/veldprojectie.'],
-  mlc:['Agility MLC','MLC ligt dichter bij de bron dan de Y-diaphragms.'],
+  mlc:['Agility MLC','160-leaf Agility-principe; leaf tips en defocus worden schematisch weergegeven.'],
   jaws:['Y diaphragms','Y-collimatie onder de MLC.'],
   applicator:['Electron applicator','Collimatie voor electronbehandeling.'],
   patient:['Patiëntvlak','Eind van het weergegeven bundeltraject.']
