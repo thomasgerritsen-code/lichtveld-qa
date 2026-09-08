@@ -158,10 +158,10 @@ export function renderScatter(sim,radiation,{visible=true}={}){
   });
 
   // Normal head scatter remains intentionally faint compared with wall interception.
-  if(radiation.primaryTransmission>.02){
+  if((radiation.normalHeadScatterFraction||0)>.0001){
     const target=stagePosition('target',sim);
     if(target){
-      const normalStrength=Math.min(.18,radiation.primaryTransmission*.10);
+      const normalStrength=Math.min(.18,(radiation.normalHeadScatterFraction||0)*4);
       makeCircle(
         group,
         target.x,
