@@ -36,6 +36,24 @@ export const SOURCES = Object.freeze([
     claims:['Steering and focusing coils','Evacuated transport','Bending magnets','Electron window, scattering foils and applicators']
   },
   {
+    id:'paynter-2019',
+    title:'Paynter – Elekta electron transport system (PhD thesis, Leeds)',
+    url:'https://etheses.whiterose.ac.uk/id/eprint/25617/1/thesis_submission.pdf',
+    type:'academic-thesis',
+    scope:'Elekta Versa HD / Synergy transport schematics',
+    confidence:'medium-high',
+    claims:['Relative waveguide-to-bending-section proportions','44° / 44° / 112° transport layout','Compact slalom assembly after the waveguide']
+  },
+  {
+    id:'waldron-2002',
+    title:'Waldron – AAPM computer-controlled medical linac refresher course',
+    url:'https://ccah.vetmed.ucdavis.edu/sites/g/files/dgvnsk4586/files/local_resources/pdfs/rad-onc-matney-x-ray-generators.pdf',
+    type:'AAPM-education',
+    scope:'Conceptual Elekta-style slalom layout',
+    confidence:'medium',
+    claims:['22° accelerator entry','45° down / 45° up / 112.5° down','Compact bending/flight-tube geometry']
+  },
+  {
     id:'elekta-patent',
     title:'Elekta patent – achromatic triple-magnet beam transport',
     url:'https://patents.google.com/patent/EP4010073B1/en',
@@ -95,6 +113,7 @@ export const CLAIMS = Object.freeze({
   opticsOrder:{confidence:'high',sourceIds:['appeldoorn-2020'],label:'Focus/steering volgorde'},
   focusCoupling:{confidence:'medium',sourceIds:['appeldoorn-2020'],label:'Helicale/coupled focusrespons',note:'De app gebruikt een vereenvoudigde gekoppelde 4D matrix, geen OEM solenoid field map.'},
   slalom:{confidence:'high',sourceIds:['elekta-patent','iaea-1196','elekta-how'],label:'M1/M2/M3 slalomfunctie'},
+  bendGeometryScale:{confidence:'medium',sourceIds:['paynter-2019','waldron-2002','elekta-patent'],label:'Relatieve bending-assembly schaal',note:'De v6 hoofdtekening gebruikt gepubliceerde schematische verhoudingen. Exacte OEM-afmetingen van coils/pole pieces zijn publiek niet beschikbaar; daarom wordt de schaal als relatieve geometrie en niet als millimetermaat gepresenteerd.'},
   bendFields:{confidence:'model',sourceIds:['elekta-patent'],label:'Magnetische veldrespons',note:'Genormaliseerde sector-magnet matrices; geen OEM poolprofielen of veldkaarten.'},
   steeringFeedback:{confidence:'high',sourceIds:['appeldoorn-2020','appeldoorn-2025'],label:'Set + LUT + Servo'},
   agility:{confidence:'high',sourceIds:['agility-focal','agility-model','agility-elekta'],label:'Agility head / MLC'},
