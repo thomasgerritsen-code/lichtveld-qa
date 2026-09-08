@@ -11,8 +11,8 @@ function norm(arr){
 export function photonProfiles(sim,params,filter='ff'){
   const t=sim.target;
   const samples=81;
-  const fieldHalfR=.18+.72*params.fy;
-  const fieldHalfT=.18+.72*params.fx;
+  const fieldHalfR=clamp(.92*params.fy,.025,.92);
+  const fieldHalfT=clamp(.92*params.fx,.025,.92);
   const shiftR=clamp(t.r*5.5,-.22,.22);
   const shiftT=clamp(t.t*5.5,-.22,.22);
   const skewR=clamp(t.rp*4.0,-.18,.18);
@@ -48,7 +48,7 @@ export function photonProfiles(sim,params,filter='ff'){
 export function electronProfile(sim,params){
   const t=sim.target;
   const pts=[];
-  const half=.22+.68*Math.min(params.fx,params.fy);
+  const half=clamp(.08+.84*Math.min(params.fx,params.fy),.08,.92);
   const center=clamp(t.t*4.5,-.18,.18);
   const scatter=.08+.16*(1-params.energy/2);
   for(let i=0;i<81;i++){
@@ -70,6 +70,6 @@ export function virtualEpid(sim,params){
     focal:{x:focalT,y:focalR},
     mlcCenter,diaphragmCenter,
     separation:Math.hypot(mlcCenter.x-diaphragmCenter.x,mlcCenter.y-diaphragmCenter.y),
-    field:{x:.22+.68*params.fx,y:.22+.68*params.fy}
+    field:{x:clamp(.92*params.fx,.025,.92),y:clamp(.92*params.fy,.025,.92)}
   };
 }
