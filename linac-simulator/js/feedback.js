@@ -37,8 +37,8 @@ export function chamberSignals(sim){
 
 export function servoAssist(chamber){
   return {
-    r2:clamp(chamber.radialTilt*.34,-.025,.025),
-    t2:clamp(chamber.transverseTilt*.18,-.018,.018)
+    r2:clamp(chamber.radialTilt*.30,-.025,.025),
+    t2:clamp(chamber.transverseTilt*-.18,-.018,.018)
   };
 }
 
