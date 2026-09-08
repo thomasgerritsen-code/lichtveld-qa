@@ -278,6 +278,7 @@ export function createController(){
     $('#fieldFactorOut').textContent=result.delivery.fieldFactor.toFixed(3);
     $('#doseCommandConsole').textContent=Math.round(result.delivery.setpoint)+' MU/min';
     $('#doseActualConsole').textContent=Math.round(result.delivery.usefulDoseRate)+' MU/min';
+    $('#patientOutputConsole').textContent=Math.round(result.delivery.patientOutputProxy)+' rel./min';
     $('#outputFactorConsole').textContent=result.delivery.fieldFactor.toFixed(3);
 
     trainer?.update(result.sim);
