@@ -79,6 +79,7 @@ export function initDiagnostics(){
   viewer.appendChild(sourceCard);
 
   const qaToggle=qaCard.querySelector('#qaToggle');
+  qaToggle.addEventListener('change',()=>qaCard.querySelector('#epidSvg').classList.toggle('qaActive',qaToggle.checked));
 
   function renderPlane(svg,stages,axis){
     svg.innerHTML='';
