@@ -229,9 +229,9 @@ export function createController(){
 
   function bindEvents(){
     CONTROL_IDS.forEach(id=>{
-      controls[id].addEventListener('input',()=>{
-        store.dispatch({type:'runtime/set',key:'activeControlId',value:id});
-        store.dispatch({type:'control/set',id,value:+controls[id].value});
+      controls[id].addEventListener('input',event=>{
+        const value=Number(event.currentTarget.value);
+        store.dispatch({type:'control/input',id,value});
       });
     });
 

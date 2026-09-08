@@ -32,3 +32,17 @@ test('reset creates a clean independent state',()=>{
   assert.equal(state.machine.mode,'photon');
   assert.equal(state.display.dispersion,true);
 });
+
+
+test('slider input updates value and active highlight in one renderable state',()=>{
+  const store=createStore();
+  let notifications=0;
+  store.subscribe(()=>{notifications+=1;});
+
+  store.dispatch({type:'control/input',id:'r1',value:37});
+
+  const state=store.getState();
+  assert.equal(state.controls.r1,37);
+  assert.equal(state.runtime.activeControlId,'r1');
+  assert.equal(notifications,1);
+});

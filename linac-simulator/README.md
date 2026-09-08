@@ -187,3 +187,20 @@ Belangrijkste wijzigingen:
 - GitHub Actions test iedere relevante pull request.
 
 Zie [ARCHITECTURE.md](./ARCHITECTURE.md) voor de ontwikkelstructuur.
+
+
+## Renderer / slider fix v11
+
+V11 corrigeert een architectuurregressie uit v10: slider-input werd in twee afzonderlijke store-actions verwerkt. De eerste action activeerde highlighting en veroorzaakte direct een render; die render kon de slider terugzetten voordat de nieuwe waarde was opgeslagen.
+
+De nieuwe `control/input` action verwerkt waarde + highlight atomisch en veroorzaakt één store-notificatie.
+
+Daarnaast is de monolithische machine-renderer opgesplitst in:
+- geometry
+- beam renderer
+- target/bellows selector
+- treatment head / MLC
+- hardware initialization
+- highlighting
+
+Een regressietest controleert expliciet dat één slider-input één notification geeft en tegelijk zowel de controlwaarde als de actieve highlight opslaat.
