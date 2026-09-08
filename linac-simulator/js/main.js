@@ -1,7 +1,7 @@
 import {UI_DEFAULTS,PART_INFO} from './config.js';
 import {decodeControls,simulate} from './beam-model.js';
 import {initHardware,render} from './render.js';
-import {initTraining} from './training.js';
+import {initTraining} from './training.js?v=4';
 import {initMetrics} from './metrics.js';
 
 const $=s=>document.querySelector(s);
