@@ -1,4 +1,4 @@
-const CACHE='linac-dashboard-v33-linac-physics-v5';
+const CACHE='linac-dashboard-v34-bending-geometry-v6';
 const CORE=[
   './','./index.html?v=21','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',
@@ -7,7 +7,7 @@ const CORE=[
   './meetdata-helper.html?v=3','./meetdata-clipboard-helper-v1.js?v=3','./referentieblad_apriltag36h11_v4.svg?v=1',
   './periodieke-controles.html?v=13','./style.css?v=13','./app_v7.js?v=13','./weekly.js?v=13',
   './manuals.html?v=1','./all-diagrams.html?v=3',
-  './linac-simulator/index.html?v=5','./linac-simulator/simulator.css?v=5','./linac-simulator/js/config.js?v=5','./linac-simulator/js/beam-model.js?v=5','./linac-simulator/js/render.js?v=5','./linac-simulator/js/training.js?v=5','./linac-simulator/js/metrics.js?v=5','./linac-simulator/js/feedback.js?v=5','./linac-simulator/js/detector.js?v=5','./linac-simulator/js/diagnostics.js?v=5','./linac-simulator/js/sources.js?v=5','./linac-simulator/js/main.js?v=5'
+  './linac-simulator/index.html?v=6','./linac-simulator/simulator.css?v=6','./linac-simulator/js/config.js?v=6','./linac-simulator/js/beam-model.js?v=6','./linac-simulator/js/render.js?v=6','./linac-simulator/js/training.js?v=5','./linac-simulator/js/metrics.js?v=5','./linac-simulator/js/feedback.js?v=5','./linac-simulator/js/detector.js?v=5','./linac-simulator/js/diagnostics.js?v=6','./linac-simulator/js/sources.js?v=6','./linac-simulator/js/main.js?v=6'
 ];
 const REFERENCES=['referentieblad_apriltag36h11_v3.svg','referentieblad_apriltag36h11_v4.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()))});
