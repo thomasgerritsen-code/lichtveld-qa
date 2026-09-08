@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=7">
+  <link rel="stylesheet" href="./simulator.css?v=8">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -16,7 +16,7 @@
 
 <main class="simShell">
   <div class="simToolbar">
-    <a class="backLink" href="../index.html?v=21">← Dashboard</a>
+    <a class="backLink" href="../index.html?v=24">← Dashboard</a>
     <div class="toolbarActions">
       <button id="resetBtn" type="button">Reset</button>
       <button id="faultBtn" type="button">Voorbeeld afwijking</button>
@@ -75,7 +75,7 @@
         <label class="check"><input id="vectorsToggle" type="checkbox"> Positie/hoek-vectoren</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. De flight tube beweegt bij Photon ↔ Electron schematisch via de bellows tussen target- en electron-windowpositie. De visuele slag is genormaliseerd; exacte OEM-afmetingen worden niet gepresenteerd.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. De visuele slag is genormaliseerd; exacte OEM-afmetingen worden niet gepresenteerd.</p></div>
     </aside>
 
     <section>
@@ -122,9 +122,9 @@
                 </g>
               </g>
               <g id="selectorGuide" class="selectorGuide">
-                <line x1="1098" y1="726" x2="1164" y2="699"/>
-                <circle cx="1098" cy="726" r="4"/><circle cx="1164" cy="699" r="4"/>
-                <text x="1045" y="696">target/window selector</text>
+                <line x1="1090" y1="716" x2="1168" y2="716"/>
+                <circle cx="1090" cy="716" r="4"/><circle cx="1168" cy="716" r="4"/>
+                <text x="1060" y="698">horizontal target shift</text>
               </g>
 
               <g id="photonHead">
@@ -176,6 +176,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./js/main.js?v=7"></script>
+<script type="module" src="./js/main.js?v=8"></script>
 </body>
 </html>
