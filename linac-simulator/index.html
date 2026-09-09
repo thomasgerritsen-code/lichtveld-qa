@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css">
+  <link rel="stylesheet" href="./simulator.css?v=21">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -28,7 +28,7 @@
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
       <p>Elekta-geïnspireerde educatieve console met machine power, BEAM ON/OFF, magnetron/RF-bron, opeenvolgende focus-compressie, waveguide beam-loss en instelbare veldgrootte. De animatievolgorde volgt Elekta's publieke uitleg: RF versnelt electronen in de waveguide, daarna volgen bending, target/window, dosimetrie en collimatie.</p>
     </div>
-    <div class="heroBadges"><span>Physics v20 · QA v20</span><span>49 regression tests</span><span>Disc-loaded waveguide</span><span>Referentiegeometrie</span></div>
+    <div class="heroBadges"><span>Physics v21 · QA v21</span><span>49 regression tests</span><span>Disc-loaded waveguide</span><span>Visueel geverifieerd</span></div>
   </section>
 
 
@@ -167,6 +167,17 @@
               <linearGradient id="waveguideFill" x1="0" x2="1"><stop offset="0%" stop-color="#11263c"/><stop offset="55%" stop-color="#1b3855"/><stop offset="100%" stop-color="#0d1b2b"/></linearGradient>
               <linearGradient id="photonCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ffd66b" stop-opacity=".46"/><stop offset="100%" stop-color="#ffd66b" stop-opacity=".05"/></linearGradient>
               <linearGradient id="electronCone" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#63ddff" stop-opacity=".42"/><stop offset="100%" stop-color="#63ddff" stop-opacity=".05"/></linearGradient>
+              <style>
+                .waveguideBore{fill:#06101a;stroke:#d7a653;stroke-width:1.4}
+                .waveguideIris{fill:none;stroke:#d4a451;stroke-width:2}
+                .waveguideChamberWall{fill:none;stroke:#8e6c3f;stroke-width:1.4}
+                .waveguideCellCenter{stroke:#304a61;stroke-width:1}
+                .focusRail{fill:none;stroke:#32675f;stroke-width:1.2;stroke-dasharray:5 5}
+                .focusWinding{fill:none;stroke:#81e7d6;stroke-width:2.6;stroke-linejoin:round}
+                .steerFrame{fill:none;stroke:#f0c64b;stroke-width:2.6}
+                .steerWinding{fill:none;stroke:#f0c64b;stroke-width:1.7;stroke-linejoin:round}
+                .steerAperture{fill:#06101a;stroke:#f0c64b;stroke-width:1.2}
+              </style>
             </defs>
             <rect width="1500" height="1120" fill="#06101a"/>
 
@@ -188,7 +199,26 @@
                 <path id="rfFeedPath" class="rfFeedPath" d="M356 865 C382 819 381 748 370 679"/>
               </g>
 
-              <g data-part="waveguide" class="component"><g transform="translate(165 765) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-46" width="670" height="92" rx="12"/><rect class="waveguideBore" x="14" y="-9" width="642" height="18" rx="9"/><line x1="20" y1="0" x2="646" y2="0" class="waveguideAxis"/><g id="rfCells"></g><path id="rfAccelWave" class="rfAccelWave" d="M20 0 H646"/></g></g>
+              <g data-part="waveguide" class="component"><g transform="translate(165 765) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-46" width="670" height="92" rx="12"/><rect class="waveguideBore" x="14" y="-9" width="642" height="18" rx="9"/><line x1="20" y1="0" x2="646" y2="0" class="waveguideAxis"/><g id="rfCells">
+                  <g class="waveguideCell" style="--cell-delay:0.000s"><path class="waveguideChamberWall" d="M 20 -12 L 20 -35 Q 37.39 -43 54.78 -35 L 54.78 -12 M 20 12 L 20 35 Q 37.39 43 54.78 35 L 54.78 12"/><path class="waveguideIris" d="M 20 -35 V -12 M 20 12 V 35"/><line class="waveguideCellCenter" x1="37.39" x2="37.39" y1="-10" y2="10"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.070s"><path class="waveguideChamberWall" d="M 54.78 -12 L 54.78 -35 Q 72.17 -43 89.56 -35 L 89.56 -12 M 54.78 12 L 54.78 35 Q 72.17 43 89.56 35 L 89.56 12"/><path class="waveguideIris" d="M 54.78 -35 V -12 M 54.78 12 V 35"/><line class="waveguideCellCenter" x1="72.17" x2="72.17" y1="-10" y2="10"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.140s"><path class="waveguideChamberWall" d="M 89.56 -12 L 89.56 -35 Q 106.94 -43 124.33 -35 L 124.33 -12 M 89.56 12 L 89.56 35 Q 106.94 43 124.33 35 L 124.33 12"/><path class="waveguideIris" d="M 89.56 -35 V -12 M 89.56 12 V 35"/><line class="waveguideCellCenter" x1="106.94" x2="106.94" y1="-10" y2="10"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.210s"><path class="waveguideChamberWall" d="M 124.33 -12 L 124.33 -35 Q 141.72 -43 159.11 -35 L 159.11 -12 M 124.33 12 L 124.33 35 Q 141.72 43 159.11 35 L 159.11 12"/><path class="waveguideIris" d="M 124.33 -35 V -12 M 124.33 12 V 35"/><line class="waveguideCellCenter" x1="141.72" x2="141.72" y1="-10" y2="10"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.280s"><path class="waveguideChamberWall" d="M 159.11 -10 L 159.11 -35 Q 176.5 -43 193.89 -35 L 193.89 -10 M 159.11 10 L 159.11 35 Q 176.5 43 193.89 35 L 193.89 10"/><path class="waveguideIris" d="M 159.11 -35 V -10 M 159.11 10 V 35"/><line class="waveguideCellCenter" x1="176.5" x2="176.5" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.350s"><path class="waveguideChamberWall" d="M 193.89 -10 L 193.89 -35 Q 211.28 -43 228.67 -35 L 228.67 -10 M 193.89 10 L 193.89 35 Q 211.28 43 228.67 35 L 228.67 10"/><path class="waveguideIris" d="M 193.89 -35 V -10 M 193.89 10 V 35"/><line class="waveguideCellCenter" x1="211.28" x2="211.28" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.420s"><path class="waveguideChamberWall" d="M 228.67 -10 L 228.67 -35 Q 246.06 -43 263.44 -35 L 263.44 -10 M 228.67 10 L 228.67 35 Q 246.06 43 263.44 35 L 263.44 10"/><path class="waveguideIris" d="M 228.67 -35 V -10 M 228.67 10 V 35"/><line class="waveguideCellCenter" x1="246.06" x2="246.06" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.490s"><path class="waveguideChamberWall" d="M 263.44 -10 L 263.44 -35 Q 280.83 -43 298.22 -35 L 298.22 -10 M 263.44 10 L 263.44 35 Q 280.83 43 298.22 35 L 298.22 10"/><path class="waveguideIris" d="M 263.44 -35 V -10 M 263.44 10 V 35"/><line class="waveguideCellCenter" x1="280.83" x2="280.83" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.560s"><path class="waveguideChamberWall" d="M 298.22 -10 L 298.22 -35 Q 315.61 -43 333 -35 L 333 -10 M 298.22 10 L 298.22 35 Q 315.61 43 333 35 L 333 10"/><path class="waveguideIris" d="M 298.22 -35 V -10 M 298.22 10 V 35"/><line class="waveguideCellCenter" x1="315.61" x2="315.61" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.630s"><path class="waveguideChamberWall" d="M 333 -10 L 333 -35 Q 350.39 -43 367.78 -35 L 367.78 -10 M 333 10 L 333 35 Q 350.39 43 367.78 35 L 367.78 10"/><path class="waveguideIris" d="M 333 -35 V -10 M 333 10 V 35"/><line class="waveguideCellCenter" x1="350.39" x2="350.39" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.700s"><path class="waveguideChamberWall" d="M 367.78 -10 L 367.78 -35 Q 385.17 -43 402.56 -35 L 402.56 -10 M 367.78 10 L 367.78 35 Q 385.17 43 402.56 35 L 402.56 10"/><path class="waveguideIris" d="M 367.78 -35 V -10 M 367.78 10 V 35"/><line class="waveguideCellCenter" x1="385.17" x2="385.17" y1="-8" y2="8"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.770s"><path class="waveguideChamberWall" d="M 402.56 -8 L 402.56 -35 Q 419.94 -43 437.33 -35 L 437.33 -8 M 402.56 8 L 402.56 35 Q 419.94 43 437.33 35 L 437.33 8"/><path class="waveguideIris" d="M 402.56 -35 V -8 M 402.56 8 V 35"/><line class="waveguideCellCenter" x1="419.94" x2="419.94" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.840s"><path class="waveguideChamberWall" d="M 437.33 -8 L 437.33 -35 Q 454.72 -43 472.11 -35 L 472.11 -8 M 437.33 8 L 437.33 35 Q 454.72 43 472.11 35 L 472.11 8"/><path class="waveguideIris" d="M 437.33 -35 V -8 M 437.33 8 V 35"/><line class="waveguideCellCenter" x1="454.72" x2="454.72" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.910s"><path class="waveguideChamberWall" d="M 472.11 -8 L 472.11 -35 Q 489.5 -43 506.89 -35 L 506.89 -8 M 472.11 8 L 472.11 35 Q 489.5 43 506.89 35 L 506.89 8"/><path class="waveguideIris" d="M 472.11 -35 V -8 M 472.11 8 V 35"/><line class="waveguideCellCenter" x1="489.5" x2="489.5" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-0.980s"><path class="waveguideChamberWall" d="M 506.89 -8 L 506.89 -35 Q 524.28 -43 541.67 -35 L 541.67 -8 M 506.89 8 L 506.89 35 Q 524.28 43 541.67 35 L 541.67 8"/><path class="waveguideIris" d="M 506.89 -35 V -8 M 506.89 8 V 35"/><line class="waveguideCellCenter" x1="524.28" x2="524.28" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-1.050s"><path class="waveguideChamberWall" d="M 541.67 -8 L 541.67 -35 Q 559.06 -43 576.44 -35 L 576.44 -8 M 541.67 8 L 541.67 35 Q 559.06 43 576.44 35 L 576.44 8"/><path class="waveguideIris" d="M 541.67 -35 V -8 M 541.67 8 V 35"/><line class="waveguideCellCenter" x1="559.06" x2="559.06" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-1.120s"><path class="waveguideChamberWall" d="M 576.44 -8 L 576.44 -35 Q 593.83 -43 611.22 -35 L 611.22 -8 M 576.44 8 L 576.44 35 Q 593.83 43 611.22 35 L 611.22 8"/><path class="waveguideIris" d="M 576.44 -35 V -8 M 576.44 8 V 35"/><line class="waveguideCellCenter" x1="593.83" x2="593.83" y1="-6" y2="6"/></g>
+                  <g class="waveguideCell" style="--cell-delay:-1.190s"><path class="waveguideChamberWall" d="M 611.22 -8 L 611.22 -35 Q 628.61 -43 646 -35 L 646 -8 M 611.22 8 L 611.22 35 Q 628.61 43 646 35 L 646 8"/><path class="waveguideIris" d="M 611.22 -35 V -8 M 611.22 8 V 35"/><line class="waveguideCellCenter" x1="628.61" x2="628.61" y1="-6" y2="6"/></g>
+                </g><path id="rfAccelWave" class="rfAccelWave" d="M20 0 H646"/></g></g>
 
               <g data-part="focus1" class="component"><g transform="translate(306 707) rotate(-22.5)">
                 <path class="focusRail" d="M-80 -48 H80 M-80 48 H80"/>
@@ -303,6 +333,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./src/app/bootstrap.js"></script>
+<script type="module" src="./src/app/bootstrap.js?v=21"></script>
 </body>
 </html>
