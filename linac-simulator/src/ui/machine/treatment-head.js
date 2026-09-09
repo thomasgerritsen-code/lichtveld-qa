@@ -54,9 +54,13 @@ export function updateTreatmentHead(params,view,delivery=null){
     'd',
     `M ${center-4} 774 L ${center+4} 774 L ${center+half} ${patientY} L ${center-half} ${patientY} Z`
   );
+  cone?.setAttribute('fill',view.mode==='electron'?'url(#electronCone)':'url(#photonCone)');
 
   const useful=delivery?.beamActive?Math.max(0,Math.min(1,delivery.outputFraction??delivery.beamQuality)):0;
   if(cone) cone.style.opacity=String(Math.max(0,Math.min(1,useful)));
   const central=document.querySelector('#centralRay');
-  if(central) central.style.opacity=String(Math.max(0,Math.min(1,useful)));
+  if(central){
+    central.style.opacity=String(Math.max(0,Math.min(1,useful)));
+    central.classList.toggle('electronMode',view.mode==='electron');
+  }
 }
