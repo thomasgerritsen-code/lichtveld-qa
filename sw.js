@@ -1,4 +1,4 @@
-const CACHE='linac-dashboard-v47-waveguide-chambers-v19';
+const CACHE='linac-dashboard-v48-clean-waveguide-v20';
 const CORE=[
   './','./index.html?v=31','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',
