@@ -10,6 +10,7 @@ export function updateRfAnimation(sim,delivery,view={mode:'photon'}){
   const magnetron=document.querySelector('#magnetronAssembly');
   const feed=document.querySelector('#rfFeedPath');
   const accel=document.querySelector('#rfAccelWave');
+  const cells=document.querySelector('#rfCells');
   const glow=document.querySelector('#magnetronGlow');
   const targetFlash=document.querySelector('#targetConversionFlash');
 
@@ -24,6 +25,10 @@ export function updateRfAnimation(sim,delivery,view={mode:'photon'}){
     element.style.opacity=String(active?(0.25+0.75*intensity):0);
     const seconds=(1.5-.85*intensity).toFixed(2)+'s';
     element.style.setProperty('--rf-speed',seconds);
+  }
+  if(cells){
+    cells.classList.toggle('rfActive',active);
+    cells.style.setProperty('--rf-cell-intensity',String(intensity));
   }
   if(glow)glow.style.opacity=String(active?(0.12+0.42*intensity):0);
 
