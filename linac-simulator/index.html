@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#1961ab">
   <title>LINAC bundeltransport · RT-VTech</title>
   <link rel="stylesheet" href="../dashboard.css?v=4">
-  <link rel="stylesheet" href="./simulator.css?v=21">
+  <link rel="stylesheet" href="./simulator.css?v=22">
 </head>
 <body>
 <header class="brandHeader"><div class="brandInner">
@@ -28,7 +28,7 @@
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
       <p>Elekta-geïnspireerde educatieve console met machine power, BEAM ON/OFF, magnetron/RF-bron, opeenvolgende focus-compressie, waveguide beam-loss en instelbare veldgrootte. De animatievolgorde volgt Elekta's publieke uitleg: RF versnelt electronen in de waveguide, daarna volgen bending, target/window, dosimetrie en collimatie.</p>
     </div>
-    <div class="heroBadges"><span>Physics v21 · QA v21</span><span>49 regression tests</span><span>Disc-loaded waveguide</span><span>Visueel geverifieerd</span></div>
+    <div class="heroBadges"><span>Physics v22 · QA v22</span><span>50 regression tests</span><span>SL25-brongeometrie</span><span>Visueel geverifieerd</span></div>
   </section>
 
 
@@ -172,11 +172,13 @@
                 .waveguideIris{fill:none;stroke:#d4a451;stroke-width:2}
                 .waveguideChamberWall{fill:none;stroke:#8e6c3f;stroke-width:1.4}
                 .waveguideCellCenter{stroke:#304a61;stroke-width:1}
-                .focusRail{fill:none;stroke:#32675f;stroke-width:1.2;stroke-dasharray:5 5}
-                .focusWinding{fill:none;stroke:#81e7d6;stroke-width:2.6;stroke-linejoin:round}
-                .steerFrame{fill:none;stroke:#f0c64b;stroke-width:2.6}
-                .steerWinding{fill:none;stroke:#f0c64b;stroke-width:1.7;stroke-linejoin:round}
-                .steerAperture{fill:#06101a;stroke:#f0c64b;stroke-width:1.2}
+                .focusWinding{fill:none;stroke:#81e7d6;stroke-width:2.8;stroke-linejoin:round}
+                .steerAxis{fill:none;stroke:#7097bd;stroke-width:1.5}
+                .steerFrame,.steerSatellite{fill:#101923;stroke:#f0c64b;stroke-width:2.4;stroke-linejoin:round}
+                .steerCross{fill:none;stroke:#f0c64b;stroke-width:1.6}
+                .gunBody{fill:#172c41;stroke:#607d98;stroke-width:2.4}
+                .gunCathodeArc{fill:none;stroke:#c4d6e7;stroke-width:3}
+                .gunEmitter{fill:none;stroke:#d7a653;stroke-width:2.2;stroke-linecap:round}
               </style>
             </defs>
             <rect width="1500" height="1120" fill="#06101a"/>
@@ -185,7 +187,7 @@
               <path class="gantryShell" d="M48 825 Q42 690 115 610 L690 370 Q790 326 878 342 L1128 354 Q1245 362 1325 430 L1395 505 L1375 916 Q1355 965 1305 982 L1040 982 L1018 758 L970 690 L826 614 L622 690 L160 892 Z"/>
               <path class="innerShell" d="M98 794 Q94 707 153 649 L707 421 Q782 391 850 404 L1110 414 Q1190 420 1260 475 L1325 540 L1310 899 L1040 899 L1015 727 L965 650 L822 575 L603 649 L154 837 Z"/>
 
-              <g data-part="gun" class="component"><g transform="translate(92 794) rotate(-22.5)"><rect class="hit hardwareBlock" x="0" y="-40" width="96" height="80" rx="14"/><circle cx="58" cy="0" r="15" class="gunCathode"/></g></g>
+              <g data-part="gun" class="component"><g transform="translate(91 795) rotate(-22.5)"><path class="hit gunBody" d="M-8 -38 H58 Q83 -38 96 -18 V18 Q83 38 58 38 H-8 Q-24 22 -24 0 Q-24 -22 -8 -38 Z"/><path class="gunCathodeArc" d="M6 -20 Q-8 0 6 20"/><path class="gunEmitter" d="M19 -18 L34 -11 M17 0 H36 M19 18 L34 11"/><circle cx="48" cy="0" r="4" class="gunCathode"/></g></g>
 
               <g id="magnetronAssembly" data-part="magnetron" class="component">
                 <circle id="magnetronGlow" cx="306" cy="881" r="62" class="magnetronGlow"/>
@@ -220,29 +222,29 @@
                   <g class="waveguideCell" style="--cell-delay:-1.190s"><path class="waveguideChamberWall" d="M 611.22 -8 L 611.22 -35 Q 628.61 -43 646 -35 L 646 -8 M 611.22 8 L 611.22 35 Q 628.61 43 646 35 L 646 8"/><path class="waveguideIris" d="M 611.22 -35 V -8 M 611.22 8 V 35"/><line class="waveguideCellCenter" x1="628.61" x2="628.61" y1="-6" y2="6"/></g>
                 </g><path id="rfAccelWave" class="rfAccelWave" d="M20 0 H646"/></g></g>
 
-              <g data-part="focus1" class="component"><g transform="translate(306 707) rotate(-22.5)">
-                <path class="focusRail" d="M-80 -48 H80 M-80 48 H80"/>
-                <g class="focusCoils">
-                  <path class="hit focusWinding" d="M-72 -36 L-55 -76 L-14 -76 L6 -36 L-14 -20 L-55 -20 Z M-72 36 L-55 76 L-14 76 L6 36 L-14 20 L-55 20 Z"/>
-                  <path class="hit focusWinding" d="M-4 -36 L14 -76 L55 -76 L74 -36 L55 -20 L14 -20 Z M-4 36 L14 76 L55 76 L74 36 L55 20 L14 20 Z"/>
-                </g>
+              <g data-part="focus1" class="component"><g transform="translate(270 722) rotate(-22.5)" class="focusCoils">
+                <path class="hit focusWinding" d="M-78 -48 L-61 -88 L-22 -79 L-6 -48 Z M-78 -48 L-22 -79 M-61 -88 L-6 -48"/>
+                <path class="hit focusWinding" d="M2 -48 L19 -88 L58 -79 L74 -48 Z M2 -48 L58 -79 M19 -88 L74 -48"/>
+                <path class="hit focusWinding" d="M-78 48 L-61 88 L-22 79 L-6 48 Z M-78 48 L-22 79 M-61 88 L-6 48"/>
+                <path class="hit focusWinding" d="M2 48 L19 88 L58 79 L74 48 Z M2 48 L58 79 M19 88 L74 48"/>
               </g></g>
-              <g data-part="steer1" class="component"><g transform="translate(438 652) rotate(-22.5)">
-                <rect class="hit steerFrame" x="-18" y="-55" width="36" height="110" rx="5"/>
-                <path class="steerWinding" d="M-13 -43 L13 -31 V31 L-13 43 M13 -43 L-13 -31 V31 L13 43"/>
-                <rect x="-7" y="-18" width="14" height="36" rx="6" class="steerAperture"/>
+              <g data-part="steer1" class="component"><g transform="translate(390 673) rotate(-22.5)">
+                <path class="steerAxis" d="M-17 -82 L17 82"/>
+                <path class="steerSatellite" d="M-31 -70 L-18 -84 L-4 -70 L-18 -56 Z M4 70 L18 56 L31 70 L18 84 Z"/>
+                <path class="hit steerFrame" d="M-15 -52 L10 -43 L15 52 L-10 43 Z"/>
+                <path class="steerCross" d="M-15 -52 L15 52 M10 -43 L-10 43"/>
               </g></g>
-              <g data-part="focus2" class="component"><g transform="translate(568 598) rotate(-22.5)">
-                <path class="focusRail" d="M-72 -48 H72 M-72 48 H72"/>
-                <g class="focusCoils">
-                  <path class="hit focusWinding" d="M-66 -36 L-48 -76 L-8 -76 L10 -36 L-8 -20 L-48 -20 Z M-66 36 L-48 76 L-8 76 L10 36 L-8 20 L-48 20 Z"/>
-                  <path class="hit focusWinding" d="M0 -36 L18 -76 L58 -76 L68 -36 L50 -20 L18 -20 Z M0 36 L18 76 L58 76 L68 36 L50 20 L18 20 Z"/>
-                </g>
+              <g data-part="focus2" class="component"><g transform="translate(500 627) rotate(-22.5)" class="focusCoils">
+                <path class="hit focusWinding" d="M-70 -48 L-54 -84 L-18 -77 L-2 -48 Z M-70 -48 L-18 -77 M-54 -84 L-2 -48"/>
+                <path class="hit focusWinding" d="M5 -48 L21 -84 L57 -77 L71 -48 Z M5 -48 L57 -77 M21 -84 L71 -48"/>
+                <path class="hit focusWinding" d="M-70 48 L-54 84 L-18 77 L-2 48 Z M-70 48 L-18 77 M-54 84 L-2 48"/>
+                <path class="hit focusWinding" d="M5 48 L21 84 L57 77 L71 48 Z M5 48 L57 77 M21 84 L71 48"/>
               </g></g>
-              <g data-part="steer2" class="component"><g transform="translate(704 542) rotate(-22.5)">
-                <rect class="hit steerFrame" x="-18" y="-55" width="36" height="110" rx="5"/>
-                <path class="steerWinding" d="M-13 -43 L13 -31 V31 L-13 43 M13 -43 L-13 -31 V31 L13 43"/>
-                <rect x="-7" y="-18" width="14" height="36" rx="6" class="steerAperture"/>
+              <g data-part="steer2" class="component"><g transform="translate(610 581) rotate(-22.5)">
+                <path class="steerAxis" d="M-17 -82 L17 82"/>
+                <path class="steerSatellite" d="M-31 -70 L-18 -84 L-4 -70 L-18 -56 Z M4 70 L18 56 L31 70 L18 84 Z"/>
+                <path class="hit steerFrame" d="M-15 -52 L10 -43 L15 52 L-10 43 Z"/>
+                <path class="steerCross" d="M-15 -52 L15 52 M10 -43 L-10 43"/>
               </g></g>
               <g data-part="bellows" class="component"><g id="bellowsLines"></g></g>
 
@@ -294,7 +296,7 @@
 
             <g id="labels">
               <text x="48" y="872">Electron gun</text><text x="247" y="947">Magnetron / RF</text><text x="205" y="590" transform="rotate(-22.5 205 590)">Disc-loaded accelerating waveguide</text>
-              <text x="241" y="604">Focus 1</text><text x="408" y="555">1R / 1T</text><text x="520" y="492">Focus 2</text><text x="675" y="447">2R / 2T</text>
+              <text x="220" y="585">Focus 1</text><text x="350" y="548">1R / 1T</text><text x="458" y="502">Focus 2</text><text x="565" y="462">2R / 2T</text>
               <text x="864" y="527">M1</text><text x="947" y="573">M2</text><text x="1085" y="411">M3</text><text x="1075" y="742">Treatment head</text><text x="1215" y="1097">Patiëntvlak</text>
             </g>
           </svg>
@@ -333,6 +335,6 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./src/app/bootstrap.js?v=21"></script>
+<script type="module" src="./src/app/bootstrap.js?v=22"></script>
 </body>
 </html>
