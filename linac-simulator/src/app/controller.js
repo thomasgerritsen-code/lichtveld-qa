@@ -1,4 +1,4 @@
-import {PART_INFO} from '../machine/model.js';
+import {EXAMPLE_DEVIATION,PART_INFO} from '../machine/model.js';
 import {CONTROL_EFFECTS} from '../machine/control-effects.js';
 import {decodeControls,simulate} from '../physics/beam-model.js';
 import {gantryEnvironment,buildControlContext,chamberSignals} from '../physics/feedback.js';
@@ -323,7 +323,7 @@ export function createController(){
   function exampleFault(){
     store.dispatch({
       type:'controls/setMany',
-      values:{gunEmission:82,gunTiming:24,magPower:88,magTune:32,rfPhase:-18,f1:35,r1:55,t1:-48,f2:38,r2:-62,t2:58,energy:42,spread:70,coarse:36,fine:-22,fx:30,fy:18,doseRateSet:450,gantry:238}
+      values:EXAMPLE_DEVIATION
     });
     store.dispatch({type:'machine/set',key:'direction',value:'ccw'});
     store.dispatch({type:'display/set',key:'mismatch',value:true});
