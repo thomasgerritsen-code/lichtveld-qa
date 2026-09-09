@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildMechanicalGeometry} from '../src/ui/machine/geometry.js';
+import {buildMechanicalGeometry,WAVE_ANCHORS} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
 import {buildWaveguideCellSpecs} from '../src/ui/machine/hardware.js';
 import * as renderer from '../src/ui/machine-renderer.js';
@@ -44,4 +44,16 @@ test('travelling waveguide exposes a detailed sequence of RF chambers',()=>{
   assert.equal(cells.at(-1).right,646);
   assert.ok(cells.every((cell,index)=>index===0||cell.x>cells[index-1].x));
   assert.ok(cells[0].apertureRy>cells.at(-1).apertureRy);
+});
+
+test('SL25 source order keeps focus and steering packages in their published sequence',()=>{
+  assert.deepEqual(
+    WAVE_ANCHORS.map(anchor=>anchor.stage),
+    ['gun','focus1','steer1','wgAfter1','focus2','wgAfter2','steer2','wgExit','bendEntry']
+  );
+
+  const x=Object.fromEntries(WAVE_ANCHORS.map(anchor=>[anchor.stage,anchor.x]));
+  assert.ok(x.focus1<x.steer1);
+  assert.ok(x.steer1<x.focus2&&x.focus2<x.steer2);
+  assert.ok((x.steer2-x.gun)/(x.bendEntry-x.gun)<.75);
 });
