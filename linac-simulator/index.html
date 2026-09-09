@@ -28,7 +28,7 @@
     <div><span class="eyebrow">Educatieve simulator</span><h2>Volledige bundel van electron gun tot patiënt</h2>
       <p>Elekta-geïnspireerde educatieve console met machine power, BEAM ON/OFF, magnetron/RF-bron, opeenvolgende focus-compressie, waveguide beam-loss en instelbare veldgrootte. De animatievolgorde volgt Elekta's publieke uitleg: RF versnelt electronen in de waveguide, daarna volgen bending, target/window, dosimetrie en collimatie.</p>
     </div>
-    <div class="heroBadges"><span>Physics v19 · QA v19</span><span>49 regression tests</span><span>Travelling-wave kamers</span><span>Referentiegeometrie</span></div>
+    <div class="heroBadges"><span>Physics v20 · QA v20</span><span>49 regression tests</span><span>Disc-loaded waveguide</span><span>Referentiegeometrie</span></div>
   </section>
 
 
@@ -188,11 +188,32 @@
                 <path id="rfFeedPath" class="rfFeedPath" d="M356 865 C382 819 381 748 370 679"/>
               </g>
 
-              <g data-part="waveguide" class="component"><g transform="translate(183 758) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-40" width="640" height="80" rx="12"/><line x1="18" y1="0" x2="622" y2="0" class="waveguideAxis"/><g id="rfCells"></g><path id="rfAccelWave" class="rfAccelWave" d="M18 0 H622"/></g></g>
-              <g data-part="focus1" class="component"><g transform="translate(300 709) rotate(-22.5)"><rect class="hit focusHousing" x="-73" y="-52" width="146" height="104" rx="13"/><g class="focusCoils"><path class="focusCoil" d="M-62 -39 L-34 -49 L-20 0 L-34 49 L-62 39 L-48 0 Z"/><path class="focusCoil" d="M-15 -45 L15 -45 L27 0 L15 45 L-15 45 L-27 0 Z"/><path class="focusCoil" d="M62 -39 L34 -49 L20 0 L34 49 L62 39 L48 0 Z"/></g><ellipse cx="0" cy="0" rx="12" ry="27" class="focusAperture"/></g></g>
-              <g data-part="steer1" class="component"><g transform="translate(405 665) rotate(-22.5)"><rect class="hit steerBlock" x="-20" y="-48" width="40" height="96" rx="7"/><path class="steerCoil" d="M-14 -34 L14 -25 L14 25 L-14 34 L-7 0 Z"/><rect x="-8" y="-25" width="16" height="50" rx="5" class="steerAperture"/></g></g>
-              <g data-part="focus2" class="component"><g transform="translate(535 611) rotate(-22.5)"><rect class="hit focusHousing" x="-67" y="-52" width="134" height="104" rx="13"/><g class="focusCoils"><path class="focusCoil" d="M-55 -39 L-25 -48 L-12 0 L-25 48 L-55 39 L-40 0 Z"/><path class="focusCoil" d="M55 -39 L25 -48 L12 0 L25 48 L55 39 L40 0 Z"/></g><ellipse cx="0" cy="0" rx="11" ry="26" class="focusAperture"/></g></g>
-              <g data-part="steer2" class="component"><g transform="translate(660 559) rotate(-22.5)"><rect class="hit steerBlock" x="-20" y="-48" width="40" height="96" rx="7"/><path class="steerCoil" d="M-14 -34 L14 -25 L14 25 L-14 34 L-7 0 Z"/><rect x="-8" y="-25" width="16" height="50" rx="5" class="steerAperture"/></g></g>
+              <g data-part="waveguide" class="component"><g transform="translate(165 765) rotate(-22.5)"><rect class="hit waveguide" x="0" y="-46" width="670" height="92" rx="12"/><rect class="waveguideBore" x="14" y="-9" width="642" height="18" rx="9"/><line x1="20" y1="0" x2="646" y2="0" class="waveguideAxis"/><g id="rfCells"></g><path id="rfAccelWave" class="rfAccelWave" d="M20 0 H646"/></g></g>
+
+              <g data-part="focus1" class="component"><g transform="translate(306 707) rotate(-22.5)">
+                <path class="focusRail" d="M-80 -48 H80 M-80 48 H80"/>
+                <g class="focusCoils">
+                  <path class="hit focusWinding" d="M-72 -36 L-55 -76 L-14 -76 L6 -36 L-14 -20 L-55 -20 Z M-72 36 L-55 76 L-14 76 L6 36 L-14 20 L-55 20 Z"/>
+                  <path class="hit focusWinding" d="M-4 -36 L14 -76 L55 -76 L74 -36 L55 -20 L14 -20 Z M-4 36 L14 76 L55 76 L74 36 L55 20 L14 20 Z"/>
+                </g>
+              </g></g>
+              <g data-part="steer1" class="component"><g transform="translate(438 652) rotate(-22.5)">
+                <rect class="hit steerFrame" x="-18" y="-55" width="36" height="110" rx="5"/>
+                <path class="steerWinding" d="M-13 -43 L13 -31 V31 L-13 43 M13 -43 L-13 -31 V31 L13 43"/>
+                <rect x="-7" y="-18" width="14" height="36" rx="6" class="steerAperture"/>
+              </g></g>
+              <g data-part="focus2" class="component"><g transform="translate(568 598) rotate(-22.5)">
+                <path class="focusRail" d="M-72 -48 H72 M-72 48 H72"/>
+                <g class="focusCoils">
+                  <path class="hit focusWinding" d="M-66 -36 L-48 -76 L-8 -76 L10 -36 L-8 -20 L-48 -20 Z M-66 36 L-48 76 L-8 76 L10 36 L-8 20 L-48 20 Z"/>
+                  <path class="hit focusWinding" d="M0 -36 L18 -76 L58 -76 L68 -36 L50 -20 L18 -20 Z M0 36 L18 76 L58 76 L68 36 L50 20 L18 20 Z"/>
+                </g>
+              </g></g>
+              <g data-part="steer2" class="component"><g transform="translate(704 542) rotate(-22.5)">
+                <rect class="hit steerFrame" x="-18" y="-55" width="36" height="110" rx="5"/>
+                <path class="steerWinding" d="M-13 -43 L13 -31 V31 L-13 43 M13 -43 L-13 -31 V31 L13 43"/>
+                <rect x="-7" y="-18" width="14" height="36" rx="6" class="steerAperture"/>
+              </g></g>
               <g data-part="bellows" class="component"><g id="bellowsLines"></g></g>
 
               <g id="slalomHardware" data-part="slalom" class="component">
@@ -242,8 +263,8 @@
             </g>
 
             <g id="labels">
-              <text x="48" y="872">Electron gun</text><text x="247" y="947">Magnetron / RF</text><text x="220" y="585" transform="rotate(-22.5 220 585)">Accelerating waveguide</text>
-              <text x="236" y="626">Focus 1</text><text x="366" y="582">1R / 1T</text><text x="488" y="532">Focus 2</text><text x="620" y="480">2R / 2T</text>
+              <text x="48" y="872">Electron gun</text><text x="247" y="947">Magnetron / RF</text><text x="205" y="590" transform="rotate(-22.5 205 590)">Disc-loaded accelerating waveguide</text>
+              <text x="241" y="604">Focus 1</text><text x="408" y="555">1R / 1T</text><text x="520" y="492">Focus 2</text><text x="675" y="447">2R / 2T</text>
               <text x="864" y="527">M1</text><text x="947" y="573">M2</text><text x="1085" y="411">M3</text><text x="1075" y="742">Treatment head</text><text x="1215" y="1097">Patiëntvlak</text>
             </g>
           </svg>
