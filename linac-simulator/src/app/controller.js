@@ -390,10 +390,11 @@ export function createController(){
   function initParticles(){
     for(let i=0;i<110;i++){
       const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('r',1.5+(i%3)*.4);
+      const radius=1.5+(i%3)*.4;
+      c.setAttribute('r',radius);
       c.setAttribute('fill','#dffaff');
       $('#particles').appendChild(c);
-      particles.push({el:c,seed:(i*.6180339887)%1,speed:.10+(i%11)*.007});
+      particles.push({el:c,radius,seed:(i*.6180339887)%1,speed:.10+(i%11)*.007});
     }
   }
 
@@ -411,6 +412,9 @@ export function createController(){
         const y=a.y+(b.y-a.y)*t;
         q.el.setAttribute('cx',x.toFixed(1));
         q.el.setAttribute('cy',y.toFixed(1));
+        const kind=a.kind||b.kind||'electron';
+        q.el.setAttribute('fill',kind==='photon'?'#ffe69a':'#dffaff');
+        q.el.setAttribute('r',String(kind==='photon'?q.radius*1.18:q.radius));
       }
     }
     requestAnimationFrame(animate);
