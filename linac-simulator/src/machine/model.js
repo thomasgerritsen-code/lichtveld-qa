@@ -7,9 +7,9 @@ export const UI_DEFAULTS = Object.freeze({
 // A visible but still transmitted teaching fault. Hard waveguide interceptions
 // remain available by moving 1R/1T or 2R/2T farther toward their limits.
 export const EXAMPLE_DEVIATION = Object.freeze({
-  gunEmission:82,gunTiming:24,magPower:88,magTune:32,rfPhase:-18,
-  f1:35,r1:11,t1:-10,f2:38,r2:-12,t2:12,
-  energy:42,spread:70,coarse:36,fine:-22,fx:30,fy:18,
+  gunEmission:95,gunTiming:5,magPower:98,magTune:5,rfPhase:-3,
+  f1:55,r1:3,t1:-3,f2:58,r2:-4,t2:4,
+  energy:49,spread:35,coarse:5,fine:-3,fx:30,fy:18,
   doseRateSet:450,gantry:238
 });
 
