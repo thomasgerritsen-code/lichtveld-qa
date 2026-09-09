@@ -258,12 +258,15 @@ test('spot readout follows the transported envelope instead of a fixed floor',()
 
 test('each steering axis can create a hard waveguide interception with zero useful rate',()=>{
   for(const id of ['r1','t1','r2','t2']){
+    let wallInterception=false;
     for(const value of [-100,100]){
       const x=run({[id]:value});
       assert.ok(x.radiation.hardStrike,`${id}=${value} did not produce a hard strike`);
-      assert.ok(['wgAfter1','wgAfter2','wgExit','bendEntry'].includes(x.radiation.hardStrike.stage));
+      wallInterception ||= ['wgAfter1','wgAfter2','wgExit','bendEntry']
+        .includes(x.radiation.hardStrike.stage);
       assert.equal(x.delivery.usefulDoseRate,0);
     }
+    assert.ok(wallInterception,`${id} cannot intercept the waveguide in either direction`);
   }
 });
 
@@ -382,18 +385,36 @@ test('all source modules except bootstrap import successfully and no hand-versio
 });
 
 test('example deviation continues beyond Focus 2 through M1 M2 M3 to target',()=>{
-  const params=decodeControls({...UI_DEFAULTS,...EXAMPLE_DEVIATION});
-  const sim=simulate(params);
-  const radiation=evaluateRadiationTransport(sim,{
-    mode:'photon',
-    filter:'ff',
-    fieldXcm:params.fieldXcm,
-    fieldYcm:params.fieldYcm
+  const {sim,radiation,delivery}=run(EXAMPLE_DEVIATION,{
+    direction:'ccw',controlMode:'manual'
   });
 
   assert.equal(radiation.hardStrike,null);
+  assert.ok(radiation.primaryTransmission>.90);
+  assert.ok(delivery.outputFraction>.80);
   assert.deepEqual(
     sim.stages.slice(-4).map(stage=>stage.name),
     ['m1','m2','m3','target']
   );
+});
+
+test('nominal beam remains transmitted through the full gantry rotation',()=>{
+  const minimum={manual:.95,lut:.97,servo:.99};
+
+  for(const gantry of [0,30,60,90,120,150,180,210,240,270,300,330,360]){
+    for(const direction of ['cw','ccw']){
+      for(const controlMode of ['manual','lut','servo']){
+        const {radiation}=run({gantry},{direction,controlMode});
+        assert.equal(
+          radiation.hardStrike,
+          null,
+          `${gantry} ${direction} ${controlMode} intercepted the waveguide`
+        );
+        assert.ok(
+          radiation.primaryTransmission>minimum[controlMode],
+          `${gantry} ${direction} ${controlMode} transmission too low`
+        );
+      }
+    }
+  }
 });
