@@ -148,6 +148,22 @@ function envelopePolygon(points,multiplier=1){
     .join(' ');
 }
 
+export function buildPatientTransportPath(targetPoint,{
+  mode='photon',
+  radiationActive=false,
+  outputFraction=0
+}={}){
+  if(!radiationActive||outputFraction<=.001)return [];
+
+  const kind=mode==='electron'?'treatment-electron':'photon';
+  return [774,835,893,928,972,1037,1080].map(y=>({
+    x:targetPoint.x,
+    y,
+    state:targetPoint.state,
+    kind
+  }));
+}
+
 function renderVectors({sim,geometry,incomingBase,bend,fullNominal,targetState,last}){
   const vectorLayer=document.querySelector('#vectorLayer');
   if(!vectorLayer)return;
@@ -198,7 +214,7 @@ function renderVectors({sim,geometry,incomingBase,bend,fullNominal,targetState,l
   }
 }
 
-export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
+export function renderBeam(params,sim,overlays,radiation=null,delivery=null,view={mode:'photon'}){
   const geometry=buildMechanicalGeometry();
   const map=stageMap(sim);
 
@@ -264,6 +280,11 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
   const visibleLow=clip(low);
   const visibleHigh=clip(high);
   const visibleBad=clip(bad);
+  const patientTransport=buildPatientTransportPath(targetPoint,{
+    mode:view.mode,
+    radiationActive:Boolean(delivery?.radiationActive),
+    outputFraction:delivery?.outputFraction??0
+  });
 
   document.querySelector('#flightOuter')?.setAttribute('d',pathD(geometry.points));
   document.querySelector('#flightInner')?.setAttribute('d',pathD(geometry.points));
@@ -332,5 +353,5 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null){
     if(vectorLayer)vectorLayer.innerHTML='';
   }
 
-  return visibleNominal;
+  return [...visibleNominal,...patientTransport];
 }
