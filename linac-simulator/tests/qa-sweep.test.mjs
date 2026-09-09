@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 
-import {UI_DEFAULTS} from '../src/machine/model.js';
+import {EXAMPLE_DEVIATION,UI_DEFAULTS} from '../src/machine/model.js';
 import {decodeControls,simulate} from '../src/physics/beam-model.js';
 import {evaluateRadiationTransport} from '../src/physics/radiation-transport.js';
 import {evaluateDelivery} from '../src/physics/delivery-state.js';
@@ -379,4 +379,21 @@ test('all source modules except bootstrap import successfully and no hand-versio
     await import(pathToFileURL(file).href+'?qa=1');
   }
   assert.ok(files.length>=20);
+});
+
+test('example deviation continues beyond Focus 2 through M1 M2 M3 to target',()=>{
+  const params=decodeControls({...UI_DEFAULTS,...EXAMPLE_DEVIATION});
+  const sim=simulate(params);
+  const radiation=evaluateRadiationTransport(sim,{
+    mode:'photon',
+    filter:'ff',
+    fieldXcm:params.fieldXcm,
+    fieldYcm:params.fieldYcm
+  });
+
+  assert.equal(radiation.hardStrike,null);
+  assert.deepEqual(
+    sim.stages.slice(-4).map(stage=>stage.name),
+    ['m1','m2','m3','target']
+  );
 });
