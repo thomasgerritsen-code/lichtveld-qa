@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildMechanicalGeometry} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
+import {buildWaveguideCellSpecs} from '../src/ui/machine/hardware.js';
 import * as renderer from '../src/ui/machine-renderer.js';
 
 test('split machine renderer import graph loads without executing DOM work',()=>{
@@ -34,4 +35,13 @@ test('active useful beam continues from target to patient plane',()=>{
   assert.deepEqual(buildPatientTransportPath(target,{
     radiationActive:false,outputFraction:1
   }),[]);
+});
+
+test('travelling waveguide exposes a detailed sequence of RF chambers',()=>{
+  const cells=buildWaveguideCellSpecs();
+  assert.equal(cells.length,32);
+  assert.equal(cells[0].x,18);
+  assert.equal(cells.at(-1).x,622);
+  assert.ok(cells.every((cell,index)=>index===0||cell.x>cells[index-1].x));
+  assert.ok(cells[0].apertureRy>cells.at(-1).apertureRy);
 });
