@@ -3,13 +3,16 @@ import {DEG,NS} from './geometry.js';
 import {initMlcLeaves} from './treatment-head.js';
 import {applySelectorMotion,enableSelectorTransitions} from './target-selector.js';
 
-export function buildWaveguideCellSpecs(count=32){
-  const first=18;
-  const last=622;
+export function buildWaveguideCellSpecs(count=18){
+  const first=20;
+  const last=646;
+  const pitch=(last-first)/count;
   return Array.from({length:count},(_,index)=>({
     index,
-    x:first+(last-first)*index/(count-1),
-    apertureRy:index<5?10:index<18?8.5:7.5
+    left:first+pitch*index,
+    right:first+pitch*(index+1),
+    x:first+pitch*(index+.5),
+    apertureRy:index<4?12:index<11?10:8
   }));
 }
 
@@ -20,33 +23,39 @@ function initWaveguideCells(){
   for(const cell of buildWaveguideCellSpecs()){
     const group=document.createElementNS(NS,'g');
     group.setAttribute('class','waveguideCell');
-    group.style.setProperty('--cell-delay',`${(-cell.index*.045).toFixed(3)}s`);
+    group.style.setProperty('--cell-delay',`${(-cell.index*.07).toFixed(3)}s`);
 
-    for(const [y1,y2] of [[-34,-cell.apertureRy],[cell.apertureRy,34]]){
+    const chamber=document.createElementNS(NS,'path');
+    chamber.setAttribute('d',[
+      `M ${cell.left} ${-cell.apertureRy}`,
+      `L ${cell.left} -35`,
+      `Q ${cell.x} -43 ${cell.right} -35`,
+      `L ${cell.right} ${-cell.apertureRy}`,
+      `M ${cell.left} ${cell.apertureRy}`,
+      `L ${cell.left} 35`,
+      `Q ${cell.x} 43 ${cell.right} 35`,
+      `L ${cell.right} ${cell.apertureRy}`
+    ].join(' '));
+    chamber.setAttribute('class','waveguideChamberWall');
+    group.appendChild(chamber);
+
+    for(const [y1,y2] of [[-35,-cell.apertureRy],[cell.apertureRy,35]]){
       const iris=document.createElementNS(NS,'line');
-      iris.setAttribute('x1',cell.x);
-      iris.setAttribute('x2',cell.x);
+      iris.setAttribute('x1',cell.left);
+      iris.setAttribute('x2',cell.left);
       iris.setAttribute('y1',y1);
       iris.setAttribute('y2',y2);
       iris.setAttribute('class','waveguideIris');
       group.appendChild(iris);
     }
 
-    const aperture=document.createElementNS(NS,'ellipse');
-    aperture.setAttribute('cx',cell.x);
-    aperture.setAttribute('cy','0');
-    aperture.setAttribute('rx','3.2');
-    aperture.setAttribute('ry',cell.apertureRy);
-    aperture.setAttribute('class','waveguideAperture');
-    group.appendChild(aperture);
-
-    if(cell.index<31){
-      const nextX=18+(622-18)*(cell.index+1)/31;
-      const chamber=document.createElementNS(NS,'path');
-      chamber.setAttribute('d',`M ${cell.x} -34 Q ${(cell.x+nextX)/2} -27 ${nextX} -34 M ${cell.x} 34 Q ${(cell.x+nextX)/2} 27 ${nextX} 34`);
-      chamber.setAttribute('class','waveguideChamberWall');
-      group.appendChild(chamber);
-    }
+    const centerMark=document.createElementNS(NS,'line');
+    centerMark.setAttribute('x1',cell.x);
+    centerMark.setAttribute('x2',cell.x);
+    centerMark.setAttribute('y1',-cell.apertureRy+2);
+    centerMark.setAttribute('y2',cell.apertureRy-2);
+    centerMark.setAttribute('class','waveguideCellCenter');
+    group.appendChild(centerMark);
 
     rf.appendChild(group);
   }
