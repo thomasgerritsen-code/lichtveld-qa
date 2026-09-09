@@ -4,14 +4,18 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export function gantryEnvironment(angleDeg,direction='cw'){
   const g=angleDeg*DEG;
   const dir=direction==='ccw'?-1:1;
+  // Normal gantry flex/hysteresis is a small correctable perturbation. The old
+  // amplitudes were large enough to force even the nominal beam into the
+  // waveguide wall at every angle, which made downstream animation impossible.
+  const flex=.15;
   return {
     radial:{
-      x:.0030*Math.sin(g+.35)+.0015*Math.sin(2*g-.2),
-      xp:.0075*Math.sin(g-.15)+dir*.0012*Math.cos(2*g)
+      x:flex*(.0030*Math.sin(g+.35)+.0015*Math.sin(2*g-.2)),
+      xp:flex*(.0075*Math.sin(g-.15)+dir*.0012*Math.cos(2*g))
     },
     transverse:{
-      x:.0022*Math.cos(g+.55)+.0011*Math.sin(2*g+.8),
-      xp:.0062*Math.cos(g-.45)-dir*.0010*Math.sin(2*g+.1)
+      x:flex*(.0022*Math.cos(g+.55)+.0011*Math.sin(2*g+.8)),
+      xp:flex*(.0062*Math.cos(g-.45)-dir*.0010*Math.sin(2*g+.1))
     }
   };
 }
@@ -19,8 +23,8 @@ export function gantryEnvironment(angleDeg,direction='cw'){
 export function lutAssist(environment,angleDeg){
   const g=angleDeg*DEG;
   return {
-    r2:(environment.radial.xp*.72 + environment.radial.x*.12) + .00045*Math.sin(3*g),
-    t2:(environment.transverse.xp*.72 + environment.transverse.x*.12) + .00040*Math.cos(3*g)
+    r2:-(environment.radial.xp*.72 + environment.radial.x*.12) - .00045*Math.sin(3*g),
+    t2:-(environment.transverse.xp*.72 + environment.transverse.x*.12) - .00040*Math.cos(3*g)
   };
 }
 
