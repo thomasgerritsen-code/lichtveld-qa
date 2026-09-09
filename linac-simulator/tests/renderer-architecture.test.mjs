@@ -39,9 +39,9 @@ test('active useful beam continues from target to patient plane',()=>{
 
 test('travelling waveguide exposes a detailed sequence of RF chambers',()=>{
   const cells=buildWaveguideCellSpecs();
-  assert.equal(cells.length,32);
-  assert.equal(cells[0].x,18);
-  assert.equal(cells.at(-1).x,622);
+  assert.equal(cells.length,18);
+  assert.equal(cells[0].left,20);
+  assert.equal(cells.at(-1).right,646);
   assert.ok(cells.every((cell,index)=>index===0||cell.x>cells[index-1].x));
   assert.ok(cells[0].apertureRy>cells.at(-1).apertureRy);
 });
