@@ -10,7 +10,7 @@ export {initHardware,setActiveControlEffect};
 export {buildMechanicalGeometry,buildMechanicalPath} from './machine/geometry.js';
 
 export function render(params,sim,overlays,view={mode:'photon',filter:'ff'},radiation=null,delivery=null){
-  const beamPath=renderBeam(params,sim,overlays,radiation,delivery);
+  const beamPath=renderBeam(params,sim,overlays,radiation,delivery,view);
   applySelectorMotion(view.mode);
   updateTreatmentHead(params,view,delivery);
   updateRfAnimation(sim,delivery,view);
