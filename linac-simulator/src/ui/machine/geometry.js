@@ -8,12 +8,12 @@ export const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFi
 
 export const WAVE_ANCHORS=[
   {stage:'gun',x:135,y:778},
-  {stage:'focus1',x:285,y:716},
-  {stage:'steer1',x:419,y:660},
-  {stage:'wgAfter1',x:460,y:643},
-  {stage:'focus2',x:535,y:612},
-  {stage:'wgAfter2',x:580,y:593},
-  {stage:'steer2',x:627,y:574},
+  {stage:'focus1',x:270,y:722},
+  {stage:'steer1',x:390,y:673},
+  {stage:'wgAfter1',x:430,y:656},
+  {stage:'focus2',x:500,y:627},
+  {stage:'wgAfter2',x:555,y:604},
+  {stage:'steer2',x:610,y:581},
   {stage:'wgExit',x:745,y:524},
   {stage:'bendEntry',x:805,y:499}
 ];
