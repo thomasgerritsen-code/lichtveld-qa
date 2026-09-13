@@ -86,7 +86,29 @@ function makeCircle(group,x,y,r,opacity,cls){
   group.appendChild(circle);
 }
 
-export function renderScatter(sim,radiation,{visible=true}={}){
+export function electronApplicatorScatterVisual(radiation,mode='photon'){
+  if(mode!=='electron')return null;
+  const electron=Math.max(0,Number(radiation?.electronScatterFraction)||0);
+  const photon=Math.max(0,Number(radiation?.electronPhotonContaminationFraction)||0);
+  const total=electron+photon;
+  if(total<=.0001)return null;
+
+  // Purely normalized display mapping. Public Versa-HD literature supports the
+  // existence of both scattered-electron and bremsstrahlung components outside
+  // the applicator, but not these SVG radii/opacities as physical distances.
+  const strength=Math.min(.24,total*5.5);
+  return {
+    strength,
+    electronShare:electron/total,
+    photonShare:photon/total,
+    electronRadius:28+strength*115,
+    photonRadius:42+strength*150,
+    electronOpacity:.045+strength*.24,
+    photonOpacity:.025+strength*.16
+  };
+}
+
+export function renderScatter(sim,radiation,{visible=true,mode='photon'}={}){
   const group=document.querySelector('#scatterLayer');
   if(!group)return;
 
@@ -171,5 +193,29 @@ export function renderScatter(sim,radiation,{visible=true}={}){
         'scatterHalo normalHeadScatter'
       );
     }
+  }
+
+  // Electron applicators create peripheral scattered-electron and bremsstrahlung
+  // components. Show them as separate faint normalized halos at the treatment head;
+  // this is educational visualization, not a dose map or clinical distance model.
+  const electronVisual=electronApplicatorScatterVisual(radiation,mode);
+  if(electronVisual){
+    const center={x:1450,y:1010};
+    makeCircle(
+      group,
+      center.x,
+      center.y,
+      electronVisual.electronRadius,
+      electronVisual.electronOpacity*electronVisual.electronShare,
+      'scatterHalo electronApplicatorScatter electronScatterComponent'
+    );
+    makeCircle(
+      group,
+      center.x,
+      center.y,
+      electronVisual.photonRadius,
+      electronVisual.photonOpacity*electronVisual.photonShare,
+      'scatterHalo electronApplicatorScatter electronPhotonComponent'
+    );
   }
 }
