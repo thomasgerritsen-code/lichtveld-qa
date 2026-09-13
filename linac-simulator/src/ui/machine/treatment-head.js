@@ -1,21 +1,43 @@
 import {NS} from './geometry.js';
 
+export function agilityLeafRows(){
+  // Public Agility descriptions specify 160 interdigitating leaves: 80 per bank.
+  // The SVG pitch below is deliberately normalized to the existing drawing envelope;
+  // it is not an OEM leaf dimension, mechanical clearance or calibration parameter.
+  const leavesPerBank=80;
+  const startY=971;
+  const envelope=46.2;
+  const pitch=envelope/leavesPerBank;
+  const height=pitch*.82;
+  return Array.from({length:leavesPerBank},(_,index)=>({
+    index,
+    y:startY+index*pitch,
+    height
+  }));
+}
+
 export function initMlcLeaves(){
   const left=document.querySelector('#mlcLeft');
   const right=document.querySelector('#mlcRight');
   if(!left||!right||left.childNodes.length)return;
 
-  for(let i=0;i<14;i++){
-    const y=971+i*3.3,h=2.7;
+  for(const row of agilityLeafRows()){
+    const {index,y,height:h}=row;
 
     const leafLeft=document.createElementNS(NS,'path');
     leafLeft.setAttribute('d',`M1327 ${y} H1410 Q1426 ${y+h/2} 1410 ${y+h} H1327 Z`);
     leafLeft.setAttribute('class','mlcLeaf');
+    leafLeft.setAttribute('data-bank','A');
+    leafLeft.setAttribute('data-leaf-index',String(index));
+    leafLeft.setAttribute('stroke-width','.16');
     left.appendChild(leafLeft);
 
     const leafRight=document.createElementNS(NS,'path');
     leafRight.setAttribute('d',`M1573 ${y} H1490 Q1474 ${y+h/2} 1490 ${y+h} H1573 Z`);
     leafRight.setAttribute('class','mlcLeaf');
+    leafRight.setAttribute('data-bank','B');
+    leafRight.setAttribute('data-leaf-index',String(index));
+    leafRight.setAttribute('stroke-width','.16');
     right.appendChild(leafRight);
   }
 
