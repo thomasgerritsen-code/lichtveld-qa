@@ -13,9 +13,10 @@ export function collimatorExchangeProxy(xCm,yCm,filter='ff'){
 
   // Published FF/FFF measurements report a collimator-exchange effect for
   // rectangular fields, with a smaller effect in FFF mode. RT-VTech models only
-  // that qualitative directionality: X is MLC-defined and Y diaphragm-defined.
-  // The coefficients are deliberately small, dimensionless teaching values and
-  // are not measured Versa HD output corrections or TPS commissioning data.
+  // that qualitative asymmetry. X is MLC-defined and Y diaphragm-defined; the
+  // sign of this schematic X/Y convention is not a claimed Versa HD calibration.
+  // Coefficients are deliberately small, dimensionless teaching values, not
+  // measured output corrections or TPS commissioning data.
   const signedAspect=clamp(Math.log(x/y)/Math.log(40),-1,1);
   const amplitude=filter==='fff'?.004:.012;
   return 1+amplitude*signedAspect;
