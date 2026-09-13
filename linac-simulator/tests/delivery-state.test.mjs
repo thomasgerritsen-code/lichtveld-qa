@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {UI_DEFAULTS} from '../src/machine/model.js';
 import {decodeControls,simulate} from '../src/physics/beam-model.js';
 import {evaluateRadiationTransport} from '../src/physics/radiation-transport.js';
-import {evaluateDelivery,photonOutputFactorProxy,equivalentSquare} from '../src/physics/delivery-state.js';
+import {evaluateDelivery,photonOutputFactorProxy,equivalentSquare,collimatorExchangeProxy} from '../src/physics/delivery-state.js';
 
 function nominal({fx=10,fy=10,doseRateSet=600,filter='ff',powerOn=true,beamOn=false}={}){
   const params=decodeControls({...UI_DEFAULTS,fx,fy,doseRateSet});
@@ -42,4 +42,24 @@ test('equivalent square treats rectangular field dimensions symmetrically',()=>{
   assert.equal(equivalentSquare(20,10),equivalentSquare(10,20));
   assert.ok(equivalentSquare(20,10)>10);
   assert.ok(equivalentSquare(20,10)<20);
+});
+
+test('rectangular photon fields retain a small orientation-dependent exchange effect',()=>{
+  const wideMlc=photonOutputFactorProxy(20,5,'ff');
+  const wideDiaphragm=photonOutputFactorProxy(5,20,'ff');
+  assert.notEqual(wideMlc,wideDiaphragm);
+  assert.ok(wideMlc>wideDiaphragm);
+  assert.equal(collimatorExchangeProxy(10,10,'ff'),1);
+});
+
+test('FFF reduces the normalized collimator-exchange effect relative to FF',()=>{
+  const ffDifference=Math.abs(
+    photonOutputFactorProxy(20,5,'ff')-photonOutputFactorProxy(5,20,'ff')
+  );
+  const fffDifference=Math.abs(
+    photonOutputFactorProxy(20,5,'fff')-photonOutputFactorProxy(5,20,'fff')
+  );
+  assert.ok(ffDifference>0);
+  assert.ok(fffDifference>0);
+  assert.ok(fffDifference<ffDifference);
 });
