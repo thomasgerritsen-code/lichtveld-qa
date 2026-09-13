@@ -9,7 +9,7 @@ function simTarget(target={}){
   };
 }
 
-test('nominal beam gives two matching redundant monitor channels and zero steering tilt',()=>{
+test('nominal beam gives two matching redundant monitor channels and six equal uniformity sectors',()=>{
   const chamber=chamberSignals(simTarget());
   assert.equal(chamber.primaryMonitor,1);
   assert.equal(chamber.secondaryMonitor,1);
@@ -17,18 +17,39 @@ test('nominal beam gives two matching redundant monitor channels and zero steeri
   assert.equal(chamber.monitorDifference,0);
   assert.equal(chamber.radialTilt,0);
   assert.equal(chamber.transverseTilt,0);
+  assert.deepEqual(chamber.uniformitySectors,[1,1,1,1,1,1]);
+  assert.equal(chamber.uniformityMean,1);
+  assert.equal(chamber.uniformitySpan,0);
   assert.equal(chamber.doseA,chamber.primaryMonitor);
   assert.equal(chamber.doseB,chamber.secondaryMonitor);
 });
 
-test('beam offset changes steering feedback while redundant output channels still track the same common loss',()=>{
+test('beam offset changes steering feedback and produces an opposing six-sector pattern',()=>{
   const chamber=chamberSignals(simTarget({r:.04,rp:.02,t:-.03,tp:.015}));
   assert.notEqual(chamber.radialTilt,0);
   assert.notEqual(chamber.transverseTilt,0);
   assert.ok(chamber.monitorMean<1);
+  assert.equal(chamber.uniformitySectors.length,6);
+  assert.ok(chamber.uniformitySpan>0);
+  for(let i=0;i<3;i++){
+    const pairMean=(chamber.uniformitySectors[i]+chamber.uniformitySectors[i+3])/2;
+    assert.ok(Math.abs(pairMean-chamber.uniformityMean)<1e-12);
+  }
   assert.ok(Math.abs(chamber.monitorDifference)<=.0080000001);
   assert.ok(Math.abs(chamber.primaryMonitor-chamber.monitorMean)<=.0040000001);
   assert.ok(Math.abs(chamber.secondaryMonitor-chamber.monitorMean)<=.0040000001);
+});
+
+test('radial and transverse offsets rotate the six-sector response rather than changing its topology',()=>{
+  const radial=chamberSignals(simTarget({r:.04}));
+  const transverse=chamberSignals(simTarget({t:.04}));
+  assert.equal(radial.uniformitySectors.length,6);
+  assert.equal(transverse.uniformitySectors.length,6);
+  assert.ok(radial.uniformitySpan>0);
+  assert.ok(transverse.uniformitySpan>0);
+  assert.notDeepEqual(radial.uniformitySectors,transverse.uniformitySectors);
+  assert.ok(Math.abs(radial.uniformityMean-radial.monitorMean)<1e-12);
+  assert.ok(Math.abs(transverse.uniformityMean-transverse.monitorMean)<1e-12);
 });
 
 test('larger target mismatch lowers monitor mean without introducing an interlock threshold',()=>{
@@ -38,12 +59,14 @@ test('larger target mismatch lowers monitor mean without introducing an interloc
   assert.ok(larger.monitorMean>0);
   assert.ok(Number.isFinite(larger.primaryMonitor));
   assert.ok(Number.isFinite(larger.secondaryMonitor));
+  assert.ok(larger.uniformitySectors.every(Number.isFinite));
 });
 
-test('control context exposes redundant monitor channels without changing the conservative servo policy',()=>{
+test('control context exposes redundant and six-sector monitor signals without changing conservative servo policy',()=>{
   const context=buildControlContext({mode:'servo',angleDeg:120,direction:'cw',preSim:simTarget({r:.02,rp:.01})});
   assert.ok(Number.isFinite(context.chamber.primaryMonitor));
   assert.ok(Number.isFinite(context.chamber.secondaryMonitor));
+  assert.equal(context.chamber.uniformitySectors.length,6);
   assert.equal(context.servoPolicy.r2,true);
   assert.equal(context.servoPolicy.t2,false);
   assert.ok(Math.abs(context.servo.r2)>0);
