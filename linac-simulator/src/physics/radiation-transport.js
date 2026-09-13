@@ -203,8 +203,22 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
   const normalHeadScatter=mode==='photon'
     ?primaryTransmission*.025*fieldScatterScale*filterScatterScale*capturedIntensity
     :0;
+
+  // Clinical electron beams also contain radiation scattered by the treatment
+  // head/applicator. Literature reports that this contribution changes with
+  // applicator/field size. Keep only the qualitative trend here: this is a
+  // dimensionless educational proxy, not a measured Elekta cone factor or dose.
+  const electronApplicatorScale=Math.max(.70,Math.min(1.35,Math.pow(10/eqSquare,.18)));
+  const electronApplicatorScatter=mode==='electron'
+    ?primaryTransmission*.03*electronApplicatorScale*capturedIntensity
+    :0;
+
   const missScatter=targetLost*.35*capturedIntensity;
-  const scatterFraction=clamp(wallScatter+missScatter+normalHeadScatter,0,1);
+  const scatterFraction=clamp(
+    wallScatter+missScatter+normalHeadScatter+electronApplicatorScatter,
+    0,
+    1
+  );
 
   const doseRatePercent=primaryTransmission<.005
     ?0
@@ -220,6 +234,7 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     scatterIndex:Math.round(scatterFraction*1000)/10,
     wallScatterFraction:clamp(wallScatter,0,1),
     normalHeadScatterFraction:clamp(normalHeadScatter,0,1),
+    electronApplicatorScatterFraction:clamp(electronApplicatorScatter,0,1),
     missScatterFraction:clamp(missScatter,0,1),
     firstStrike,
     hardStrike,
