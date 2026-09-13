@@ -6,6 +6,21 @@ export function equivalentSquare(xCm,yCm){
   return 2*x*y/(x+y);
 }
 
+export function collimatorExchangeProxy(xCm,yCm,filter='ff'){
+  const x=clamp(Number(xCm)||10,1,40);
+  const y=clamp(Number(yCm)||10,1,40);
+  if(Math.abs(x-y)<1e-12)return 1;
+
+  // Published FF/FFF measurements report a collimator-exchange effect for
+  // rectangular fields, with a smaller effect in FFF mode. RT-VTech models only
+  // that qualitative directionality: X is MLC-defined and Y diaphragm-defined.
+  // The coefficients are deliberately small, dimensionless teaching values and
+  // are not measured Versa HD output corrections or TPS commissioning data.
+  const signedAspect=clamp(Math.log(x/y)/Math.log(40),-1,1);
+  const amplitude=filter==='fff'?.004:.012;
+  return 1+amplitude*signedAspect;
+}
+
 export function photonOutputFactorProxy(xCm,yCm,filter='ff'){
   const eq=equivalentSquare(xCm,yCm);
   const isFff=filter==='fff';
@@ -16,13 +31,16 @@ export function photonOutputFactorProxy(xCm,yCm,filter='ff'){
   const lowAt1=isFff?.70:.69;
   const highAt40=isFff?1.09:1.16;
 
+  let squareTrend;
   if(eq<=10){
     const u=Math.log(10/eq)/Math.log(10);
-    return 1-(1-lowAt1)*Math.pow(clamp(u,0,1),.72);
+    squareTrend=1-(1-lowAt1)*Math.pow(clamp(u,0,1),.72);
+  }else{
+    const u=Math.log(eq/10)/Math.log(4);
+    squareTrend=1+(highAt40-1)*Math.pow(clamp(u,0,1),.82);
   }
 
-  const u=Math.log(eq/10)/Math.log(4);
-  return 1+(highAt40-1)*Math.pow(clamp(u,0,1),.82);
+  return squareTrend*collimatorExchangeProxy(xCm,yCm,filter);
 }
 
 export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon',filter='ff'}){
