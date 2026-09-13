@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import {agilityLeafRows} from '../src/ui/machine/treatment-head.js';
+
+test('Agility schematic exposes 80 leaves per bank for 160 total leaves',()=>{
+  const rows=agilityLeafRows();
+  assert.equal(rows.length,80);
+  assert.deepEqual(rows.map(row=>row.index),Array.from({length:80},(_,index)=>index));
+  assert.equal(rows.length*2,160);
+});
+
+test('Agility leaf rows preserve the existing normalized treatment-head envelope',()=>{
+  const rows=agilityLeafRows();
+  assert.ok(rows.every(row=>row.height>0));
+  assert.ok(rows.every((row,index)=>index===0||row.y>rows[index-1].y));
+  const first=rows[0];
+  const last=rows.at(-1);
+  assert.equal(first.y,971);
+  assert.ok(last.y+last.height<1017.2);
+  assert.ok(last.y+last.height>1016.5);
+});
