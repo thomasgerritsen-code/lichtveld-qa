@@ -31,11 +31,31 @@ export function lutAssist(environment,angleDeg){
 export function chamberSignals(sim){
   const t=sim.target;
   const doseLoss=Math.min(.16,Math.abs(t.r)*.8+Math.abs(t.t)*.8+Math.abs(t.rp)*.25+Math.abs(t.tp)*.25);
+  const commonDose=clamp(1-doseLoss*.48,0,1.2);
+  const radialTilt=clamp(t.r*.85+t.rp*.32,-.25,.25);
+  const transverseTilt=clamp(t.t*.85+t.tp*.32,-.25,.25);
+
+  // Public Elekta material describes independent ionisation-chamber monitoring,
+  // while generic linac references describe dual transmission dose monitoring
+  // and separate position/symmetry information. Keep those concepts distinct:
+  // the two redundant monitor channels follow the same common output signal,
+  // whereas radial/transverse steering feedback remains sector-like. The small
+  // channel split below is only a normalized teaching cue, not an OEM chamber
+  // tolerance, calibration coefficient or interlock threshold.
+  const channelSplit=clamp(radialTilt*.012+transverseTilt*.008,-.004,.004);
+  const primaryMonitor=clamp(commonDose+channelSplit,0,1.2);
+  const secondaryMonitor=clamp(commonDose-channelSplit,0,1.2);
+
   return {
-    doseA:1-doseLoss*.48 + t.r*.025,
-    doseB:1-doseLoss*.48 - t.r*.025,
-    radialTilt:clamp(t.r*.85+t.rp*.32,-.25,.25),
-    transverseTilt:clamp(t.t*.85+t.tp*.32,-.25,.25)
+    primaryMonitor,
+    secondaryMonitor,
+    monitorMean:(primaryMonitor+secondaryMonitor)/2,
+    monitorDifference:primaryMonitor-secondaryMonitor,
+    // Backward-compatible aliases used by the current diagnostics panel.
+    doseA:primaryMonitor,
+    doseB:secondaryMonitor,
+    radialTilt,
+    transverseTilt
   };
 }
 
@@ -63,7 +83,16 @@ export function servoAssist(chamber){
 export function buildControlContext({mode='manual',angleDeg=0,direction='cw',preSim=null}){
   const environment=gantryEnvironment(angleDeg,direction);
   const lut=mode==='lut'||mode==='servo'?lutAssist(environment,angleDeg):{r2:0,t2:0};
-  const chamber=preSim?chamberSignals(preSim):{doseA:1,doseB:1,radialTilt:0,transverseTilt:0};
+  const chamber=preSim?chamberSignals(preSim):{
+    primaryMonitor:1,
+    secondaryMonitor:1,
+    monitorMean:1,
+    monitorDifference:0,
+    doseA:1,
+    doseB:1,
+    radialTilt:0,
+    transverseTilt:0
+  };
   const servo=mode==='servo'?servoAssist(chamber):{r2:0,t2:0};
   const servoPolicy=servoChannelPolicy();
   return {mode,angleDeg,direction,environment,lut,servo,servoPolicy,chamber};
