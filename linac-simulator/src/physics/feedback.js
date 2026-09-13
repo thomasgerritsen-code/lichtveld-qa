@@ -39,10 +39,24 @@ export function chamberSignals(sim){
   };
 }
 
+export function servoChannelPolicy(){
+  return {
+    r2:true,
+    t2:false,
+    basis:'conservative generic Elekta model: published 2R servo is always enabled, while 2T servo availability depends on the selected energy set'
+  };
+}
+
 export function servoAssist(chamber){
+  // van Appeldoorn et al. report the 2R servo as always enabled, while 2T is
+  // disabled for all FFF and electron energies and is energy-set dependent for
+  // conventional photon beams. This simulator has a continuous educational
+  // energy slider rather than OEM Energy Sets, so it deliberately models only
+  // the universally supported 2R servo path instead of pretending that 2T is
+  // always available. Gains remain normalized teaching values.
   return {
     r2:clamp(chamber.radialTilt*.30,-.025,.025),
-    t2:clamp(chamber.transverseTilt*-.18,-.018,.018)
+    t2:0
   };
 }
 
@@ -51,5 +65,6 @@ export function buildControlContext({mode='manual',angleDeg=0,direction='cw',pre
   const lut=mode==='lut'||mode==='servo'?lutAssist(environment,angleDeg):{r2:0,t2:0};
   const chamber=preSim?chamberSignals(preSim):{doseA:1,doseB:1,radialTilt:0,transverseTilt:0};
   const servo=mode==='servo'?servoAssist(chamber):{r2:0,t2:0};
-  return {mode,angleDeg,direction,environment,lut,servo,chamber};
+  const servoPolicy=servoChannelPolicy();
+  return {mode,angleDeg,direction,environment,lut,servo,servoPolicy,chamber};
 }
