@@ -85,7 +85,7 @@ export const PART_INFO = Object.freeze({
   target:['Target','Photon mode: elektronen produceren bremsstrahlung in de target.'],
   window:['Electron window','Electron mode: de target wordt omzeild.'],
   filter:['FF / FFF','FF en FFF worden als verschillende relatieve profielmodellen weergegeven; niet alleen als filter zichtbaar/onzichtbaar.'],
-  monitor:['Monitor chamber','In het model levert de chamber relatieve dose- en tilt-signalen voor de virtuele servo.'],
+  monitor:['Monitor chamber','Publieke Elekta-uitleg beschrijft onafhankelijke ionisatiekamer-monitoring. In dit onderwijsmodel zijn daarom twee redundante relatieve outputkanalen gescheiden van de R/T tilt-signalen voor virtuele steering; er worden geen OEM calibraties of interlockgrenzen gebruikt.'],
   mirror:['Mirror','Optische lichtveld-/veldprojectie.'],
   mlc:['Agility MLC','160-leaf Agility-principe; leaf tips en defocus worden schematisch weergegeven.'],
   jaws:['Y diaphragms','Y-collimatie onder de MLC.'],
