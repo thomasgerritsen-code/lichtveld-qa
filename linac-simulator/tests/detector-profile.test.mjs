@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {UI_DEFAULTS} from '../src/machine/model.js';
 import {decodeControls,simulate} from '../src/physics/beam-model.js';
-import {photonProfiles} from '../src/physics/detector.js';
+import {agilityMlcLeakageFloor,photonProfiles} from '../src/physics/detector.js';
 import {photonOutputFactorProxy} from '../src/physics/delivery-state.js';
 
 function nominalProfileSet(filter){
@@ -50,6 +50,22 @@ test('directional edge model preserves the same central normalization on both ax
     const profiles=nominalProfileSet(filter);
     assert.ok(Math.abs(nearest(profiles.radial,0).y-1)<1e-12);
     assert.ok(Math.abs(nearest(profiles.transverse,0).y-1)<1e-12);
+  }
+});
+
+test('Agility MLC leakage proxy remains non-zero and lower for FFF than FF',()=>{
+  assert.ok(agilityMlcLeakageFloor('ff')>0);
+  assert.ok(agilityMlcLeakageFloor('fff')>0);
+  assert.ok(agilityMlcLeakageFloor('fff')<agilityMlcLeakageFloor('ff'));
+});
+
+test('far outside the field the MLC axis retains a small leakage tail',()=>{
+  for(const filter of ['ff','fff']){
+    const profiles=nominalProfileSet(filter);
+    const mlcTail=nearest(profiles.transverse,.95).y;
+    const diaphragmTail=nearest(profiles.radial,.95).y;
+    assert.ok(mlcTail>0,`${filter}: expected non-zero MLC leakage tail`);
+    assert.ok(mlcTail>diaphragmTail,`${filter}: leakage floor should distinguish MLC from diaphragm model`);
   }
 });
 
