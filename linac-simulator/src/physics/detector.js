@@ -8,6 +8,14 @@ function norm(arr){
   return arr.map(p=>({...p,y:p.y/m}));
 }
 
+export function agilityMlcLeakageFloor(filter='ff'){
+  // Public Agility measurements show low but non-zero MLC transmission/leakage,
+  // with lower measured transmission for matched FFF beams than FF beams.
+  // These are deliberately normalized teaching floors only; they do not reproduce
+  // measured transmission percentages, TPS parameters or OEM acceptance limits.
+  return filter==='fff'?.0012:.0024;
+}
+
 export function photonProfiles(sim,params,filter='ff'){
   const t=sim.target;
   const samples=81;
@@ -31,8 +39,9 @@ export function photonProfiles(sim,params,filter='ff'){
   // that qualitative ordering; they are normalized educational parameters.
   const diaphragmPenumbraWidth=basePenumbraWidth*.94;
   const mlcPenumbraWidth=basePenumbraWidth*1.08;
+  const mlcLeakage=agilityMlcLeakageFloor(filter);
 
-  const make=(half,shift,skew,penumbraWidth)=>{
+  const make=(half,shift,skew,penumbraWidth,leakageFloor=0)=>{
     const pts=[];
     for(let i=0;i<samples;i++){
       const x=-1+2*i/(samples-1);
@@ -40,15 +49,19 @@ export function photonProfiles(sim,params,filter='ff'){
       let base;
       if(filter==='fff') base=Math.exp(-.5*(u/.58)**2);
       else base=.93+.07*Math.exp(-.5*(u/.48)**2);
-      const shaped=base*edge(u,half,penumbraWidth)*(1+skew*u);
+      const aperture=edge(u,half,penumbraWidth);
+      const transmission=leakageFloor+(1-leakageFloor)*aperture;
+      const shaped=base*transmission*(1+skew*u);
       pts.push({x,y:Math.max(0,shaped)});
     }
     return norm(pts);
   };
 
-  // R follows Y diaphragms; T follows X/MLC in the simulator controls.
-  const radial=make(fieldHalfR,shiftR,skewR,diaphragmPenumbraWidth);
-  const transverse=make(fieldHalfT,shiftT,skewT,mlcPenumbraWidth);
+  // R follows Y diaphragms; T follows X/MLC in the simulator controls. Only the
+  // MLC-defined axis receives the Agility leakage floor; the diaphragm profile
+  // keeps the existing edge model rather than inventing a second leakage value.
+  const radial=make(fieldHalfR,shiftR,skewR,diaphragmPenumbraWidth,0);
+  const transverse=make(fieldHalfT,shiftT,skewT,mlcPenumbraWidth,mlcLeakage);
   const symmetryR=clamp(skewR*100,-20,20);
   const symmetryT=clamp(skewT*100,-20,20);
   return {
