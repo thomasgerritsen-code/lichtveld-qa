@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {buildMechanicalGeometry,WAVE_ANCHORS} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
 import {buildWaveguideCellSpecs} from '../src/ui/machine/hardware.js';
+import {electronApplicatorScatterVisual} from '../src/ui/machine/scatter-renderer.js';
 import * as renderer from '../src/ui/machine-renderer.js';
 
 test('split machine renderer import graph loads without executing DOM work',()=>{
@@ -56,4 +57,26 @@ test('SL25 source order keeps focus and steering packages in their published seq
   assert.ok(x.focus1<x.steer1);
   assert.ok(x.steer1<x.focus2&&x.focus2<x.steer2);
   assert.ok((x.steer2-x.gun)/(x.bendEntry-x.gun)<.75);
+});
+
+test('electron applicator scatter visual is electron-mode only and preserves component shares',()=>{
+  const radiation={
+    electronScatterFraction:.0255,
+    electronPhotonContaminationFraction:.0045
+  };
+  const visual=electronApplicatorScatterVisual(radiation,'electron');
+
+  assert.ok(visual);
+  assert.equal(electronApplicatorScatterVisual(radiation,'photon'),null);
+  assert.ok(Math.abs(visual.electronShare+.0+visual.photonShare-1)<1e-12);
+  assert.ok(visual.electronShare>visual.photonShare);
+  assert.ok(visual.photonRadius>visual.electronRadius);
+  assert.ok(visual.electronOpacity>visual.photonOpacity);
+});
+
+test('electron applicator scatter visual disappears when no modeled scatter is present',()=>{
+  assert.equal(electronApplicatorScatterVisual({
+    electronScatterFraction:0,
+    electronPhotonContaminationFraction:0
+  },'electron'),null);
 });

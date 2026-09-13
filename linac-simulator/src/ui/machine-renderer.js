@@ -16,7 +16,8 @@ export function render(params,sim,overlays,view={mode:'photon',filter:'ff'},radi
   updateRfAnimation(sim,delivery,view);
   if(radiation){
     renderScatter(sim,radiation,{
-      visible:Boolean(delivery?.beamActive&&delivery?.sourceActive)&&overlays.scatter!==false
+      visible:Boolean(delivery?.beamActive&&delivery?.sourceActive)&&overlays.scatter!==false,
+      mode:view.mode
     });
   }
   return beamPath;
