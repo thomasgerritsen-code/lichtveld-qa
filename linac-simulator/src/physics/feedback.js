@@ -28,6 +28,20 @@ export function lutAssist(environment,angleDeg){
   };
 }
 
+function sixSectorUniformity(commonDose,radialTilt,transverseTilt){
+  // AAPM's FFF technology assessment describes Elekta's third monitor chamber
+  // as six geometrically arranged collection plates providing uniformity signals.
+  // The angular projection below is deliberately normalized: it captures the
+  // topology of six sector-like signals without using OEM plate geometry,
+  // calibration gains, tolerances, service thresholds or clinical settings.
+  const sectorGain=.035;
+  return Array.from({length:6},(_,index)=>{
+    const angle=index*Math.PI/3;
+    const projected=radialTilt*Math.cos(angle)+transverseTilt*Math.sin(angle);
+    return clamp(commonDose+sectorGain*projected,0,1.2);
+  });
+}
+
 export function chamberSignals(sim){
   const t=sim.target;
   const doseLoss=Math.min(.16,Math.abs(t.r)*.8+Math.abs(t.t)*.8+Math.abs(t.rp)*.25+Math.abs(t.tp)*.25);
@@ -45,12 +59,18 @@ export function chamberSignals(sim){
   const channelSplit=clamp(radialTilt*.012+transverseTilt*.008,-.004,.004);
   const primaryMonitor=clamp(commonDose+channelSplit,0,1.2);
   const secondaryMonitor=clamp(commonDose-channelSplit,0,1.2);
+  const uniformitySectors=sixSectorUniformity(commonDose,radialTilt,transverseTilt);
+  const uniformityMean=uniformitySectors.reduce((sum,value)=>sum+value,0)/uniformitySectors.length;
+  const uniformitySpan=Math.max(...uniformitySectors)-Math.min(...uniformitySectors);
 
   return {
     primaryMonitor,
     secondaryMonitor,
     monitorMean:(primaryMonitor+secondaryMonitor)/2,
     monitorDifference:primaryMonitor-secondaryMonitor,
+    uniformitySectors,
+    uniformityMean,
+    uniformitySpan,
     // Backward-compatible aliases used by the current diagnostics panel.
     doseA:primaryMonitor,
     doseB:secondaryMonitor,
@@ -88,6 +108,9 @@ export function buildControlContext({mode='manual',angleDeg=0,direction='cw',pre
     secondaryMonitor:1,
     monitorMean:1,
     monitorDifference:0,
+    uniformitySectors:[1,1,1,1,1,1],
+    uniformityMean:1,
+    uniformitySpan:0,
     doseA:1,
     doseB:1,
     radialTilt:0,
