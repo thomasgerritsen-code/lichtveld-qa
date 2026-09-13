@@ -1,4 +1,4 @@
-const CACHE='linac-dashboard-v53-agility-leakage-v26';
+const CACHE='linac-dashboard-v54-agility-160-leaf-v27';
 const CORE=[
   './','./index.html?v=31','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',
