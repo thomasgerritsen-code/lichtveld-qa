@@ -5,10 +5,14 @@ import {decodeControls,simulate} from '../src/physics/beam-model.js';
 import {photonProfiles} from '../src/physics/detector.js';
 import {photonOutputFactorProxy} from '../src/physics/delivery-state.js';
 
-function nominalProfiles(filter){
+function nominalProfileSet(filter){
   const params=decodeControls({...UI_DEFAULTS,fx:10,fy:10});
   const sim=simulate(params,{},{});
-  return photonProfiles(sim,params,filter).radial;
+  return photonProfiles(sim,params,filter);
+}
+
+function nominalProfiles(filter){
+  return nominalProfileSet(filter).radial;
 }
 
 function nearest(profile,x){
@@ -30,6 +34,23 @@ test('FFF normalized penumbra falls faster outside the same nominal field edge',
   const fffOutside=nearest(fff,.30).y;
   assert.ok(fffOutside<ffOutside);
   assert.ok(fffOutside<ffOutside*.8);
+});
+
+test('Agility MLC-defined axis has a broader normalized edge than the orthogonal diaphragm axis',()=>{
+  for(const filter of ['ff','fff']){
+    const profiles=nominalProfileSet(filter);
+    const diaphragmOutside=nearest(profiles.radial,.30).y;
+    const mlcOutside=nearest(profiles.transverse,.30).y;
+    assert.ok(mlcOutside>diaphragmOutside,`${filter}: expected MLC edge to be broader`);
+  }
+});
+
+test('directional edge model preserves the same central normalization on both axes',()=>{
+  for(const filter of ['ff','fff']){
+    const profiles=nominalProfileSet(filter);
+    assert.ok(Math.abs(nearest(profiles.radial,0).y-1)<1e-12);
+    assert.ok(Math.abs(nearest(profiles.transverse,0).y-1)<1e-12);
+  }
 });
 
 test('FFF field-output proxy has less field-size dependence around the 10x10 reference',()=>{
