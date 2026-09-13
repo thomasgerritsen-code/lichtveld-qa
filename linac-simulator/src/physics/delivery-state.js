@@ -44,6 +44,25 @@ export function photonOutputFactorProxy(xCm,yCm,filter='ff'){
   return squareTrend*collimatorExchangeProxy(xCm,yCm,filter);
 }
 
+export function electronConeOutputProxy(xCm,yCm){
+  const eq=equivalentSquare(xCm,yCm);
+
+  // Versa HD commissioning literature explicitly characterizes electron cone/
+  // cutout output factors across multiple applicator and field sizes and uses a
+  // 10×10 cm applicator as the normalization reference. RT-VTech therefore no
+  // longer treats every electron field as exactly 1.000. The curve below is a
+  // deliberately shallow, dimensionless teaching proxy only: it encodes reduced
+  // relative output for small cutouts and a modest increase for larger openings,
+  // without reproducing any measured energy-, cone-, SSD- or cutout-specific data.
+  if(eq<=10){
+    const u=Math.log(10/eq)/Math.log(10);
+    return 1-.08*Math.pow(clamp(u,0,1),.75);
+  }
+
+  const u=Math.log(eq/10)/Math.log(4);
+  return 1+.04*Math.pow(clamp(u,0,1),.8);
+}
+
 export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon',filter='ff'}){
   const powerOn=Boolean(machine?.powerOn);
   const beamRequested=Boolean(machine?.beamOn);
@@ -55,7 +74,7 @@ export function evaluateDelivery({radiation,machine,params,sim=null,mode='photon
 
   const fieldFactor=mode==='photon'
     ?photonOutputFactorProxy(params?.fieldXcm??10,params?.fieldYcm??10,filter)
-    :1;
+    :electronConeOutputProxy(params?.fieldXcm??10,params?.fieldYcm??10);
 
   const outputFraction=clamp(beamQuality*sourceFactor,0,1);
   const radiationActive=beamActive&&sourceActive;
