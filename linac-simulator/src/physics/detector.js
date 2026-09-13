@@ -18,7 +18,21 @@ export function photonProfiles(sim,params,filter='ff'){
   const skewR=clamp(t.rp*4.0,-.18,.18);
   const skewT=clamp(t.tp*4.0,-.18,.18);
 
-  const make=(half,shift,skew)=>{
+  // Versa HD commissioning studies report qualitatively sharper penumbrae and
+  // lower out-of-field dose for matched FFF beams than for their FF counterparts.
+  // These widths are normalized drawing parameters only; they are not clinical
+  // penumbra dimensions, commissioning measurements or OEM calibration values.
+  const basePenumbraWidth=filter==='fff'?.029:.035;
+
+  // Agility uses the MLC to define one field axis and a separate pair of sculpted
+  // diaphragms on the orthogonal axis. Public Versa HD/Agility literature reports
+  // direction-dependent penumbra and specifically notes that MLC-defined
+  // collimation can produce the broader edge. The multipliers below encode only
+  // that qualitative ordering; they are normalized educational parameters.
+  const diaphragmPenumbraWidth=basePenumbraWidth*.94;
+  const mlcPenumbraWidth=basePenumbraWidth*1.08;
+
+  const make=(half,shift,skew,penumbraWidth)=>{
     const pts=[];
     for(let i=0;i<samples;i++){
       const x=-1+2*i/(samples-1);
@@ -26,14 +40,15 @@ export function photonProfiles(sim,params,filter='ff'){
       let base;
       if(filter==='fff') base=Math.exp(-.5*(u/.58)**2);
       else base=.93+.07*Math.exp(-.5*(u/.48)**2);
-      const shaped=base*edge(u,half,.035)*(1+skew*u);
+      const shaped=base*edge(u,half,penumbraWidth)*(1+skew*u);
       pts.push({x,y:Math.max(0,shaped)});
     }
     return norm(pts);
   };
 
-  const radial=make(fieldHalfR,shiftR,skewR);
-  const transverse=make(fieldHalfT,shiftT,skewT);
+  // R follows Y diaphragms; T follows X/MLC in the simulator controls.
+  const radial=make(fieldHalfR,shiftR,skewR,diaphragmPenumbraWidth);
+  const transverse=make(fieldHalfT,shiftT,skewT,mlcPenumbraWidth);
   const symmetryR=clamp(skewR*100,-20,20);
   const symmetryT=clamp(skewT*100,-20,20);
   return {
