@@ -204,13 +204,21 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     ?primaryTransmission*.025*fieldScatterScale*filterScatterScale*capturedIntensity
     :0;
 
-  // Clinical electron beams also contain radiation scattered by the treatment
-  // head/applicator. Literature reports that this contribution changes with
-  // applicator/field size. Keep only the qualitative trend here: this is a
-  // dimensionless educational proxy, not a measured Elekta cone factor or dose.
+  // Clinical electron beams contain both scattered electrons and a photon/
+  // bremsstrahlung component generated in the treatment head/applicator. Public
+  // literature supports that qualitative two-component picture, but the exact
+  // mix depends strongly on energy and hardware. RT-VTech therefore keeps the
+  // existing total applicator-scatter proxy and only decomposes it into normalized
+  // teaching components; these are not measured contamination fractions.
   const electronApplicatorScale=Math.max(.70,Math.min(1.35,Math.pow(10/eqSquare,.18)));
   const electronApplicatorScatter=mode==='electron'
     ?primaryTransmission*.03*electronApplicatorScale*capturedIntensity
+    :0;
+  const electronPhotonContamination=mode==='electron'
+    ?electronApplicatorScatter*.15
+    :0;
+  const electronScatter=mode==='electron'
+    ?electronApplicatorScatter-electronPhotonContamination
     :0;
 
   const missScatter=targetLost*.35*capturedIntensity;
@@ -235,6 +243,8 @@ export function evaluateRadiationTransport(sim,{mode='photon',filter='ff',fieldX
     wallScatterFraction:clamp(wallScatter,0,1),
     normalHeadScatterFraction:clamp(normalHeadScatter,0,1),
     electronApplicatorScatterFraction:clamp(electronApplicatorScatter,0,1),
+    electronScatterFraction:clamp(electronScatter,0,1),
+    electronPhotonContaminationFraction:clamp(electronPhotonContamination,0,1),
     missScatterFraction:clamp(missScatter,0,1),
     firstStrike,
     hardStrike,

@@ -27,6 +27,19 @@ test('nominal electron beam includes a low non-zero normalized applicator-scatte
   assert.ok(radiation.electronApplicatorScatterFraction<.1);
 });
 
+test('electron applicator scatter separates electron and photon-contamination teaching components without changing the total',()=>{
+  const radiation=run({},'electron',{fieldXcm:10,fieldYcm:10});
+
+  assert.ok(radiation.electronScatterFraction>0);
+  assert.ok(radiation.electronPhotonContaminationFraction>0);
+  assert.ok(radiation.electronScatterFraction>radiation.electronPhotonContaminationFraction);
+  assert.ok(Math.abs(
+    radiation.electronScatterFraction+
+    radiation.electronPhotonContaminationFraction-
+    radiation.electronApplicatorScatterFraction
+  )<1e-12);
+});
+
 test('educational electron applicator-scatter proxy decreases gently for a larger equivalent field',()=>{
   const small=run({},'electron',{fieldXcm:6,fieldYcm:6});
   const reference=run({},'electron',{fieldXcm:10,fieldYcm:10});
@@ -38,9 +51,11 @@ test('educational electron applicator-scatter proxy decreases gently for a large
   assert.equal(large.doseRatePercent,100);
 });
 
-test('photon mode does not acquire the electron applicator-scatter component',()=>{
+test('photon mode does not acquire electron-scatter or electron photon-contamination components',()=>{
   const radiation=run({},'photon',{fieldXcm:10,fieldYcm:10});
   assert.equal(radiation.electronApplicatorScatterFraction,0);
+  assert.equal(radiation.electronScatterFraction,0);
+  assert.equal(radiation.electronPhotonContaminationFraction,0);
   assert.ok(radiation.normalHeadScatterFraction>0);
 });
 
