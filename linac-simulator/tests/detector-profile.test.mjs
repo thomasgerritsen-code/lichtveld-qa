@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {UI_DEFAULTS} from '../src/machine/model.js';
 import {decodeControls,simulate} from '../src/physics/beam-model.js';
-import {agilityMlcLeakageFloor,photonProfiles} from '../src/physics/detector.js';
+import {agilityMlcLeakageFloor,photonProfiles,electronProfile} from '../src/physics/detector.js';
 import {photonOutputFactorProxy} from '../src/physics/delivery-state.js';
 
 function nominalProfileSet(filter){
@@ -74,4 +74,30 @@ test('FFF field-output proxy has less field-size dependence around the 10x10 ref
   assert.equal(photonOutputFactorProxy(10,10,'fff'),1);
   assert.ok(photonOutputFactorProxy(5,5,'fff')>photonOutputFactorProxy(5,5,'ff'));
   assert.ok(photonOutputFactorProxy(20,20,'fff')<photonOutputFactorProxy(20,20,'ff'));
+});
+
+test('electron profile keeps radial and transverse steering centers independent',()=>{
+  const params=decodeControls({...UI_DEFAULTS,fx:10,fy:10,r1:35,t1:0});
+  const sim=simulate(params,{},{});
+  const profiles=electronProfile(sim,params);
+  assert.ok(Math.abs(profiles.centerR)>1e-4);
+  assert.ok(Math.abs(profiles.centerT)<Math.abs(profiles.centerR)*.25);
+  assert.notEqual(profiles.radial,profiles.transverse);
+});
+
+test('rectangular electron field proxy preserves separate X and Y profile widths',()=>{
+  const params=decodeControls({...UI_DEFAULTS,fx:20,fy:8});
+  const sim=simulate(params,{},{});
+  const profiles=electronProfile(sim,params);
+  const radialAt30=nearest(profiles.radial,.30).y;
+  const transverseAt30=nearest(profiles.transverse,.30).y;
+  assert.ok(transverseAt30>radialAt30,'larger X extent should remain wider in transverse profile');
+});
+
+test('electron profile retains compatibility alias for previous callers',()=>{
+  const params=decodeControls({...UI_DEFAULTS,fx:10,fy:10});
+  const sim=simulate(params,{},{});
+  const profiles=electronProfile(sim,params);
+  assert.equal(profiles.profile,profiles.transverse);
+  assert.equal(profiles.center,profiles.centerT);
 });

@@ -75,18 +75,41 @@ export function photonProfiles(sim,params,filter='ff'){
 
 export function electronProfile(sim,params){
   const t=sim.target;
-  const pts=[];
-  const half=clamp(.08+.84*Math.min(params.fx,params.fy),.08,.92);
-  const center=clamp(t.t*4.5,-.18,.18);
   const effectiveEnergy=sim.effectiveEnergy??params.energy;
   const scatter=.08+.16*(1-effectiveEnergy/2);
-  for(let i=0;i<81;i++){
-    const x=-1+2*i/80,u=x-center;
-    const broad=edge(u,half,.055+scatter*.08);
-    const shoulder=.85+.15*Math.exp(-.5*(u/(half*.72+scatter))**2);
-    pts.push({x,y:broad*shoulder});
-  }
-  return {profile:norm(pts),center,scatterWidth:scatter};
+  const centerR=clamp(t.r*4.5,-.18,.18);
+  const centerT=clamp(t.t*4.5,-.18,.18);
+  const halfR=clamp(.08+.84*params.fy,.08,.92);
+  const halfT=clamp(.08+.84*params.fx,.08,.92);
+
+  // Electron commissioning is performed with separate in-plane and cross-plane
+  // profiles. Keep those axes independent in this normalized teaching model so
+  // R/T steering and rectangular applicator/cutout proxies remain distinguishable.
+  // No measured clinical profile widths or cone dimensions are reproduced here.
+  const make=(half,center)=>{
+    const pts=[];
+    for(let i=0;i<81;i++){
+      const x=-1+2*i/80,u=x-center;
+      const broad=edge(u,half,.055+scatter*.08);
+      const shoulder=.85+.15*Math.exp(-.5*(u/(half*.72+scatter))**2);
+      pts.push({x,y:broad*shoulder});
+    }
+    return norm(pts);
+  };
+
+  const radial=make(halfR,centerR);
+  const transverse=make(halfT,centerT);
+  return {
+    radial,
+    transverse,
+    // Compatibility alias for older callers: transverse was the only profile
+    // represented before the axis-specific model was introduced.
+    profile:transverse,
+    centerR,
+    centerT,
+    center:centerT,
+    scatterWidth:scatter
+  };
 }
 
 export function virtualEpid(sim,params){

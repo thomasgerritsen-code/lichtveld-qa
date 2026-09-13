@@ -164,11 +164,11 @@ export function initDiagnostics(){
         profileCard.querySelector('#fieldSymmetry').textContent=`${p.symmetryR.toFixed(1)} / ${p.symmetryT.toFixed(1)}`;
       }else{
         const e=electronProfile(sim,params);
-        renderProfile(profileCard.querySelector('#profileR'),e.profile);
-        renderProfile(profileCard.querySelector('#profileT'),e.profile);
-        profileCard.querySelector('#profileTitleR').textContent='Electron fluence · scattering model';
-        profileCard.querySelector('#profileTitleT').textContent='Electron fluence · applicator model';
-        profileCard.querySelector('#fieldCenter').textContent=`0.000 / ${e.center.toFixed(3)}`;
+        renderProfile(profileCard.querySelector('#profileR'),e.radial);
+        renderProfile(profileCard.querySelector('#profileT'),e.transverse);
+        profileCard.querySelector('#profileTitleR').textContent='Radial electron fluence · applicator/cutout proxy';
+        profileCard.querySelector('#profileTitleT').textContent='Transverse electron fluence · applicator/cutout proxy';
+        profileCard.querySelector('#fieldCenter').textContent=`${e.centerR.toFixed(3)} / ${e.centerT.toFixed(3)}`;
         profileCard.querySelector('#fieldSymmetry').textContent='n.v.t.';
       }
 
