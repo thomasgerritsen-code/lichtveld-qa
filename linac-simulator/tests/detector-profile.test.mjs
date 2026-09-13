@@ -15,10 +15,12 @@ function nearest(profile,x){
   return profile.reduce((best,p)=>Math.abs(p.x-x)<Math.abs(best.x-x)?p:best);
 }
 
-test('FFF keeps the expected peaked central profile while FF remains comparatively flat',()=>{
+test('FFF keeps a more centrally peaked normalized profile than FF away from the field edge',()=>{
   const ff=nominalProfiles('ff');
   const fff=nominalProfiles('fff');
-  assert.ok(nearest(ff,.15).y>nearest(fff,.15).y);
+  const ffShoulder=nearest(ff,.10).y;
+  const fffShoulder=nearest(fff,.10).y;
+  assert.ok(fffShoulder<ffShoulder);
 });
 
 test('FFF normalized penumbra falls faster outside the same nominal field edge',()=>{
