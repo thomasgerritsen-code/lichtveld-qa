@@ -18,6 +18,12 @@ export function photonProfiles(sim,params,filter='ff'){
   const skewR=clamp(t.rp*4.0,-.18,.18);
   const skewT=clamp(t.tp*4.0,-.18,.18);
 
+  // Versa HD commissioning studies report qualitatively sharper penumbrae and
+  // lower out-of-field dose for matched FFF beams than for their FF counterparts.
+  // These widths are normalized drawing parameters only; they are not clinical
+  // penumbra dimensions, commissioning measurements or OEM calibration values.
+  const penumbraWidth=filter==='fff'?.029:.035;
+
   const make=(half,shift,skew)=>{
     const pts=[];
     for(let i=0;i<samples;i++){
@@ -26,7 +32,7 @@ export function photonProfiles(sim,params,filter='ff'){
       let base;
       if(filter==='fff') base=Math.exp(-.5*(u/.58)**2);
       else base=.93+.07*Math.exp(-.5*(u/.48)**2);
-      const shaped=base*edge(u,half,.035)*(1+skew*u);
+      const shaped=base*edge(u,half,penumbraWidth)*(1+skew*u);
       pts.push({x,y:Math.max(0,shaped)});
     }
     return norm(pts);
