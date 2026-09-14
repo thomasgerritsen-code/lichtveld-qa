@@ -73,6 +73,43 @@ export function treatmentHeadApertureState(params,view={mode:'photon'}){
   };
 }
 
+export function agilityDiaphragmVisualState(params){
+  const {diaphragmGap}=treatmentHeadApertureState(params,{mode:'photon'});
+  const center=1450;
+  const outerHalfWidth=168;
+  const top=1008;
+  const bottom=1038;
+  const curve=13;
+  const leftInner=center-diaphragmGap;
+  const rightInner=center+diaphragmGap;
+  const leftOuter=center-outerHalfWidth;
+  const rightOuter=center+outerHalfWidth;
+
+  // Agility publications describe sculpted diaphragms with curved beam-defining
+  // ends. These paths intentionally exaggerate that topology for readability in
+  // the schematic. Coordinates are normalized SVG illustration geometry only and
+  // do not represent OEM dimensions, radii, clearances or calibrated positions.
+  return {
+    role:'sculpted-diaphragm',
+    leftPath:`M${leftOuter} ${top} H${leftInner-curve} Q${leftInner} ${(top+bottom)/2} ${leftInner-curve} ${bottom} H${leftOuter} Z`,
+    rightPath:`M${rightOuter} ${top} H${rightInner+curve} Q${rightInner} ${(top+bottom)/2} ${rightInner+curve} ${bottom} H${rightOuter} Z`
+  };
+}
+
+function ensureDiaphragmPath(id){
+  const current=document.querySelector(`#${id}`);
+  if(!current||current.tagName?.toLowerCase()==='path')return current;
+  const path=document.createElementNS(NS,'path');
+  for(const {name,value} of current.attributes)path.setAttribute(name,value);
+  path.removeAttribute('x');
+  path.removeAttribute('y');
+  path.removeAttribute('width');
+  path.removeAttribute('height');
+  path.removeAttribute('rx');
+  current.replaceWith(path);
+  return path;
+}
+
 export function initMlcLeaves(){
   const left=document.querySelector('#mlcLeft');
   const right=document.querySelector('#mlcRight');
@@ -80,7 +117,6 @@ export function initMlcLeaves(){
 
   for(const row of agilityLeafRows()){
     const {index,y,height:h}=row;
-
     const leafLeft=document.createElementNS(NS,'path');
     leafLeft.setAttribute('d',`M1327 ${y} H1410 Q1426 ${y+h/2} 1410 ${y+h} H1327 Z`);
     leafLeft.setAttribute('class','mlcLeaf');
@@ -120,15 +156,16 @@ export function updateTreatmentHead(params,view,delivery=null){
     right.setAttribute('data-role',aperture.mlcRole);
   }
 
-  const jawL=document.querySelector('#jawL');
-  const jawR=document.querySelector('#jawR');
+  const diaphragmVisual=agilityDiaphragmVisualState(params);
+  const jawL=ensureDiaphragmPath('jawL');
+  const jawR=ensureDiaphragmPath('jawR');
   if(jawL){
-    jawL.setAttribute('x',center-aperture.diaphragmGap-78);
-    jawL.setAttribute('data-role','sculpted-diaphragm');
+    jawL.setAttribute('d',diaphragmVisual.leftPath);
+    jawL.setAttribute('data-role',diaphragmVisual.role);
   }
   if(jawR){
-    jawR.setAttribute('x',center+aperture.diaphragmGap);
-    jawR.setAttribute('data-role','sculpted-diaphragm');
+    jawR.setAttribute('d',diaphragmVisual.rightPath);
+    jawR.setAttribute('data-role',diaphragmVisual.role);
   }
 
   const filterVisual=photonFilterVisualState(view);
