@@ -25,7 +25,7 @@ test('nominal beam gives two matching redundant monitor channels and six equal u
   assert.equal(chamber.doseB,chamber.secondaryMonitor);
 });
 
-test('monitor graphics expose two dose layers and a separate seven-sector beam-quality layer',()=>{
+test('monitor graphics expose two dose layers plus six collection plates in a seven-electrode quality chamber',()=>{
   const visual=monitorChamberVisualState();
   assert.equal(visual.role,'monitor-chamber-stack');
   assert.equal(visual.dosePlanes.length,2);
@@ -34,7 +34,8 @@ test('monitor graphics expose two dose layers and a separate seven-sector beam-q
     ['primary-dose-monitor','backup-dose-monitor']
   );
   assert.equal(visual.qualityPlane.role,'beam-quality-monitor');
-  assert.equal(visual.qualityPlane.sectorCount,7);
+  assert.equal(visual.qualityPlane.collectionPlateCount,6);
+  assert.equal(visual.qualityPlane.electrodeCount,7);
   assert.ok(visual.dosePlanes[0].y<visual.dosePlanes[1].y);
   assert.ok(visual.dosePlanes[1].y<visual.qualityPlane.y);
 });
