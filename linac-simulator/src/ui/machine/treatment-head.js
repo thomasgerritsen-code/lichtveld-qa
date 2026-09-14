@@ -97,11 +97,12 @@ export function agilityDiaphragmVisualState(params){
 }
 
 export function monitorChamberVisualState(){
-  // Elekta's public LINAC overview describes two independent ionization chambers
-  // for dose monitoring plus a third beam-quality chamber using seven electrodes.
-  // Represent that functional topology as a compact three-layer stack. All geometry
-  // below is normalized SVG illustration geometry only: it is not chamber thickness,
-  // electrode spacing, physical separation, gain, calibration or an interlock value.
+  // Public Elekta information describes two independent ionization chambers for
+  // dose monitoring and seven electrodes in the third beam-quality chamber. The
+  // AAPM FFF report resolves the teaching topology further as six collection plates
+  // providing uniformity signals. We therefore draw six collection regions while
+  // retaining the public seven-electrode count as metadata. Geometry is normalized
+  // SVG illustration only, not chamber thickness, spacing, calibration or limits.
   return {
     role:'monitor-chamber-stack',
     housing:{x:1366,y:902,width:168,height:32,rx:9},
@@ -109,7 +110,12 @@ export function monitorChamberVisualState(){
       {role:'primary-dose-monitor',y:909},
       {role:'backup-dose-monitor',y:918}
     ],
-    qualityPlane:{role:'beam-quality-monitor',y:927,sectorCount:7}
+    qualityPlane:{
+      role:'beam-quality-monitor',
+      y:927,
+      collectionPlateCount:6,
+      electrodeCount:7
+    }
   };
 }
 
@@ -158,22 +164,23 @@ export function initMonitorChambers(){
 
   const quality=document.createElementNS(NS,'g');
   quality.setAttribute('data-role',visual.qualityPlane.role);
-  quality.setAttribute('data-sector-count',String(visual.qualityPlane.sectorCount));
-  const sectorWidth=16;
-  const gap=3;
-  const total=visual.qualityPlane.sectorCount*sectorWidth+(visual.qualityPlane.sectorCount-1)*gap;
+  quality.setAttribute('data-collection-plate-count',String(visual.qualityPlane.collectionPlateCount));
+  quality.setAttribute('data-electrode-count',String(visual.qualityPlane.electrodeCount));
+  const plateWidth=18;
+  const gap=4;
+  const total=visual.qualityPlane.collectionPlateCount*plateWidth+(visual.qualityPlane.collectionPlateCount-1)*gap;
   const startX=1450-total/2;
-  for(let index=0;index<visual.qualityPlane.sectorCount;index++){
-    const sector=document.createElementNS(NS,'rect');
-    sector.setAttribute('x',String(startX+index*(sectorWidth+gap)));
-    sector.setAttribute('y',String(visual.qualityPlane.y-2.2));
-    sector.setAttribute('width',String(sectorWidth));
-    sector.setAttribute('height','4.4');
-    sector.setAttribute('rx','1.5');
-    sector.setAttribute('data-sector-index',String(index));
-    sector.setAttribute('fill','#67d8cb');
-    sector.setAttribute('opacity',index===3?'.9':'.52');
-    quality.appendChild(sector);
+  for(let index=0;index<visual.qualityPlane.collectionPlateCount;index++){
+    const plate=document.createElementNS(NS,'rect');
+    plate.setAttribute('x',String(startX+index*(plateWidth+gap)));
+    plate.setAttribute('y',String(visual.qualityPlane.y-2.2));
+    plate.setAttribute('width',String(plateWidth));
+    plate.setAttribute('height','4.4');
+    plate.setAttribute('rx','1.5');
+    plate.setAttribute('data-collection-plate-index',String(index));
+    plate.setAttribute('fill','#67d8cb');
+    plate.setAttribute('opacity','.62');
+    quality.appendChild(plate);
   }
   group.appendChild(quality);
 
