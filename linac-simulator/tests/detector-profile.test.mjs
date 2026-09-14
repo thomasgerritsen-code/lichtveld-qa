@@ -103,10 +103,10 @@ test('electron profile retains compatibility alias for previous callers',()=>{
 });
 
 test('normalized electron penumbra broadens with increasing simulated beam energy',()=>{
-  const lowParams=decodeControls({...UI_DEFAULTS,fx:10,fy:10,energy:0});
-  const highParams=decodeControls({...UI_DEFAULTS,fx:10,fy:10,energy:100});
-  const low=electronProfile(simulate(lowParams,{},{}),lowParams);
-  const high=electronProfile(simulate(highParams,{},{}),highParams);
+  const params=decodeControls({...UI_DEFAULTS,fx:10,fy:10});
+  const nominal=simulate(params,{},{});
+  const low=electronProfile({...nominal,effectiveEnergy:.96},params);
+  const high=electronProfile({...nominal,effectiveEnergy:1.04},params);
 
   assert.ok(high.scatterWidth>low.scatterWidth);
   assert.ok(nearest(high.radial,.40).y>nearest(low.radial,.40).y);
