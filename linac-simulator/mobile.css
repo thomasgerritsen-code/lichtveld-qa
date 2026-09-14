@@ -1,0 +1,74 @@
+@media (max-width:700px){
+  html{scroll-behavior:smooth}
+  body{font-size:16px}
+  .simShell{padding:8px 8px 18px}
+  .simToolbar{gap:10px}
+  .toolbarActions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  button,.backLink,.controls summary{min-height:44px}
+  button{padding:10px 11px}
+  .backLink{display:inline-flex;align-items:center}
+
+  .mobileQuickNav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 10px}
+  .mobileQuickNav button{min-width:0;font-size:.78rem;padding:9px 7px;background:#eef5fd;color:#1961ab;border-color:#cfe0f4}
+
+  .hero{padding:12px;margin-bottom:10px}
+  .hero h2{font-size:1.2rem;line-height:1.2}
+  .hero p{font-size:.88rem}
+  .heroBadges{gap:5px}
+  .heroBadges span{font-size:.69rem;padding:5px 7px}
+
+  .integrityConsole{margin-bottom:10px}
+  .consoleTop{padding:10px}
+  .consoleStateStrip{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .consoleState{min-width:0}
+  .consoleState b{overflow-wrap:anywhere}
+  .consoleGrid{padding:8px;gap:8px}
+  .consolePowerBlock,.consoleFieldBlock,.consoleDoseBlock{padding:9px}
+  .machinePowerBtn,.beamOnBtn,.beamOffBtn{min-height:52px}
+  .fieldPresets{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .fieldPresets button{min-height:44px;font-size:.75rem}
+  .fieldReadout,.doseConsoleReadouts{grid-template-columns:1fr}
+
+  .controls{gap:8px}
+  .controls details,.modelNote{border-radius:10px}
+  .controls summary{display:flex;align-items:center;padding:11px 12px;touch-action:manipulation}
+  .controlBody{padding:9px 12px 12px;gap:12px}
+  .controlBody label:not(.check){font-size:.9rem}
+  .controlBody input[type=range],.consoleDoseSlider input[type=range]{min-height:44px;margin:0;touch-action:pan-y}
+  .check{min-height:44px;font-size:.9rem}
+  .check input[type=checkbox]{width:24px;height:24px;flex:0 0 auto}
+  .segmented,.controlModeGrid{gap:8px}
+  .segmented button,.controlModeGrid button{min-height:44px}
+
+  .viewerHead{align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .viewerHead>div{min-width:0;flex:1 1 180px}
+  .viewerHead button{display:inline-flex!important;align-items:center;justify-content:center;min-height:44px;flex:0 0 auto}
+  .effectBanner{font-size:.8rem}
+  .mobileViewerHint{display:block;padding:8px 10px;background:#eef5fd;color:#31516f;border-bottom:1px solid #cfe0f4;font-size:.75rem;line-height:1.35}
+  .machineViewport{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
+  .machineViewport svg{width:900px;max-width:none;height:auto}
+  .machineViewport.mobileFit svg{width:100%;max-width:100%;min-width:0}
+  .machineViewport:not(.mobileFit){scroll-behavior:smooth}
+
+  .statusGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px}
+  .stat{min-width:0;padding:8px}
+  .stat strong{overflow-wrap:anywhere}
+  .info{padding:10px}
+
+  .metricsScroll{overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+  .metricsTable{min-width:620px}
+}
+
+@media (max-width:390px){
+  .simShell{padding-left:6px;padding-right:6px}
+  .toolbarActions{grid-template-columns:1fr}
+  .mobileQuickNav{grid-template-columns:1fr 1fr 1fr}
+  .consoleStateStrip{grid-template-columns:1fr 1fr}
+  .machineViewport svg{width:820px}
+  .machineViewport.mobileFit svg{width:100%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .machineViewport:not(.mobileFit){scroll-behavior:auto}
+}
