@@ -11,7 +11,7 @@ for(const href of ['./mobile.css?v=1','./focus-steering.css?v=1']){
 
 const controller=createController();
 controller.start();
-initFocusSteeringGraphics();
 initMobileUx();
+initFocusSteeringGraphics();
 
 window.linacApp=controller;
