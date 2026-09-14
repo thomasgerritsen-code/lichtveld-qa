@@ -53,13 +53,23 @@ export function treatmentHeadApertureState(params,view={mode:'photon'}){
   // not an OEM leaf position, travel limit, clearance or clinical setting.
   const desiredHalfGap=view.mode==='electron'?110:photonHalfGap;
   const mlcDelta=desiredHalfGap-baseHalfGap;
-  const jawGap=18+82*params.fy;
+
+  // Public Versa HD/Agility beam-model descriptions identify the axis orthogonal
+  // to the MLC as a pair of sculpted diaphragms. Keep the existing normalized Y
+  // aperture response, but name its role explicitly instead of implying a second
+  // conventional jaw pair. This is topology/semantics only: no OEM positions,
+  // dimensions, transmission values or mechanical limits are represented here.
+  const diaphragmGap=18+82*params.fy;
 
   return {
     desiredHalfGap,
     mlcDelta,
-    jawGap,
-    mlcRole:view.mode==='electron'?'parked':'field-shaping'
+    diaphragmGap,
+    // Compatibility alias for older callers/tests while the UI terminology moves
+    // from generic 'jaw' wording to the Agility-specific diaphragm role.
+    jawGap:diaphragmGap,
+    mlcRole:view.mode==='electron'?'parked':'field-shaping',
+    orthogonalCollimatorRole:'sculpted-diaphragm-pair'
   };
 }
 
@@ -112,8 +122,14 @@ export function updateTreatmentHead(params,view,delivery=null){
 
   const jawL=document.querySelector('#jawL');
   const jawR=document.querySelector('#jawR');
-  if(jawL)jawL.setAttribute('x',center-aperture.jawGap-78);
-  if(jawR)jawR.setAttribute('x',center+aperture.jawGap);
+  if(jawL){
+    jawL.setAttribute('x',center-aperture.diaphragmGap-78);
+    jawL.setAttribute('data-role','sculpted-diaphragm');
+  }
+  if(jawR){
+    jawR.setAttribute('x',center+aperture.diaphragmGap);
+    jawR.setAttribute('data-role','sculpted-diaphragm');
+  }
 
   const filterVisual=photonFilterVisualState(view);
   const filterGroup=document.querySelector('#flatteningFilter');
