@@ -96,6 +96,29 @@ export function agilityDiaphragmVisualState(params){
   };
 }
 
+export function monitorChamberVisualState(){
+  // Public Elekta information describes two independent ionization chambers for
+  // dose monitoring and seven electrodes in the third beam-quality chamber. The
+  // AAPM FFF report resolves the teaching topology further as six collection plates
+  // providing uniformity signals. We therefore draw six collection regions while
+  // retaining the public seven-electrode count as metadata. Geometry is normalized
+  // SVG illustration only, not chamber thickness, spacing, calibration or limits.
+  return {
+    role:'monitor-chamber-stack',
+    housing:{x:1366,y:902,width:168,height:32,rx:9},
+    dosePlanes:[
+      {role:'primary-dose-monitor',y:909},
+      {role:'backup-dose-monitor',y:918}
+    ],
+    qualityPlane:{
+      role:'beam-quality-monitor',
+      y:927,
+      collectionPlateCount:6,
+      electrodeCount:7
+    }
+  };
+}
+
 function ensureDiaphragmPath(id){
   const current=document.querySelector(`#${id}`);
   if(!current||current.tagName?.toLowerCase()==='path')return current;
@@ -108,6 +131,63 @@ function ensureDiaphragmPath(id){
   path.removeAttribute('rx');
   current.replaceWith(path);
   return path;
+}
+
+export function initMonitorChambers(){
+  const group=document.querySelector('[data-part="monitor"]');
+  if(!group||group.querySelector('[data-role="monitor-chamber-stack"]'))return;
+
+  const visual=monitorChamberVisualState();
+  group.setAttribute('data-role',visual.role);
+
+  const housing=group.querySelector('.monitor');
+  if(housing){
+    for(const [name,value] of Object.entries(visual.housing))housing.setAttribute(name,String(value));
+    housing.setAttribute('data-role','monitor-housing');
+    housing.setAttribute('fill','#102c36');
+    housing.setAttribute('stroke','#67d8cb');
+  }
+
+  for(const plane of visual.dosePlanes){
+    const line=document.createElementNS(NS,'line');
+    line.setAttribute('x1','1381');
+    line.setAttribute('x2','1519');
+    line.setAttribute('y1',String(plane.y));
+    line.setAttribute('y2',String(plane.y));
+    line.setAttribute('data-role',plane.role);
+    line.setAttribute('stroke','#8ce8df');
+    line.setAttribute('stroke-width','2.2');
+    line.setAttribute('stroke-linecap','round');
+    line.setAttribute('opacity','.86');
+    group.appendChild(line);
+  }
+
+  const quality=document.createElementNS(NS,'g');
+  quality.setAttribute('data-role',visual.qualityPlane.role);
+  quality.setAttribute('data-collection-plate-count',String(visual.qualityPlane.collectionPlateCount));
+  quality.setAttribute('data-electrode-count',String(visual.qualityPlane.electrodeCount));
+  const plateWidth=18;
+  const gap=4;
+  const total=visual.qualityPlane.collectionPlateCount*plateWidth+(visual.qualityPlane.collectionPlateCount-1)*gap;
+  const startX=1450-total/2;
+  for(let index=0;index<visual.qualityPlane.collectionPlateCount;index++){
+    const plate=document.createElementNS(NS,'rect');
+    plate.setAttribute('x',String(startX+index*(plateWidth+gap)));
+    plate.setAttribute('y',String(visual.qualityPlane.y-2.2));
+    plate.setAttribute('width',String(plateWidth));
+    plate.setAttribute('height','4.4');
+    plate.setAttribute('rx','1.5');
+    plate.setAttribute('data-collection-plate-index',String(index));
+    plate.setAttribute('fill','#67d8cb');
+    plate.setAttribute('opacity','.62');
+    quality.appendChild(plate);
+  }
+  group.appendChild(quality);
+
+  const marker=document.createElementNS(NS,'g');
+  marker.setAttribute('data-role','monitor-chamber-stack');
+  marker.setAttribute('aria-hidden','true');
+  group.appendChild(marker);
 }
 
 export function initMlcLeaves(){
