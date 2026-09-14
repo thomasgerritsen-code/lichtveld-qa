@@ -1,0 +1,14 @@
+.focusSolenoidBody{fill:#102a31;stroke:#4f8f88;stroke-width:2;opacity:.72}
+.focusSolenoidTurn{fill:none;stroke:#81e7d6;stroke-width:2.5;opacity:.96}
+.focusAxisGuide{stroke:#b7d7df;stroke-width:1.2;stroke-dasharray:5 5;opacity:.7}
+.steeringRadialCoil{fill:#292415;stroke:#f0c64b;stroke-width:2.2}
+.steeringTransverseCoil{fill:#101923;stroke:#ffda6d;stroke-width:2.2}
+.steeringAxisGuide{stroke:#b7d7df;stroke-width:1.2;stroke-dasharray:5 5;opacity:.72}
+.steeringChannelLabel{fill:#fff1a8;font-size:13px;font-weight:900;paint-order:stroke;stroke:#06101a;stroke-width:3px;stroke-linejoin:round}
+.focusTopologyGraphic,.steeringTopologyGraphic{pointer-events:none}
+#focusSteeringTopologyOverlay{filter:drop-shadow(0 1px 1px rgba(0,0,0,.28))}
+@media(max-width:700px){
+  .focusSolenoidTurn{stroke-width:3}
+  .steeringRadialCoil,.steeringTransverseCoil{stroke-width:2.8}
+  .steeringChannelLabel{font-size:16px}
+}
