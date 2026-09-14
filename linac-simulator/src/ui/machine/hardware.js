@@ -28,6 +28,56 @@ export function inputModeTransformerSpec(){
   };
 }
 
+export function electronGunTopologySpec(){
+  return {
+    // Educational topology only: cathode -> control/focusing electrode -> anode aperture.
+    // Relative positions are normalized illustration coordinates, not OEM dimensions.
+    cathodeX:7,
+    controlX:39,
+    anodeX:79,
+    apertureHalfHeight:9,
+    beamExitX:96
+  };
+}
+
+function initElectronGunGraphics(){
+  const gun=document.querySelector('[data-part="gun"] > g');
+  if(!gun||gun.querySelector('#electronGunElectrodes'))return;
+  const spec=electronGunTopologySpec();
+
+  const group=document.createElementNS(NS,'g');
+  group.setAttribute('id','electronGunElectrodes');
+  group.setAttribute('data-geometry','normalized-educational');
+  group.setAttribute('data-topology','cathode-control-anode');
+
+  const control=document.createElementNS(NS,'path');
+  control.setAttribute('d',`M${spec.controlX-9} -25 Q${spec.controlX+7} -16 ${spec.controlX+8} -${spec.apertureHalfHeight} M${spec.controlX-9} 25 Q${spec.controlX+7} 16 ${spec.controlX+8} ${spec.apertureHalfHeight}`);
+  control.setAttribute('fill','none');
+  control.setAttribute('stroke','#91d8ff');
+  control.setAttribute('stroke-width','2.4');
+  control.setAttribute('stroke-linecap','round');
+  group.appendChild(control);
+
+  const anode=document.createElementNS(NS,'path');
+  anode.setAttribute('d',`M${spec.anodeX} -28 V-${spec.apertureHalfHeight} M${spec.anodeX} ${spec.apertureHalfHeight} V28`);
+  anode.setAttribute('fill','none');
+  anode.setAttribute('stroke','#d9e7f4');
+  anode.setAttribute('stroke-width','4');
+  anode.setAttribute('stroke-linecap','round');
+  group.appendChild(anode);
+
+  const injection=document.createElementNS(NS,'path');
+  injection.setAttribute('d',`M${spec.cathodeX+5} 0 C${spec.controlX-2} 0 ${spec.anodeX-14} 0 ${spec.beamExitX} 0`);
+  injection.setAttribute('fill','none');
+  injection.setAttribute('stroke','#77dcff');
+  injection.setAttribute('stroke-width','1.5');
+  injection.setAttribute('stroke-dasharray','4 4');
+  injection.setAttribute('opacity','.75');
+  group.appendChild(injection);
+
+  gun.appendChild(group);
+}
+
 function initWaveguideCells(){
   const rf=document.querySelector('#rfCells');
   if(!rf||rf.childNodes.length)return;
@@ -173,6 +223,7 @@ function shiftTreatmentHead(){
 
 export function initHardware(){
   scaleSlalomHardware();
+  initElectronGunGraphics();
   initWaveguideCells();
   initInputModeTransformer();
   initBellows();
