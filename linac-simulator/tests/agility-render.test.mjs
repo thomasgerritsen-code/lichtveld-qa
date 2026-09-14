@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {agilityLeafRows,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
+import {agilityLeafRows,photonFilterVisualState,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
 
 test('Agility schematic exposes 80 leaves per bank for 160 total leaves',()=>{
   const rows=agilityLeafRows();
@@ -40,4 +40,20 @@ test('electron mode parks Agility leaves while applicator/diaphragm field contro
   assert.equal(narrow.mlcDelta,wideX.mlcDelta);
   assert.equal(narrow.jawGap,wideX.jawGap);
   assert.ok(wideY.jawGap>narrow.jawGap);
+});
+
+test('photon filter visual distinguishes conventional FF from the FFF filter plate',()=>{
+  const ff=photonFilterVisualState({mode:'photon',filter:'ff'});
+  const fff=photonFilterVisualState({mode:'photon',filter:'fff'});
+
+  assert.equal(ff.role,'flattening-filter');
+  assert.equal(fff.role,'fff-filter-plate');
+  assert.notEqual(ff.path,fff.path);
+  assert.match(ff.path,/L1485 852/);
+  assert.match(fff.path,/V876/);
+});
+
+test('photon filter visual defaults safely to the conventional FF representation',()=>{
+  assert.equal(photonFilterVisualState({mode:'photon'}).role,'flattening-filter');
+  assert.equal(photonFilterVisualState({mode:'electron',filter:'unknown'}).role,'flattening-filter');
 });
