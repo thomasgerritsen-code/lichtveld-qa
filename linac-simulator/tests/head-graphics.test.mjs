@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {primaryCollimatorVisualState} from '../src/ui/machine/head-graphics.js';
+import {primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
 
 test('primary collimator is represented as a fixed downstream-diverging conical aperture',()=>{
   const visual=primaryCollimatorVisualState();
@@ -24,4 +24,26 @@ test('primary collimator paths remain symmetric around the treatment-head axis',
   assert.equal(visual.center-bottomLeft,bottomRight-visual.center);
   assert.ok(bottomLeft<topLeft);
   assert.ok(bottomRight>topRight);
+});
+
+test('photon target is a compact backed assembly upstream of the primary collimator',()=>{
+  const target=targetAssemblyVisualState();
+  const primary=primaryCollimatorVisualState();
+
+  assert.equal(target.role,'photon-target-assembly');
+  assert.equal(target.topology,'thin-target-with-backing-upstream-of-primary-collimator');
+  assert.equal(target.center,primary.center);
+  assert.ok(target.faceWidth<target.backingWidth);
+  assert.ok(target.faceHeight<target.backingHeight);
+  assert.ok(target.backingY+target.backingHeight<primary.top);
+  assert.ok(target.downstreamClearance>0);
+});
+
+test('target face and backing remain symmetric around the treatment-head axis',()=>{
+  const target=targetAssemblyVisualState();
+
+  assert.equal(target.center-target.faceX,target.faceWidth/2);
+  assert.equal(target.center-target.backingX,target.backingWidth/2);
+  assert.equal(target.faceX+target.faceWidth/2,target.center);
+  assert.equal(target.backingX+target.backingWidth/2,target.center);
 });
