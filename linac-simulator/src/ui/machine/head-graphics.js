@@ -88,6 +88,9 @@ export function initTargetAssemblyGraphics(){
   backing.setAttribute('width',String(visual.backingWidth));
   backing.setAttribute('height',String(visual.backingHeight));
   backing.setAttribute('rx','2');
+  backing.setAttribute('fill','#52677b');
+  backing.setAttribute('stroke','#9fb0c0');
+  backing.setAttribute('stroke-width','1.5');
   backing.setAttribute('data-role','target-backing');
 
   group.setAttribute('data-role',visual.role);
