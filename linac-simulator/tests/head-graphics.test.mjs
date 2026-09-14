@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {electronWindowVisualState,opticalFieldVisualState,primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
+import {electronScatteringFoilVisualState,electronWindowVisualState,opticalFieldVisualState,primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
 
 test('primary collimator is represented as a fixed downstream-diverging conical aperture',()=>{
   const visual=primaryCollimatorVisualState();
@@ -66,6 +66,27 @@ test('electron window remains upstream and visually separate from electron scatt
 
   assert.ok(window.downstreamSeparation>0);
   assert.ok(window.membraneY<window.scatteringFoilY);
+});
+
+test('electron mode depicts a dual scattering system in the public beamline order',()=>{
+  const window=electronWindowVisualState();
+  const foils=electronScatteringFoilVisualState();
+
+  assert.equal(foils.role,'electron-dual-scattering-foil-system');
+  assert.equal(foils.topology,'thin-primary-foil-followed-by-shaped-secondary-foil');
+  assert.deepEqual(foils.ordering,['electron-window','primary-scattering-foil','secondary-scattering-foil','monitor-chamber']);
+  assert.ok(window.membraneY<foils.primary.y);
+  assert.ok(foils.primary.y<foils.secondary.y);
+  assert.ok(foils.secondary.y<902);
+});
+
+test('dual scattering foil drawing stays centered and distinguishes thin primary from shaped secondary',()=>{
+  const foils=electronScatteringFoilVisualState();
+
+  assert.equal((foils.primary.x1+foils.primary.x2)/2,foils.center);
+  assert.match(foils.secondary.path,/Q/);
+  assert.equal(foils.primary.role,'primary-electron-scattering-foil');
+  assert.equal(foils.secondary.role,'secondary-electron-scattering-foil');
 });
 
 test('optical field system depicts a tilted mirror crossing the treatment axis and a separate lamp',()=>{
