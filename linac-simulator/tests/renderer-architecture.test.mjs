@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildMechanicalGeometry,WAVE_ANCHORS} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
-import {buildWaveguideCellSpecs} from '../src/ui/machine/hardware.js';
+import {buildWaveguideCellSpecs,inputModeTransformerSpec} from '../src/ui/machine/hardware.js';
 import {electronApplicatorScatterVisual} from '../src/ui/machine/scatter-renderer.js';
 import * as renderer from '../src/ui/machine-renderer.js';
 
@@ -45,6 +45,16 @@ test('travelling waveguide exposes a detailed sequence of RF chambers',()=>{
   assert.equal(cells.at(-1).right,646);
   assert.ok(cells.every((cell,index)=>index===0||cell.x>cells[index-1].x));
   assert.ok(cells[0].apertureRy>cells.at(-1).apertureRy);
+});
+
+test('RF input mode transformer remains at the gun-side entrance of the travelling-wave structure',()=>{
+  const cells=buildWaveguideCellSpecs();
+  const input=inputModeTransformerSpec();
+  assert.equal(input.localX,cells[0].left);
+  assert.ok(input.localWidth>0&&input.localWidth<(cells.at(-1).right-cells[0].left)/4);
+  assert.ok(input.localHeight>cells[0].apertureRy*2);
+  assert.match(input.rfFeedPath,/^M356 865/);
+  assert.match(input.rfFeedPath,/194 752$/);
 });
 
 test('SL25 source order keeps focus and steering packages in their published sequence',()=>{
