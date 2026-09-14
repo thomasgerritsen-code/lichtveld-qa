@@ -101,3 +101,14 @@ test('electron profile retains compatibility alias for previous callers',()=>{
   assert.equal(profiles.profile,profiles.transverse);
   assert.equal(profiles.center,profiles.centerT);
 });
+
+test('normalized electron penumbra broadens with increasing simulated beam energy',()=>{
+  const lowParams=decodeControls({...UI_DEFAULTS,fx:10,fy:10,energy:0});
+  const highParams=decodeControls({...UI_DEFAULTS,fx:10,fy:10,energy:100});
+  const low=electronProfile(simulate(lowParams,{},{}),lowParams);
+  const high=electronProfile(simulate(highParams,{},{}),highParams);
+
+  assert.ok(high.scatterWidth>low.scatterWidth);
+  assert.ok(nearest(high.radial,.40).y>nearest(low.radial,.40).y);
+  assert.ok(nearest(high.transverse,.40).y>nearest(low.transverse,.40).y);
+});
