@@ -1,6 +1,6 @@
 import {MODEL} from '../../machine/model.js';
 import {DEG,NS} from './geometry.js';
-import {initMlcLeaves} from './treatment-head.js';
+import {initMlcLeaves,initMonitorChambers} from './treatment-head.js';
 import {applySelectorMotion,enableSelectorTransitions} from './target-selector.js';
 
 export function buildWaveguideCellSpecs(count=18){
@@ -125,6 +125,7 @@ export function initHardware(){
   scaleSlalomHardware();
   initWaveguideCells();
   initBellows();
+  initMonitorChambers();
   initMlcLeaves();
   shiftTreatmentHead();
   enableSelectorTransitions();
