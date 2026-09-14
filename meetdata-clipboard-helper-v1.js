@@ -22,9 +22,8 @@
   if(!Number.isFinite(gun)||!Number.isFinite(target)){alert('De gevonden vacuümwaarden zijn niet numeriek.');return}
   if(!confirm(wanted+'\nVac Gun: '+gun+'\nVac Targ: '+target+'\n\nKlopt dit?'))return;
   const payload=JSON.stringify({source:'MeetdataVT',system:wanted,gun,target,capturedAt:new Date().toISOString()});
-  const qa='https://thomasgerritsen-code.github.io/lichtveld-qa/wekelijkse-linac.html?v=3&meetdata=1';
-  navigator.clipboard.writeText(payload).then(()=>{location.href=qa}).catch(()=>{
-    const manual=prompt('Automatisch kopiëren lukte niet. Kopieer deze regel en open daarna de wekelijkse QA:',payload);
-    if(manual!==null)location.href=qa;
-  });
+  // Gebruik een URL-fragment: dit wordt niet naar GitHub Pages meegestuurd en het
+  // weekformulier verwijdert het direct nadat de waarden zijn overgenomen.
+  const qa='https://thomasgerritsen-code.github.io/lichtveld-qa/wekelijkse-linac.html?v=4#meetdata='+encodeURIComponent(payload);
+  location.href=qa;
 })();
