@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {opticalFieldVisualState,primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
+import {electronWindowVisualState,opticalFieldVisualState,primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
 
 test('primary collimator is represented as a fixed downstream-diverging conical aperture',()=>{
   const visual=primaryCollimatorVisualState();
@@ -46,6 +46,26 @@ test('target face and backing remain symmetric around the treatment-head axis',(
   assert.equal(target.center-target.backingX,target.backingWidth/2);
   assert.equal(target.faceX+target.faceWidth/2,target.center);
   assert.equal(target.backingX+target.backingWidth/2,target.center);
+});
+
+test('electron window is depicted as a thin membrane in a wider support frame',()=>{
+  const window=electronWindowVisualState();
+
+  assert.equal(window.role,'electron-vacuum-exit-window');
+  assert.equal(window.topology,'thin-membrane-in-support-frame-upstream-of-scattering-foils');
+  assert.equal(window.membraneRole,'electron-window-membrane');
+  assert.equal(window.frameRole,'electron-window-support');
+  assert.ok(window.membraneWidth<window.frameWidth);
+  assert.ok(window.membraneHeight<window.frameHeight);
+  assert.equal(window.membraneX+window.membraneWidth/2,window.center);
+  assert.equal(window.frameX+window.frameWidth/2,window.center);
+});
+
+test('electron window remains upstream and visually separate from electron scattering foils',()=>{
+  const window=electronWindowVisualState();
+
+  assert.ok(window.downstreamSeparation>0);
+  assert.ok(window.membraneY<window.scatteringFoilY);
 });
 
 test('optical field system depicts a tilted mirror crossing the treatment axis and a separate lamp',()=>{
