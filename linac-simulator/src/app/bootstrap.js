@@ -1,13 +1,17 @@
 import {createController} from './controller.js';
 import {initMobileUx} from './mobile-ux.js';
+import {initFocusSteeringGraphics} from '../ui/machine/focus-steering-graphics.js';
 
-const mobileStyles=document.createElement('link');
-mobileStyles.rel='stylesheet';
-mobileStyles.href='./mobile.css?v=1';
-document.head.appendChild(mobileStyles);
+for(const href of ['./mobile.css?v=1','./focus-steering.css?v=1']){
+  const link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href=href;
+  document.head.appendChild(link);
+}
 
 const controller=createController();
 controller.start();
+initFocusSteeringGraphics();
 initMobileUx();
 
 window.linacApp=controller;
