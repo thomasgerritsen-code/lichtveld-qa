@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
+import {opticalFieldVisualState,primaryCollimatorVisualState,targetAssemblyVisualState} from '../src/ui/machine/head-graphics.js';
 
 test('primary collimator is represented as a fixed downstream-diverging conical aperture',()=>{
   const visual=primaryCollimatorVisualState();
@@ -46,4 +46,23 @@ test('target face and backing remain symmetric around the treatment-head axis',(
   assert.equal(target.center-target.backingX,target.backingWidth/2);
   assert.equal(target.faceX+target.faceWidth/2,target.center);
   assert.equal(target.backingX+target.backingWidth/2,target.center);
+});
+
+test('optical field system depicts a tilted mirror crossing the treatment axis and a separate lamp',()=>{
+  const optical=opticalFieldVisualState();
+
+  assert.equal(optical.role,'optical-field-system');
+  assert.equal(optical.topology,'tilted-field-mirror-with-off-axis-lamp');
+  assert.equal(optical.mirrorRole,'field-light-mirror');
+  assert.equal(optical.lampRole,'field-light-lamp');
+  assert.equal(optical.mirrorCrossesBeamAxis,true);
+  assert.notEqual(optical.mirrorLeft.y,optical.mirrorRight.y);
+  assert.ok(Math.abs(optical.lampOffsetFromAxis)>optical.lamp.r);
+});
+
+test('optical field mirror remains downstream of the monitor stack and upstream of the collimator exit',()=>{
+  const optical=opticalFieldVisualState();
+
+  assert.ok(optical.mirrorLeft.y>934);
+  assert.ok(optical.mirrorRight.y<971);
 });
