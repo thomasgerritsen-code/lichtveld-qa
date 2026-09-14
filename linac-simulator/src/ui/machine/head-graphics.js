@@ -98,6 +98,39 @@ export function electronWindowVisualState(){
   };
 }
 
+export function electronScatteringFoilVisualState(){
+  // IAEA teaching material describes clinical electron beams as using a single or
+  // dual scattering-foil system. Peer-reviewed work on an Elekta radiotherapy
+  // accelerator specifically models a dual system with a thin primary foil followed
+  // by a shaped secondary foil. Show only that public topology here. Coordinates and
+  // curvature are normalized educational graphics, not OEM foil thicknesses,
+  // materials, spacing, energy-specific settings or carousel/service dimensions.
+  const center=1450;
+  const primaryY=851;
+  const primaryHalfWidth=35;
+  const secondaryY=889;
+  const secondaryHalfWidth=39;
+  const secondaryDepth=10;
+
+  return {
+    role:'electron-dual-scattering-foil-system',
+    topology:'thin-primary-foil-followed-by-shaped-secondary-foil',
+    center,
+    primary:{
+      role:'primary-electron-scattering-foil',
+      x1:center-primaryHalfWidth,
+      x2:center+primaryHalfWidth,
+      y:primaryY
+    },
+    secondary:{
+      role:'secondary-electron-scattering-foil',
+      path:`M${center-secondaryHalfWidth} ${secondaryY} Q${center} ${secondaryY+secondaryDepth} ${center+secondaryHalfWidth} ${secondaryY} Q${center} ${secondaryY+secondaryDepth*.35} ${center-secondaryHalfWidth} ${secondaryY} Z`,
+      y:secondaryY
+    },
+    ordering:['electron-window','primary-scattering-foil','secondary-scattering-foil','monitor-chamber']
+  };
+}
+
 export function opticalFieldVisualState(){
   // IAEA linac teaching material identifies a field-defining light system, while
   // public treatment-head descriptions show a mirror and filament lamp downstream
@@ -142,6 +175,36 @@ function replaceWithPath(element){
   return path;
 }
 
+function initElectronScatteringFoilGraphics(){
+  const group=document.querySelector('#electronHead');
+  if(!group)return;
+  const visual=electronScatteringFoilVisualState();
+  const primary=group.querySelector('.foil');
+  const secondary=group.querySelector('.foil2');
+
+  if(primary){
+    primary.setAttribute('x1',String(visual.primary.x1));
+    primary.setAttribute('x2',String(visual.primary.x2));
+    primary.setAttribute('y1',String(visual.primary.y));
+    primary.setAttribute('y2',String(visual.primary.y));
+    primary.setAttribute('data-role',visual.primary.role);
+    primary.setAttribute('stroke-width','2.4');
+  }
+
+  if(secondary){
+    const path=replaceWithPath(secondary);
+    path?.setAttribute('d',visual.secondary.path);
+    path?.setAttribute('data-role',visual.secondary.role);
+    path?.setAttribute('fill','#7fd9e8');
+    path?.setAttribute('fill-opacity','.28');
+    path?.setAttribute('stroke','#9de8f2');
+    path?.setAttribute('stroke-width','1.6');
+  }
+
+  group.setAttribute('data-role',visual.role);
+  group.setAttribute('data-topology',visual.topology);
+}
+
 export function initElectronWindowGraphics(){
   const group=document.querySelector('#electronWindow');
   if(!group)return;
@@ -184,6 +247,7 @@ export function initElectronWindowGraphics(){
 
   group.setAttribute('data-role',visual.role);
   group.setAttribute('data-topology',visual.topology);
+  initElectronScatteringFoilGraphics();
 }
 
 export function initOpticalFieldGraphics(){
