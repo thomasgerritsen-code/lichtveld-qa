@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {chamberSignals,buildControlContext} from '../src/physics/feedback.js';
+import {monitorChamberVisualState} from '../src/ui/machine/treatment-head.js';
 
 function simTarget(target={}){
   return {
@@ -22,6 +23,20 @@ test('nominal beam gives two matching redundant monitor channels and six equal u
   assert.equal(chamber.uniformitySpan,0);
   assert.equal(chamber.doseA,chamber.primaryMonitor);
   assert.equal(chamber.doseB,chamber.secondaryMonitor);
+});
+
+test('monitor graphics expose two dose layers and a separate seven-sector beam-quality layer',()=>{
+  const visual=monitorChamberVisualState();
+  assert.equal(visual.role,'monitor-chamber-stack');
+  assert.equal(visual.dosePlanes.length,2);
+  assert.deepEqual(
+    visual.dosePlanes.map(plane=>plane.role),
+    ['primary-dose-monitor','backup-dose-monitor']
+  );
+  assert.equal(visual.qualityPlane.role,'beam-quality-monitor');
+  assert.equal(visual.qualityPlane.sectorCount,7);
+  assert.ok(visual.dosePlanes[0].y<visual.dosePlanes[1].y);
+  assert.ok(visual.dosePlanes[1].y<visual.qualityPlane.y);
 });
 
 test('beam offset changes steering feedback and produces an opposing six-sector pattern',()=>{
