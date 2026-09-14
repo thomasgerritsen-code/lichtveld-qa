@@ -77,22 +77,31 @@ export function agilityDiaphragmVisualState(params){
   const {diaphragmGap}=treatmentHeadApertureState(params,{mode:'photon'});
   const center=1450;
   const outerHalfWidth=168;
-  const top=1008;
-  const bottom=1038;
+  const midY=1023;
+  const rearThickness=18;
+  const frontThickness=30;
   const curve=13;
   const leftInner=center-diaphragmGap;
   const rightInner=center+diaphragmGap;
   const leftOuter=center-outerHalfWidth;
   const rightOuter=center+outerHalfWidth;
+  const rearTop=midY-rearThickness/2;
+  const rearBottom=midY+rearThickness/2;
+  const frontTop=midY-frontThickness/2;
+  const frontBottom=midY+frontThickness/2;
 
-  // Agility publications describe sculpted diaphragms with curved beam-defining
-  // ends. These paths intentionally exaggerate that topology for readability in
-  // the schematic. Coordinates are normalized SVG illustration geometry only and
-  // do not represent OEM dimensions, radii, clearances or calibrated positions.
+  // Elekta's public sculpted-diaphragm patent describes a thicker front edge with
+  // relatively thinner regions behind it, and explicitly allows a curved front face
+  // to control penumbra as the diaphragm moves. The drawing exaggerates only that
+  // topology: all coordinates and thickness ratios are normalized illustration values,
+  // not OEM dimensions, attenuation data, clearances, travel limits or service settings.
   return {
     role:'sculpted-diaphragm',
-    leftPath:`M${leftOuter} ${top} H${leftInner-curve} Q${leftInner} ${(top+bottom)/2} ${leftInner-curve} ${bottom} H${leftOuter} Z`,
-    rightPath:`M${rightOuter} ${top} H${rightInner+curve} Q${rightInner} ${(top+bottom)/2} ${rightInner+curve} ${bottom} H${rightOuter} Z`
+    topology:'thicker-curved-front-edge-with-thinner-rear-region',
+    rearThickness,
+    frontThickness,
+    leftPath:`M${leftOuter} ${rearTop} H${leftInner-curve} L${leftInner-curve} ${frontTop} Q${leftInner} ${midY} ${leftInner-curve} ${frontBottom} L${leftInner-curve} ${rearBottom} H${leftOuter} Z`,
+    rightPath:`M${rightOuter} ${rearTop} H${rightInner+curve} L${rightInner+curve} ${frontTop} Q${rightInner} ${midY} ${rightInner+curve} ${frontBottom} L${rightInner+curve} ${rearBottom} H${rightOuter} Z`
   };
 }
 
@@ -260,10 +269,12 @@ export function updateTreatmentHead(params,view,delivery=null){
   if(jawL){
     jawL.setAttribute('d',diaphragmVisual.leftPath);
     jawL.setAttribute('data-role',diaphragmVisual.role);
+    jawL.setAttribute('data-topology',diaphragmVisual.topology);
   }
   if(jawR){
     jawR.setAttribute('d',diaphragmVisual.rightPath);
     jawR.setAttribute('data-role',diaphragmVisual.role);
+    jawR.setAttribute('data-topology',diaphragmVisual.topology);
   }
 
   const filterVisual=photonFilterVisualState(view);

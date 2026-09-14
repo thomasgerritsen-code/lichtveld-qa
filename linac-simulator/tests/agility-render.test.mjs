@@ -41,11 +41,13 @@ test('orthogonal photon field control is explicitly represented as the Agility s
   assert.equal(wide.jawGap,wide.diaphragmGap);
 });
 
-test('Agility diaphragm visual uses curved beam-defining faces and follows Y field opening',()=>{
+test('Agility diaphragm visual uses a thicker curved front edge and follows Y field opening',()=>{
   const narrow=agilityDiaphragmVisualState({fx:.40,fy:.15});
   const wide=agilityDiaphragmVisualState({fx:.40,fy:.85});
 
   assert.equal(narrow.role,'sculpted-diaphragm');
+  assert.equal(narrow.topology,'thicker-curved-front-edge-with-thinner-rear-region');
+  assert.ok(narrow.frontThickness>narrow.rearThickness);
   assert.match(narrow.leftPath,/Q/);
   assert.match(narrow.rightPath,/Q/);
   assert.notEqual(narrow.leftPath,wide.leftPath);
