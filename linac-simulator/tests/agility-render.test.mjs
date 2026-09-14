@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {agilityLeafRows,photonFilterVisualState,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
+import {agilityDiaphragmVisualState,agilityLeafRows,photonFilterVisualState,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
 
 test('Agility schematic exposes 80 leaves per bank for 160 total leaves',()=>{
   const rows=agilityLeafRows();
@@ -39,6 +39,25 @@ test('orthogonal photon field control is explicitly represented as the Agility s
   assert.ok(wide.diaphragmGap>narrow.diaphragmGap);
   assert.equal(narrow.jawGap,narrow.diaphragmGap);
   assert.equal(wide.jawGap,wide.diaphragmGap);
+});
+
+test('Agility diaphragm visual uses curved beam-defining faces and follows Y field opening',()=>{
+  const narrow=agilityDiaphragmVisualState({fx:.40,fy:.15});
+  const wide=agilityDiaphragmVisualState({fx:.40,fy:.85});
+
+  assert.equal(narrow.role,'sculpted-diaphragm');
+  assert.match(narrow.leftPath,/Q/);
+  assert.match(narrow.rightPath,/Q/);
+  assert.notEqual(narrow.leftPath,wide.leftPath);
+  assert.notEqual(narrow.rightPath,wide.rightPath);
+});
+
+test('Agility diaphragm visual is independent of the orthogonal X/MLC field control',()=>{
+  const left=agilityDiaphragmVisualState({fx:.10,fy:.45});
+  const right=agilityDiaphragmVisualState({fx:.90,fy:.45});
+
+  assert.equal(left.leftPath,right.leftPath);
+  assert.equal(left.rightPath,right.rightPath);
 });
 
 test('electron mode parks Agility leaves while applicator/diaphragm field control remains independent',()=>{
