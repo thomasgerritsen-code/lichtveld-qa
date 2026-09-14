@@ -30,6 +30,17 @@ test('photon mode keeps Agility leaves coupled to the X field control',()=>{
   assert.ok(large.mlcDelta>small.mlcDelta);
 });
 
+test('orthogonal photon field control is explicitly represented as the Agility sculpted diaphragm pair',()=>{
+  const narrow=treatmentHeadApertureState({fx:.40,fy:.15},{mode:'photon'});
+  const wide=treatmentHeadApertureState({fx:.40,fy:.85},{mode:'photon'});
+
+  assert.equal(narrow.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
+  assert.equal(wide.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
+  assert.ok(wide.diaphragmGap>narrow.diaphragmGap);
+  assert.equal(narrow.jawGap,narrow.diaphragmGap);
+  assert.equal(wide.jawGap,wide.diaphragmGap);
+});
+
 test('electron mode parks Agility leaves while applicator/diaphragm field control remains independent',()=>{
   const narrow=treatmentHeadApertureState({fx:.10,fy:.20},{mode:'electron'});
   const wideX=treatmentHeadApertureState({fx:.90,fy:.20},{mode:'electron'});
@@ -37,9 +48,10 @@ test('electron mode parks Agility leaves while applicator/diaphragm field contro
 
   assert.equal(narrow.mlcRole,'parked');
   assert.equal(wideX.mlcRole,'parked');
+  assert.equal(narrow.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
   assert.equal(narrow.mlcDelta,wideX.mlcDelta);
-  assert.equal(narrow.jawGap,wideX.jawGap);
-  assert.ok(wideY.jawGap>narrow.jawGap);
+  assert.equal(narrow.diaphragmGap,wideX.diaphragmGap);
+  assert.ok(wideY.diaphragmGap>narrow.diaphragmGap);
 });
 
 test('photon filter visual distinguishes conventional FF from the FFF filter plate',()=>{
