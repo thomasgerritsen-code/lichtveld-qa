@@ -1,4 +1,4 @@
-const CACHE='linac-dashboard-v58-primary-collimator-graphics-v33';
+const CACHE='linac-dashboard-v59-target-head-graphics-v34';
 const CORE=[
   './','./index.html?v=31','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',

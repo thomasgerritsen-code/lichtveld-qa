@@ -1,6 +1,6 @@
 import {MODEL} from '../../machine/model.js';
 import {DEG,NS} from './geometry.js';
-import {initPrimaryCollimatorGraphics} from './head-graphics.js';
+import {initPrimaryCollimatorGraphics,initTargetAssemblyGraphics} from './head-graphics.js';
 import {initMlcLeaves,initMonitorChambers} from './treatment-head.js';
 import {applySelectorMotion,enableSelectorTransitions} from './target-selector.js';
 
@@ -126,6 +126,7 @@ export function initHardware(){
   scaleSlalomHardware();
   initWaveguideCells();
   initBellows();
+  initTargetAssemblyGraphics();
   initPrimaryCollimatorGraphics();
   initMonitorChambers();
   initMlcLeaves();
