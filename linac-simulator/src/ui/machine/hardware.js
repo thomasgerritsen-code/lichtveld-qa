@@ -1,6 +1,6 @@
 import {MODEL} from '../../machine/model.js';
 import {DEG,NS} from './geometry.js';
-import {initOpticalFieldGraphics,initPrimaryCollimatorGraphics,initTargetAssemblyGraphics} from './head-graphics.js';
+import {initElectronWindowGraphics,initOpticalFieldGraphics,initPrimaryCollimatorGraphics,initTargetAssemblyGraphics} from './head-graphics.js';
 import {initMlcLeaves,initMonitorChambers} from './treatment-head.js';
 import {applySelectorMotion,enableSelectorTransitions} from './target-selector.js';
 
@@ -127,6 +127,7 @@ export function initHardware(){
   initWaveguideCells();
   initBellows();
   initTargetAssemblyGraphics();
+  initElectronWindowGraphics();
   initPrimaryCollimatorGraphics();
   initMonitorChambers();
   initOpticalFieldGraphics();
