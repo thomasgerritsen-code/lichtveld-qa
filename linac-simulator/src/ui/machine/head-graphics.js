@@ -64,6 +64,84 @@ export function targetAssemblyVisualState(){
   };
 }
 
+export function opticalFieldVisualState(){
+  // IAEA linac teaching material identifies a field-defining light system, while
+  // public treatment-head descriptions show a mirror and filament lamp downstream
+  // of the monitor chamber. Illustrate that optical topology explicitly: a thin
+  // tilted mirror crossing the treatment axis plus an off-axis lamp. Coordinates,
+  // angle, spacing and lamp size are normalized schematic geometry only; they are
+  // not Elekta service dimensions, optical calibration values or alignment settings.
+  const center=1450;
+  const mirrorLeft={x:1399,y:944};
+  const mirrorRight={x:1501,y:962};
+  const thickness=4;
+  const lamp={cx:1542,cy:944,r:9};
+  const mirrorPath=[
+    `M${mirrorLeft.x} ${mirrorLeft.y}`,
+    `L${mirrorRight.x} ${mirrorRight.y}`,
+    `L${mirrorRight.x} ${mirrorRight.y+thickness}`,
+    `L${mirrorLeft.x} ${mirrorLeft.y+thickness}`,
+    'Z'
+  ].join(' ');
+
+  return {
+    role:'optical-field-system',
+    topology:'tilted-field-mirror-with-off-axis-lamp',
+    center,
+    mirrorLeft,
+    mirrorRight,
+    mirrorPath,
+    lamp,
+    mirrorRole:'field-light-mirror',
+    lampRole:'field-light-lamp',
+    mirrorCrossesBeamAxis:mirrorLeft.x<center&&mirrorRight.x>center,
+    lampOffsetFromAxis:lamp.cx-center
+  };
+}
+
+function replaceWithPath(element){
+  if(!element||element.tagName?.toLowerCase()==='path')return element;
+  const path=document.createElementNS(SVG_NS,'path');
+  for(const {name,value} of element.attributes)path.setAttribute(name,value);
+  for(const attribute of ['x1','x2','y1','y2'])path.removeAttribute(attribute);
+  element.replaceWith(path);
+  return path;
+}
+
+export function initOpticalFieldGraphics(){
+  const group=document.querySelector('[data-part="mirror"]');
+  if(!group)return;
+
+  const visual=opticalFieldVisualState();
+  const mirror=replaceWithPath(group.querySelector('.mirror'));
+  if(mirror){
+    mirror.setAttribute('d',visual.mirrorPath);
+    mirror.setAttribute('data-role',visual.mirrorRole);
+    mirror.setAttribute('fill','#bfe8ef');
+    mirror.setAttribute('fill-opacity','.34');
+    mirror.setAttribute('stroke','#d7f3f6');
+    mirror.setAttribute('stroke-width','1.6');
+  }
+
+  let lamp=group.querySelector('[data-role="field-light-lamp"]');
+  if(!lamp){
+    lamp=document.createElementNS(SVG_NS,'circle');
+    lamp.setAttribute('class','fieldLightLamp');
+    group.appendChild(lamp);
+  }
+  lamp.setAttribute('cx',String(visual.lamp.cx));
+  lamp.setAttribute('cy',String(visual.lamp.cy));
+  lamp.setAttribute('r',String(visual.lamp.r));
+  lamp.setAttribute('data-role',visual.lampRole);
+  lamp.setAttribute('fill','#f3d47a');
+  lamp.setAttribute('fill-opacity','.82');
+  lamp.setAttribute('stroke','#ffe6a2');
+  lamp.setAttribute('stroke-width','1.6');
+
+  group.setAttribute('data-role',visual.role);
+  group.setAttribute('data-topology',visual.topology);
+}
+
 export function initTargetAssemblyGraphics(){
   const group=document.querySelector('#photonTarget');
   const face=group?.querySelector('.target');
