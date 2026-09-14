@@ -76,7 +76,14 @@ export function photonProfiles(sim,params,filter='ff'){
 export function electronProfile(sim,params){
   const t=sim.target;
   const effectiveEnergy=sim.effectiveEnergy??params.energy;
-  const scatter=.08+.16*(1-effectiveEnergy/2);
+
+  // Versa HD measurements report increasing electron penumbra/peripheral spread
+  // with increasing beam energy. Preserve only that qualitative ordering here.
+  // The energy axis is the simulator's normalized RF/beam-energy coordinate and
+  // the widths below are dimensionless teaching parameters, not MeV-specific
+  // commissioning data, applicator factors or clinical penumbra dimensions.
+  const normalizedEnergy=clamp((effectiveEnergy-.96)/.08,0,1);
+  const scatter=.155+.010*normalizedEnergy;
   const centerR=clamp(t.r*4.5,-.18,.18);
   const centerT=clamp(t.t*4.5,-.18,.18);
   const halfR=clamp(.08+.84*params.fy,.08,.92);
