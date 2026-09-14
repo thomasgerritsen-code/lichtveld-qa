@@ -18,18 +18,23 @@ export function agilityLeafRows(){
 
 export function photonFilterVisualState(view={mode:'photon',filter:'ff'}){
   const filter=view.filter==='fff'?'fff':'ff';
+  const visible=view.mode==='photon';
 
   // AAPM's public FFF report describes Elekta FFF beams as using a thin filtering
   // disc/plate in place of the conventional flattening filter. Represent only that
   // topology here: the SVG paths are normalized illustration geometry, not physical
   // dimensions, material thicknesses, OEM carousel positions or service settings.
+  // Both FF and FFF therefore keep a photon filtering element visible; electron mode
+  // uses its separate scattering-foil head and does not display this photon element.
   if(filter==='fff'){
     return {
+      visible,
       role:'fff-filter-plate',
       path:'M1417 869 H1483 V876 H1417 Z'
     };
   }
   return {
+    visible,
     role:'flattening-filter',
     path:'M1415 852 L1485 852 L1469 893 L1431 893 Z'
   };
@@ -111,12 +116,16 @@ export function updateTreatmentHead(params,view,delivery=null){
   if(jawR)jawR.setAttribute('x',center+aperture.jawGap);
 
   const filterVisual=photonFilterVisualState(view);
-  const filterShape=document.querySelector('#flatteningFilter .filterShape');
+  const filterGroup=document.querySelector('#flatteningFilter');
+  const filterShape=filterGroup?.querySelector('.filterShape');
   if(filterShape){
     filterShape.setAttribute('d',filterVisual.path);
     filterShape.setAttribute('data-role',filterVisual.role);
   }
-  document.querySelector('#flatteningFilter')?.setAttribute('data-filter',view.filter==='fff'?'fff':'ff');
+  if(filterGroup){
+    filterGroup.hidden=!filterVisual.visible;
+    filterGroup.setAttribute('data-filter',view.filter==='fff'?'fff':'ff');
+  }
 
   const electronBroad=.92+.08*(1-params.energy);
   const half=view.mode==='electron'

@@ -46,11 +46,23 @@ test('photon filter visual distinguishes conventional FF from the FFF filter pla
   const ff=photonFilterVisualState({mode:'photon',filter:'ff'});
   const fff=photonFilterVisualState({mode:'photon',filter:'fff'});
 
+  assert.equal(ff.visible,true);
+  assert.equal(fff.visible,true);
   assert.equal(ff.role,'flattening-filter');
   assert.equal(fff.role,'fff-filter-plate');
   assert.notEqual(ff.path,fff.path);
   assert.match(ff.path,/L1485 852/);
   assert.match(fff.path,/V876/);
+});
+
+test('photon filtering element is hidden only in electron mode',()=>{
+  const photonFf=photonFilterVisualState({mode:'photon',filter:'ff'});
+  const photonFff=photonFilterVisualState({mode:'photon',filter:'fff'});
+  const electron=photonFilterVisualState({mode:'electron',filter:'fff'});
+
+  assert.equal(photonFf.visible,true);
+  assert.equal(photonFff.visible,true);
+  assert.equal(electron.visible,false);
 });
 
 test('photon filter visual defaults safely to the conventional FF representation',()=>{
