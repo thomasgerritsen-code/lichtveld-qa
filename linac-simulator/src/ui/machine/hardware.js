@@ -17,6 +17,17 @@ export function buildWaveguideCellSpecs(count=18){
   }));
 }
 
+export function inputModeTransformerSpec(){
+  return {
+    // Normalized educational geometry. Public Elekta/SL descriptions place the
+    // input mode transformer at the gun-side entrance of the travelling-wave structure.
+    localX:20,
+    localWidth:42,
+    localHeight:54,
+    rfFeedPath:'M356 865 C335 824 290 786 245 765 C224 755 208 751 194 752'
+  };
+}
+
 function initWaveguideCells(){
   const rf=document.querySelector('#rfCells');
   if(!rf||rf.childNodes.length)return;
@@ -60,6 +71,44 @@ function initWaveguideCells(){
 
     rf.appendChild(group);
   }
+}
+
+function initInputModeTransformer(){
+  const waveguide=document.querySelector('[data-part="waveguide"] > g');
+  const feed=document.querySelector('#rfFeedPath');
+  if(!waveguide||!feed)return;
+
+  const spec=inputModeTransformerSpec();
+  feed.setAttribute('d',spec.rfFeedPath);
+  feed.setAttribute('data-rf-entry','gun-side');
+
+  if(waveguide.querySelector('#inputModeTransformer'))return;
+  const group=document.createElementNS(NS,'g');
+  group.setAttribute('id','inputModeTransformer');
+  group.setAttribute('data-geometry','normalized-educational');
+
+  const coupler=document.createElementNS(NS,'path');
+  const x=spec.localX,w=spec.localWidth,h=spec.localHeight;
+  coupler.setAttribute('d',`M${x} ${h/2} V${h*.72} H${x+w} V${h/2}`);
+  coupler.setAttribute('fill','none');
+  coupler.setAttribute('stroke','#7fc9ff');
+  coupler.setAttribute('stroke-width','5');
+  coupler.setAttribute('stroke-linejoin','round');
+  group.appendChild(coupler);
+
+  const marker=document.createElementNS(NS,'rect');
+  marker.setAttribute('x',x);
+  marker.setAttribute('y',-18);
+  marker.setAttribute('width',w);
+  marker.setAttribute('height','36');
+  marker.setAttribute('rx','8');
+  marker.setAttribute('fill','none');
+  marker.setAttribute('stroke','#7fc9ff');
+  marker.setAttribute('stroke-width','2');
+  marker.setAttribute('stroke-dasharray','5 4');
+  group.appendChild(marker);
+
+  waveguide.appendChild(group);
 }
 
 function initBellows(){
@@ -125,6 +174,7 @@ function shiftTreatmentHead(){
 export function initHardware(){
   scaleSlalomHardware();
   initWaveguideCells();
+  initInputModeTransformer();
   initBellows();
   initTargetAssemblyGraphics();
   initElectronWindowGraphics();
