@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import {agilityDiaphragmVisualState,agilityLeafRows,photonFilterVisualState,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
+import {agilityDiaphragmVisualState,agilityLeafRows,agilityLeafVisualState,photonFilterVisualState,treatmentHeadApertureState} from '../src/ui/machine/treatment-head.js';
 
 test('Agility schematic exposes 80 leaves per bank for 160 total leaves',()=>{
   const rows=agilityLeafRows();
@@ -21,10 +21,22 @@ test('Agility leaf rows preserve the existing normalized treatment-head envelope
   assert.ok(last.y+last.height>1016.5);
 });
 
+test('Agility leaves expose a normalized eccentric rounded tip rather than a symmetric midpoint tip',()=>{
+  const row=agilityLeafRows()[20];
+  const left=agilityLeafVisualState(row,'A');
+  const right=agilityLeafVisualState(row,'B');
+  assert.equal(left.role,'agility-mlc-leaf');
+  assert.equal(left.tipTopology,'eccentric-rounded-tip');
+  assert.equal(right.tipTopology,'eccentric-rounded-tip');
+  assert.notEqual(left.tipControlFraction,.5);
+  assert.ok(left.tipControlFraction>0&&left.tipControlFraction<1);
+  assert.match(left.path,/Q1426/);
+  assert.match(right.path,/Q1474/);
+});
+
 test('photon mode keeps Agility leaves coupled to the X field control',()=>{
   const small=treatmentHeadApertureState({fx:.10,fy:.25},{mode:'photon'});
   const large=treatmentHeadApertureState({fx:.90,fy:.25},{mode:'photon'});
-
   assert.equal(small.mlcRole,'field-shaping');
   assert.equal(large.mlcRole,'field-shaping');
   assert.ok(large.mlcDelta>small.mlcDelta);
@@ -33,7 +45,6 @@ test('photon mode keeps Agility leaves coupled to the X field control',()=>{
 test('orthogonal photon field control is explicitly represented as the Agility sculpted diaphragm pair',()=>{
   const narrow=treatmentHeadApertureState({fx:.40,fy:.15},{mode:'photon'});
   const wide=treatmentHeadApertureState({fx:.40,fy:.85},{mode:'photon'});
-
   assert.equal(narrow.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
   assert.equal(wide.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
   assert.ok(wide.diaphragmGap>narrow.diaphragmGap);
@@ -44,7 +55,6 @@ test('orthogonal photon field control is explicitly represented as the Agility s
 test('Agility diaphragm visual uses a thicker curved front edge and follows Y field opening',()=>{
   const narrow=agilityDiaphragmVisualState({fx:.40,fy:.15});
   const wide=agilityDiaphragmVisualState({fx:.40,fy:.85});
-
   assert.equal(narrow.role,'sculpted-diaphragm');
   assert.equal(narrow.topology,'thicker-curved-front-edge-with-thinner-rear-region');
   assert.ok(narrow.frontThickness>narrow.rearThickness);
@@ -57,7 +67,6 @@ test('Agility diaphragm visual uses a thicker curved front edge and follows Y fi
 test('Agility diaphragm visual is independent of the orthogonal X/MLC field control',()=>{
   const left=agilityDiaphragmVisualState({fx:.10,fy:.45});
   const right=agilityDiaphragmVisualState({fx:.90,fy:.45});
-
   assert.equal(left.leftPath,right.leftPath);
   assert.equal(left.rightPath,right.rightPath);
 });
@@ -66,7 +75,6 @@ test('electron mode parks Agility leaves while applicator/diaphragm field contro
   const narrow=treatmentHeadApertureState({fx:.10,fy:.20},{mode:'electron'});
   const wideX=treatmentHeadApertureState({fx:.90,fy:.20},{mode:'electron'});
   const wideY=treatmentHeadApertureState({fx:.10,fy:.80},{mode:'electron'});
-
   assert.equal(narrow.mlcRole,'parked');
   assert.equal(wideX.mlcRole,'parked');
   assert.equal(narrow.orthogonalCollimatorRole,'sculpted-diaphragm-pair');
@@ -78,7 +86,6 @@ test('electron mode parks Agility leaves while applicator/diaphragm field contro
 test('photon filter visual distinguishes conventional FF from the FFF filter plate',()=>{
   const ff=photonFilterVisualState({mode:'photon',filter:'ff'});
   const fff=photonFilterVisualState({mode:'photon',filter:'fff'});
-
   assert.equal(ff.visible,true);
   assert.equal(fff.visible,true);
   assert.equal(ff.role,'flattening-filter');
@@ -92,7 +99,6 @@ test('photon filtering element is hidden only in electron mode',()=>{
   const photonFf=photonFilterVisualState({mode:'photon',filter:'ff'});
   const photonFff=photonFilterVisualState({mode:'photon',filter:'fff'});
   const electron=photonFilterVisualState({mode:'electron',filter:'fff'});
-
   assert.equal(photonFf.visible,true);
   assert.equal(photonFff.visible,true);
   assert.equal(electron.visible,false);
