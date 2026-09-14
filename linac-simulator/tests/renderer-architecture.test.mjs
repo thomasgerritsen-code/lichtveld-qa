@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildMechanicalGeometry,WAVE_ANCHORS} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
-import {buildWaveguideCellSpecs,inputModeTransformerSpec} from '../src/ui/machine/hardware.js';
+import {buildWaveguideCellSpecs,electronGunTopologySpec,inputModeTransformerSpec} from '../src/ui/machine/hardware.js';
 import {electronApplicatorScatterVisual} from '../src/ui/machine/scatter-renderer.js';
 import * as renderer from '../src/ui/machine-renderer.js';
 
@@ -55,6 +55,14 @@ test('RF input mode transformer remains at the gun-side entrance of the travelli
   assert.ok(input.localHeight>cells[0].apertureRy*2);
   assert.match(input.rfFeedPath,/^M356 865/);
   assert.match(input.rfFeedPath,/194 752$/);
+});
+
+test('electron gun keeps cathode, control electrode and anode in injection order',()=>{
+  const gun=electronGunTopologySpec();
+  assert.ok(gun.cathodeX<gun.controlX);
+  assert.ok(gun.controlX<gun.anodeX);
+  assert.ok(gun.anodeX<gun.beamExitX);
+  assert.ok(gun.apertureHalfHeight>0);
 });
 
 test('SL25 source order keeps focus and steering packages in their published sequence',()=>{
