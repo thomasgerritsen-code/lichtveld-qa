@@ -96,6 +96,23 @@ export function agilityDiaphragmVisualState(params){
   };
 }
 
+export function monitorChamberVisualState(){
+  // Elekta's public LINAC overview describes two independent ionization chambers
+  // for dose monitoring plus a third beam-quality chamber using seven electrodes.
+  // Represent that functional topology as a compact three-layer stack. All geometry
+  // below is normalized SVG illustration geometry only: it is not chamber thickness,
+  // electrode spacing, physical separation, gain, calibration or an interlock value.
+  return {
+    role:'monitor-chamber-stack',
+    housing:{x:1366,y:902,width:168,height:32,rx:9},
+    dosePlanes:[
+      {role:'primary-dose-monitor',y:909},
+      {role:'backup-dose-monitor',y:918}
+    ],
+    qualityPlane:{role:'beam-quality-monitor',y:927,sectorCount:7}
+  };
+}
+
 function ensureDiaphragmPath(id){
   const current=document.querySelector(`#${id}`);
   if(!current||current.tagName?.toLowerCase()==='path')return current;
@@ -108,6 +125,62 @@ function ensureDiaphragmPath(id){
   path.removeAttribute('rx');
   current.replaceWith(path);
   return path;
+}
+
+export function initMonitorChambers(){
+  const group=document.querySelector('[data-part="monitor"]');
+  if(!group||group.querySelector('[data-role="monitor-chamber-stack"]'))return;
+
+  const visual=monitorChamberVisualState();
+  group.setAttribute('data-role',visual.role);
+
+  const housing=group.querySelector('.monitor');
+  if(housing){
+    for(const [name,value] of Object.entries(visual.housing))housing.setAttribute(name,String(value));
+    housing.setAttribute('data-role','monitor-housing');
+    housing.setAttribute('fill','#102c36');
+    housing.setAttribute('stroke','#67d8cb');
+  }
+
+  for(const plane of visual.dosePlanes){
+    const line=document.createElementNS(NS,'line');
+    line.setAttribute('x1','1381');
+    line.setAttribute('x2','1519');
+    line.setAttribute('y1',String(plane.y));
+    line.setAttribute('y2',String(plane.y));
+    line.setAttribute('data-role',plane.role);
+    line.setAttribute('stroke','#8ce8df');
+    line.setAttribute('stroke-width','2.2');
+    line.setAttribute('stroke-linecap','round');
+    line.setAttribute('opacity','.86');
+    group.appendChild(line);
+  }
+
+  const quality=document.createElementNS(NS,'g');
+  quality.setAttribute('data-role',visual.qualityPlane.role);
+  quality.setAttribute('data-sector-count',String(visual.qualityPlane.sectorCount));
+  const sectorWidth=16;
+  const gap=3;
+  const total=visual.qualityPlane.sectorCount*sectorWidth+(visual.qualityPlane.sectorCount-1)*gap;
+  const startX=1450-total/2;
+  for(let index=0;index<visual.qualityPlane.sectorCount;index++){
+    const sector=document.createElementNS(NS,'rect');
+    sector.setAttribute('x',String(startX+index*(sectorWidth+gap)));
+    sector.setAttribute('y',String(visual.qualityPlane.y-2.2));
+    sector.setAttribute('width',String(sectorWidth));
+    sector.setAttribute('height','4.4');
+    sector.setAttribute('rx','1.5');
+    sector.setAttribute('data-sector-index',String(index));
+    sector.setAttribute('fill','#67d8cb');
+    sector.setAttribute('opacity',index===3?'.9':'.52');
+    quality.appendChild(sector);
+  }
+  group.appendChild(quality);
+
+  const marker=document.createElementNS(NS,'g');
+  marker.setAttribute('data-role','monitor-chamber-stack');
+  marker.setAttribute('aria-hidden','true');
+  group.appendChild(marker);
 }
 
 export function initMlcLeaves(){
