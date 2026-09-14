@@ -64,6 +64,40 @@ export function targetAssemblyVisualState(){
   };
 }
 
+export function electronWindowVisualState(){
+  // Peer-reviewed Elekta Precise work explicitly describes the standard electron
+  // window as a physical vacuum/exit window upstream of the downstream electron
+  // scattering system. Represent that topology as a thin membrane held in a wider
+  // support frame, rather than a single abstract line. The dimensions, spacing and
+  // colours below are normalized teaching graphics only: they are not OEM window
+  // thicknesses, materials, clear apertures, tolerances or service specifications.
+  const center=1450;
+  const membraneY=768;
+  const membraneWidth=44;
+  const membraneHeight=3;
+  const frameWidth=70;
+  const frameHeight=11;
+  const frameY=membraneY-frameHeight/2;
+
+  return {
+    role:'electron-vacuum-exit-window',
+    topology:'thin-membrane-in-support-frame-upstream-of-scattering-foils',
+    center,
+    membraneY,
+    membraneWidth,
+    membraneHeight,
+    membraneX:center-membraneWidth/2,
+    frameWidth,
+    frameHeight,
+    frameX:center-frameWidth/2,
+    frameY,
+    membraneRole:'electron-window-membrane',
+    frameRole:'electron-window-support',
+    scatteringFoilY:852,
+    downstreamSeparation:852-(membraneY+membraneHeight/2)
+  };
+}
+
 export function opticalFieldVisualState(){
   // IAEA linac teaching material identifies a field-defining light system, while
   // public treatment-head descriptions show a mirror and filament lamp downstream
@@ -106,6 +140,50 @@ function replaceWithPath(element){
   for(const attribute of ['x1','x2','y1','y2'])path.removeAttribute(attribute);
   element.replaceWith(path);
   return path;
+}
+
+export function initElectronWindowGraphics(){
+  const group=document.querySelector('#electronWindow');
+  if(!group)return;
+
+  const visual=electronWindowVisualState();
+  const legacyLine=group.querySelector('.electronWindow');
+  legacyLine?.remove();
+
+  let frame=group.querySelector('[data-role="electron-window-support"]');
+  if(!frame){
+    frame=document.createElementNS(SVG_NS,'rect');
+    frame.setAttribute('class','electronWindowSupport');
+    group.insertBefore(frame,group.firstChild);
+  }
+  frame.setAttribute('x',String(visual.frameX));
+  frame.setAttribute('y',String(visual.frameY));
+  frame.setAttribute('width',String(visual.frameWidth));
+  frame.setAttribute('height',String(visual.frameHeight));
+  frame.setAttribute('rx','3');
+  frame.setAttribute('fill','#465a6d');
+  frame.setAttribute('stroke','#9fb0c0');
+  frame.setAttribute('stroke-width','1.4');
+  frame.setAttribute('data-role',visual.frameRole);
+
+  let membrane=group.querySelector('[data-role="electron-window-membrane"]');
+  if(!membrane){
+    membrane=document.createElementNS(SVG_NS,'rect');
+    membrane.setAttribute('class','electronWindowMembrane');
+    group.insertBefore(membrane,group.querySelector('.portLabel'));
+  }
+  membrane.setAttribute('x',String(visual.membraneX));
+  membrane.setAttribute('y',String(visual.membraneY-visual.membraneHeight/2));
+  membrane.setAttribute('width',String(visual.membraneWidth));
+  membrane.setAttribute('height',String(visual.membraneHeight));
+  membrane.setAttribute('rx','1');
+  membrane.setAttribute('fill','#d9dfe5');
+  membrane.setAttribute('stroke','#f2f5f7');
+  membrane.setAttribute('stroke-width','.8');
+  membrane.setAttribute('data-role',visual.membraneRole);
+
+  group.setAttribute('data-role',visual.role);
+  group.setAttribute('data-topology',visual.topology);
 }
 
 export function initOpticalFieldGraphics(){

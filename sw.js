@@ -1,4 +1,4 @@
-const CACHE='linac-dashboard-v60-optical-head-graphics-v35';
+const CACHE='linac-dashboard-v61-electron-window-head-graphics-v36';
 const CORE=[
   './','./index.html?v=31','./dashboard.css?v=4','./manifest.webmanifest?v=13','./umc-utrecht-banner.svg?v=1',
   './apparaatkeuze.html?v=2','./linac-controles.html?v=2','./mrl-controles.html?v=1',
