@@ -16,6 +16,29 @@ export function agilityLeafRows(){
   }));
 }
 
+export function treatmentHeadApertureState(params,view={mode:'photon'}){
+  const baseHalfGap=40;
+  const photonHalfGap=18+92*params.fx;
+
+  // Integrity's public DICOM conformance statement lists MLCX for photon beams,
+  // but not for electron beams; electron field definition is represented through
+  // applicator/diaphragm information instead. In electron mode, park the Agility
+  // leaves outside the illustrated treatment aperture rather than implying that
+  // leaf motion shapes the electron field. The 110 value is only the normalized
+  // SVG drawing envelope already used by the photon control at full opening; it is
+  // not an OEM leaf position, travel limit, clearance or clinical setting.
+  const desiredHalfGap=view.mode==='electron'?110:photonHalfGap;
+  const mlcDelta=desiredHalfGap-baseHalfGap;
+  const jawGap=18+82*params.fy;
+
+  return {
+    desiredHalfGap,
+    mlcDelta,
+    jawGap,
+    mlcRole:view.mode==='electron'?'parked':'field-shaping'
+  };
+}
+
 export function initMlcLeaves(){
   const left=document.querySelector('#mlcLeft');
   const right=document.querySelector('#mlcRight');
@@ -50,21 +73,23 @@ export function initMlcLeaves(){
 export function updateTreatmentHead(params,view,delivery=null){
   const center=1450;
   const patientY=1080;
-
-  const baseHalfGap=40;
-  const desiredHalfGap=18+92*params.fx;
-  const mlcDelta=desiredHalfGap-baseHalfGap;
+  const aperture=treatmentHeadApertureState(params,view);
 
   const left=document.querySelector('#mlcLeft');
   const right=document.querySelector('#mlcRight');
-  if(left)left.style.transform=`translateX(${-mlcDelta}px)`;
-  if(right)right.style.transform=`translateX(${mlcDelta}px)`;
+  if(left){
+    left.style.transform=`translateX(${-aperture.mlcDelta}px)`;
+    left.setAttribute('data-role',aperture.mlcRole);
+  }
+  if(right){
+    right.style.transform=`translateX(${aperture.mlcDelta}px)`;
+    right.setAttribute('data-role',aperture.mlcRole);
+  }
 
-  const jawGap=18+82*params.fy;
   const jawL=document.querySelector('#jawL');
   const jawR=document.querySelector('#jawR');
-  if(jawL)jawL.setAttribute('x',center-jawGap-78);
-  if(jawR)jawR.setAttribute('x',center+jawGap);
+  if(jawL)jawL.setAttribute('x',center-aperture.jawGap-78);
+  if(jawR)jawR.setAttribute('x',center+aperture.jawGap);
 
   const electronBroad=.92+.08*(1-params.energy);
   const half=view.mode==='electron'
