@@ -7,9 +7,9 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 | Treatment head / beam path | 4 | 4 | 4 | 4 | 4 | In progress |
 | Agility MLC / diaphragms | 4 | 4 | 4 | 4 | 5 | In progress |
 | Electron gun / RF / waveguide | 4 | 4 | 4 | 4 | 4 | In progress |
-| Focus / steering | 4 | 4 | 3 | 4 | 4 | Priority |
+| Focus / steering | 4 | 4 | 4 | 4 | 5 | In progress |
 | Slalom bending / flight tube | 4 | 4 | 4 | 4 | 5 | In progress |
-| Beam physics / patient-plane feedback | 3 | 4 | 3 | 4 | 4 | In progress |
+| Beam physics / patient-plane feedback | 3 | 4 | 3 | 4 | 4 | Priority |
 | UI / educational readability | 4 | 4 | 4 | 4 | 4 | In progress |
 
 ## Golden path
@@ -20,23 +20,24 @@ Electron gun → RF / travelling-wave acceleration → Focus 1 → 1R/1T → Foc
 
 - RF level → normalized accelerator response → useful beam response.
 - Focus 1 → upstream envelope compression → Focus 2 → downstream envelope compression.
-- 1R/1T and 2R/2T → trajectory correction → possible wall interception / beam loss when deliberately mis-steered.
+- 1R/1T → primary injection centering; 2R/2T → downstream trajectory / target-angle alignment. Deliberate normalized mis-steering can produce wall interception / beam loss.
 - Slalom M1 → initial energy-dispersive deflection → M2 counter-bend → M3 final achromatic redirection toward the treatment head. The displayed station sizes and gaps are normalized educational geometry.
 - Photon mode → target → bremsstrahlung → FF/FFF section → monitor → Agility collimation.
 - Electron mode → exit window → primary + shaped secondary scattering foil → monitor → electron field definition / applicator → patient plane.
 
 ## Current evidence-backed improvement
 
-The slalom bending assembly now exposes a source-supported **three-stage magnet topology** directly around the modeled flight-tube path: M1 as the first dispersive bend, M2 as the opposing/counter bend and a visually larger M3 station for the final achromatic redirection toward the treatment head. The previous broad polygons remain only as a subdued assembly envelope. Public Elekta teaching describes magnets in the flight tube producing the compact slalom bend; IAEA/AAPM teaching diagrams show the sequential three-bend topology. All displayed pole sizes, gaps and relative drawing lengths are normalized educational values; no OEM pole dimensions, field strengths, currents or service geometry are represented.
+Focus / steering graphics now expose the public Elekta SL25 stage order as physically distinct educational hardware: **Focus 1 → 1R/1T → Focus 2 → 2R/2T**. Focus stages are depicted as solenoid-style windings surrounding the waveguide, while each steering station shows two independently identifiable R and T channels. The primary steering station is labelled by role as injection centering and the secondary station as downstream / target-angle alignment. Positions are derived from the same `WAVE_ANCHORS` used by beam transport. All coil lengths, radii, drawing shapes and spacing are normalized educational illustration values; no OEM dimensions, currents, magnetic fields or service settings are represented.
 
 ## Recent evidence-backed improvements
 
 - Electron mode depicts a dual scattering-foil topology: thin primary foil followed by a shaped secondary foil upstream of the monitor chamber, using normalized educational geometry only.
-- Slalom graphics now align three explicit normalized magnet stations with the same mechanical path used by the beam renderer, reducing disagreement between geometry and visualization.
+- Slalom graphics align three explicit normalized magnet stations with the same mechanical path used by the beam renderer, reducing geometry/renderer drift.
+- Focus / steering graphics now distinguish focusing hardware from two-axis steering hardware and make the different 1R/1T versus 2R/2T roles visible without changing beam physics.
 
 ## Next highest-value gap
 
-Focus / steering remains the next high-value visual gap: the causal behavior and stage order are already modeled, but the magnet graphics should be checked against public accelerator diagrams so that Focus 1/2 and 1R/1T / 2R/2T are easier to distinguish physically without implying proprietary coil dimensions or service settings. Beam-physics / patient-plane feedback remains a parallel lower-scoring area but follows later in the configured priority order.
+Beam physics / patient-plane feedback is now the lowest-scoring area. The next audit should check whether the patient-plane visualization makes source-backed qualitative changes in photon FF/FFF profiles, electron scatter/contamination, field size, steering loss and penumbra sufficiently visible and understandable, while keeping response curves normalized and non-clinical.
 
 ## Definition of done
 
@@ -44,4 +45,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-A graphics change should preferentially derive display stations from the same geometry object used by beam transport rather than duplicating SVG coordinates. This reduces geometry/renderer drift while preserving the separation between machine topology, educational physics and presentation.
+A graphics change should preferentially derive display stations from the same geometry object used by beam transport rather than duplicating SVG coordinates. This reduces geometry/renderer drift while preserving the separation between machine topology, educational physics and presentation. This run reinforced that rule: the focus/steering overlay reads `WAVE_ANCHORS` rather than introducing a second independent stage-position map.
