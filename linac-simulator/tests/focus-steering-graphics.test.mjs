@@ -32,8 +32,9 @@ test('focus graphics read as solenoid windings while steering keeps R and T visu
   assert.match(css,/\.steeringChannelLabel/);
 });
 
-test('bootstrap initializes the source-backed overlay after the base renderer',()=>{
+test('bootstrap preserves mobile UX ordering and then initializes the source-backed overlay',()=>{
   const bootstrap=read('src/app/bootstrap.js');
+  assert.match(bootstrap,/controller\.start\(\);\s*initMobileUx\(\);/);
   assert.match(bootstrap,/initFocusSteeringGraphics/);
-  assert.ok(bootstrap.indexOf('controller.start()')<bootstrap.indexOf('initFocusSteeringGraphics()'));
+  assert.ok(bootstrap.indexOf('initMobileUx()')<bootstrap.indexOf('initFocusSteeringGraphics()'));
 });
