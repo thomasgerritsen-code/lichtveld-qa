@@ -98,14 +98,16 @@ export function agilityDiaphragmVisualState(params){
 
 export function monitorChamberVisualState(){
   // Public Elekta information describes two independent ionization chambers for
-  // dose monitoring and seven electrodes in the third beam-quality chamber. The
-  // AAPM FFF report resolves the teaching topology further as six collection plates
-  // providing uniformity signals. We therefore draw six collection regions while
-  // retaining the public seven-electrode count as metadata. Geometry is normalized
-  // SVG illustration only, not chamber thickness, spacing, calibration or limits.
+  // dose monitoring and a third beam-quality chamber using seven electrodes.
+  // AAPM resolves that third chamber further as six collection plates arranged to
+  // provide uniformity signals. The drawing therefore shows those six collection
+  // regions plus a visibly separate seventh-electrode indicator. Its exact electrical
+  // role is deliberately not asserted because the public sources used here do not
+  // define it. Geometry is normalized SVG illustration only, not chamber thickness,
+  // spacing, calibration, internal construction or service data.
   return {
     role:'monitor-chamber-stack',
-    housing:{x:1366,y:902,width:168,height:32,rx:9},
+    housing:{x:1366,y:902,width:168,height:36,rx:9},
     dosePlanes:[
       {role:'primary-dose-monitor',y:909},
       {role:'backup-dose-monitor',y:918}
@@ -114,7 +116,11 @@ export function monitorChamberVisualState(){
       role:'beam-quality-monitor',
       y:927,
       collectionPlateCount:6,
-      electrodeCount:7
+      electrodeCount:7,
+      seventhElectrode:{
+        role:'beam-quality-seventh-electrode-indicator',
+        y:934
+      }
     }
   };
 }
@@ -182,6 +188,18 @@ export function initMonitorChambers(){
     plate.setAttribute('opacity','.62');
     quality.appendChild(plate);
   }
+
+  const seventh=document.createElementNS(NS,'line');
+  seventh.setAttribute('x1','1392');
+  seventh.setAttribute('x2','1508');
+  seventh.setAttribute('y1',String(visual.qualityPlane.seventhElectrode.y));
+  seventh.setAttribute('y2',String(visual.qualityPlane.seventhElectrode.y));
+  seventh.setAttribute('data-role',visual.qualityPlane.seventhElectrode.role);
+  seventh.setAttribute('stroke','#c0fff8');
+  seventh.setAttribute('stroke-width','1.4');
+  seventh.setAttribute('stroke-dasharray','4 3');
+  seventh.setAttribute('opacity','.66');
+  quality.appendChild(seventh);
   group.appendChild(quality);
 
   const marker=document.createElementNS(NS,'g');
