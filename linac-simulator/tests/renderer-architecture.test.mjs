@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildMechanicalGeometry,WAVE_ANCHORS} from '../src/ui/machine/geometry.js';
 import {buildPatientTransportPath} from '../src/ui/machine/beam-renderer.js';
-import {buildWaveguideCellSpecs,electronGunTopologySpec,inputModeTransformerSpec} from '../src/ui/machine/hardware.js';
+import {buildWaveguideCellSpecs,electronGunTopologySpec,inputModeTransformerSpec,slalomTopologyVisualState} from '../src/ui/machine/hardware.js';
 import {electronApplicatorScatterVisual} from '../src/ui/machine/scatter-renderer.js';
 import * as renderer from '../src/ui/machine-renderer.js';
 
@@ -19,6 +19,24 @@ test('mechanical geometry remains available through the split renderer layer',()
   assert.ok(geometry.marks.m1<geometry.marks.m2);
   assert.ok(geometry.marks.m2<geometry.marks.m3);
   assert.ok(geometry.marks.m3<geometry.marks.target);
+});
+
+test('slalom visual exposes three ordered normalized magnet stations around the beam path',()=>{
+  const geometry=buildMechanicalGeometry();
+  const stations=slalomTopologyVisualState();
+
+  assert.deepEqual(stations.map(station=>station.id),['m1','m2','m3']);
+  assert.deepEqual(stations.map(station=>station.role),[
+    'first-dispersive-bend','counter-bend','final-achromatic-bend'
+  ]);
+  assert.ok(stations[0].pathIndex<stations[1].pathIndex);
+  assert.ok(stations[1].pathIndex<stations[2].pathIndex);
+  assert.equal(stations[0].pathIndex,geometry.marks.m1);
+  assert.equal(stations[1].pathIndex,geometry.marks.m2);
+  assert.equal(stations[2].pathIndex,geometry.marks.m3);
+  assert.ok(stations.every(station=>Number.isFinite(station.x)&&Number.isFinite(station.y)));
+  assert.ok(stations.every(station=>station.halfGap>0&&station.poleDepth>0));
+  assert.ok(stations[2].halfLength>stations[0].halfLength);
 });
 
 test('active useful beam continues from target to patient plane',()=>{
