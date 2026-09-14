@@ -1,5 +1,5 @@
 import {MODEL} from '../../machine/model.js';
-import {DEG,NS} from './geometry.js';
+import {DEG,NS,buildMechanicalGeometry,tangentNormal} from './geometry.js';
 import {initElectronWindowGraphics,initOpticalFieldGraphics,initPrimaryCollimatorGraphics,initTargetAssemblyGraphics} from './head-graphics.js';
 import {initMlcLeaves,initMonitorChambers} from './treatment-head.js';
 import {applySelectorMotion,enableSelectorTransitions} from './target-selector.js';
@@ -38,6 +38,33 @@ export function electronGunTopologySpec(){
     apertureHalfHeight:9,
     beamExitX:96
   };
+}
+
+export function slalomTopologyVisualState(){
+  // Public Elekta/IAEA/AAPM teaching material supports a compact three-stage
+  // slalom bend: two smaller opposing bends followed by a larger final bend
+  // that redirects the beam toward the treatment head. These pole-shoe sizes,
+  // gaps and display lengths are normalized illustration values only; they are
+  // not OEM magnet dimensions, field strengths, currents or service geometry.
+  const geometry=buildMechanicalGeometry();
+  const definitions=[
+    {id:'m1',role:'first-dispersive-bend',halfLength:35,halfGap:21,poleDepth:18},
+    {id:'m2',role:'counter-bend',halfLength:35,halfGap:21,poleDepth:18},
+    {id:'m3',role:'final-achromatic-bend',halfLength:50,halfGap:23,poleDepth:21}
+  ];
+
+  return definitions.map(definition=>{
+    const index=geometry.marks[definition.id];
+    const point=geometry.points[index];
+    const tangent=tangentNormal(geometry.points,index);
+    return {
+      ...definition,
+      x:point.x,
+      y:point.y,
+      angleDeg:Math.atan2(tangent.ty,tangent.tx)/DEG,
+      pathIndex:index
+    };
+  });
 }
 
 function initElectronGunGraphics(){
@@ -184,6 +211,59 @@ function initBellows(){
   }
 }
 
+function initSlalomTopologyGraphics(){
+  const slalom=document.querySelector('#slalomHardware');
+  if(!slalom||slalom.querySelector('#slalomTopologyOverlay'))return;
+
+  // Keep the pre-existing broad polygons only as a subdued assembly envelope;
+  // the source-supported three-stage pole topology is drawn on top of it.
+  for(const legacy of slalom.querySelectorAll('.magnetPole')){
+    legacy.setAttribute('opacity','.16');
+    legacy.setAttribute('data-legacy-envelope','1');
+  }
+
+  const overlay=document.createElementNS(NS,'g');
+  overlay.setAttribute('id','slalomTopologyOverlay');
+  overlay.setAttribute('data-geometry','normalized-educational');
+  overlay.setAttribute('data-topology','three-stage-slalom-bend');
+
+  for(const station of slalomTopologyVisualState()){
+    const group=document.createElementNS(NS,'g');
+    group.setAttribute('class','slalomMagnetStation');
+    group.setAttribute('data-stage',station.id);
+    group.setAttribute('data-role',station.role);
+    group.setAttribute('transform',`translate(${station.x.toFixed(1)} ${station.y.toFixed(1)}) rotate(${station.angleDeg.toFixed(2)})`);
+
+    for(const sign of [-1,1]){
+      const pole=document.createElementNS(NS,'rect');
+      pole.setAttribute('class','magnetPole slalomPoleShoe');
+      pole.setAttribute('x',-station.halfLength);
+      pole.setAttribute('y',sign<0?-(station.halfGap+station.poleDepth):station.halfGap);
+      pole.setAttribute('width',station.halfLength*2);
+      pole.setAttribute('height',station.poleDepth);
+      pole.setAttribute('rx','7');
+      pole.setAttribute('opacity','.92');
+      group.appendChild(pole);
+    }
+
+    const aperture=document.createElementNS(NS,'line');
+    aperture.setAttribute('x1',-station.halfLength*.78);
+    aperture.setAttribute('x2',station.halfLength*.78);
+    aperture.setAttribute('y1','0');
+    aperture.setAttribute('y2','0');
+    aperture.setAttribute('stroke','#b8d6e8');
+    aperture.setAttribute('stroke-width','1.4');
+    aperture.setAttribute('stroke-dasharray','5 4');
+    aperture.setAttribute('opacity','.65');
+    aperture.setAttribute('pointer-events','none');
+    group.appendChild(aperture);
+
+    overlay.appendChild(group);
+  }
+
+  slalom.appendChild(overlay);
+}
+
 function scaleSlalomHardware(){
   const scale=MODEL.visual?.bendAssemblyScale||1;
   const [px,py]=MODEL.visual?.bendPivot||[805,499];
@@ -223,6 +303,7 @@ function shiftTreatmentHead(){
 
 export function initHardware(){
   scaleSlalomHardware();
+  initSlalomTopologyGraphics();
   initElectronGunGraphics();
   initWaveguideCells();
   initInputModeTransformer();
