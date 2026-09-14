@@ -25,7 +25,7 @@ test('nominal beam gives two matching redundant monitor channels and six equal u
   assert.equal(chamber.doseB,chamber.secondaryMonitor);
 });
 
-test('monitor graphics expose two dose layers plus six collection plates in a seven-electrode quality chamber',()=>{
+test('monitor graphics expose two dose layers plus six collection plates and a distinct seventh electrode indicator',()=>{
   const visual=monitorChamberVisualState();
   assert.equal(visual.role,'monitor-chamber-stack');
   assert.equal(visual.dosePlanes.length,2);
@@ -36,8 +36,12 @@ test('monitor graphics expose two dose layers plus six collection plates in a se
   assert.equal(visual.qualityPlane.role,'beam-quality-monitor');
   assert.equal(visual.qualityPlane.collectionPlateCount,6);
   assert.equal(visual.qualityPlane.electrodeCount,7);
+  assert.equal(visual.qualityPlane.seventhElectrode.role,'beam-quality-seventh-electrode-indicator');
+  assert.equal(visual.qualityPlane.electrodeCount,visual.qualityPlane.collectionPlateCount+1);
   assert.ok(visual.dosePlanes[0].y<visual.dosePlanes[1].y);
   assert.ok(visual.dosePlanes[1].y<visual.qualityPlane.y);
+  assert.ok(visual.qualityPlane.y<visual.qualityPlane.seventhElectrode.y);
+  assert.ok(visual.qualityPlane.seventhElectrode.y<visual.housing.y+visual.housing.height);
 });
 
 test('beam offset changes steering feedback and produces an opposing six-sector pattern',()=>{
