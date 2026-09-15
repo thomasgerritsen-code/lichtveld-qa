@@ -5,6 +5,7 @@ import {initFocusSteeringGraphics} from '../ui/machine/focus-steering-graphics.j
 import {initBackscatterPlateGraphics} from '../ui/machine/backscatter-plate.js';
 import {initRfWaveguideTopologyGraphics} from '../ui/machine/rf-waveguide-topology.js';
 import {initAgilityLeafGuides} from '../ui/machine/agility-guides.js';
+import {initHeadModeRoute} from '../ui/machine/head-mode-route.js';
 import {initPatientPlane} from '../ui/patient-plane.js';
 import {initSlalomContinuity} from '../../js/slalom-continuity.js';
 
@@ -23,6 +24,7 @@ initBackscatterPlateGraphics();
 initRfWaveguideTopologyGraphics();
 initAgilityLeafGuides();
 initSlalomContinuity();
+initHeadModeRoute(controller);
 initPatientPlane(controller);
 initGoldenPath(controller);
 
