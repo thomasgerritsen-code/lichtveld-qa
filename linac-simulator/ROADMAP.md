@@ -5,7 +5,7 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 | Subsystem | Geometry / topology | Physics / behavior | Graphics / readability | Cause-effect interaction | Regression coverage | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Treatment head / beam path | 5 | 4 | 5 | 5 | 5 | In progress |
-| Agility MLC / diaphragms | 5 | 4 | 5 | 4 | 5 | In progress |
+| Agility MLC / diaphragms | 5 | 4 | 5 | 5 | 5 | In progress |
 | Electron gun / RF / waveguide | 5 | 4 | 5 | 4 | 5 | In progress |
 | Focus / steering | 4 | 4 | 5 | 5 | 5 | In progress |
 | Slalom bending / flight tube | 5 | 4 | 5 | 5 | 5 | In progress |
@@ -24,16 +24,18 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 - 2R/2T → bend entry → M1 dispersive bend → M2 counter-bend → M3 final redirection → flight tube / treatment-head entrance. The continuity overlay reuses the renderer's mechanical geometry; displayed station sizes, gaps and path are normalized educational geometry.
 - Photon mode → target → bremsstrahlung → FF inserted or FFF open filter position → monitor → backscatter plate → optical field system → Agility collimation → diverging field projection → patient-plane field/profile feedback.
 - Electron mode → exit window → primary + shaped secondary scattering foil → monitor → electron field definition / applicator → diverging field projection → patient plane, with separate normalized electron-scatter and photon-contamination teaching components.
-- Field X/Y → MLC/diaphragm or electron-field aperture → projected field opening → visible patient-plane field width/height; steering/transport loss → beam-axis displacement and/or lower useful primary and patient-output proxy.
+- Photon Field X → Agility MLC bank opening along the leaf-travel axis; Photon Field Y → the orthogonal sculpted diaphragm pair. Both then feed the existing projected field opening / patient-plane footprint. Electron mode does not present this photon-collimation overlay.
+- Steering/transport loss → beam-axis displacement and/or lower useful primary and patient-output proxy.
 
 ## Current evidence-backed improvement
 
-The treatment-head entrance now exposes a single mode-aware route overlay sourced from machine mode/filter state. Photon FF shows **head entrance → target / bremsstrahlung → flattening filter in → monitor**; Photon FFF keeps the target route but explicitly shows the flattening-filter position as out/open; Electron shows **head entrance → electron window → primary + shaped secondary scattering foils → monitor**. The inactive alternative is not presented as part of the active causal route.
+Agility field-size cause-effect now exposes the distinct roles already present in the renderer: **Field X → Agility MLC banks** and **Field Y → orthogonal sculpted diaphragms**. Public Agility descriptions and peer-reviewed head models support 160 leaves in two banks, leaf travel along one IEC axis, and a separate sculpted diaphragm pair defining the orthogonal axis with no backup jaws. The overlay is driven by existing `fx`/`fy`, active-control and photon/electron state; it adds no new control or collimation physics.
 
-This is visualization/state topology only. It reuses the existing target, window, filter, foil and monitor hardware and does not introduce new dose physics, target dimensions, foil thicknesses, filter dimensions, carousel positions, thresholds or service/calibration values.
+The axis guides are normalized educational graphics only. No leaf speeds, travel limits, minimum gaps, mechanical dimensions, tolerances or service/calibration values are used. In Electron mode the photon Agility cause-effect overlay is hidden so it does not imply that photon MLC/diaphragm field definition is the active electron route.
 
 ## Recent evidence-backed improvements
 
+- Treatment-head entrance exposes mutually exclusive Photon FF, Photon FFF and Electron routes from existing mode/filter state.
 - Slalom / flight-tube continuity exposes 2R/2T → bend entry → M1 → M2 → M3 → flight tube / head entrance from shared renderer geometry.
 - Electron mode depicts a dual scattering-foil topology upstream of the monitor chamber using normalized educational geometry only.
 - Focus / steering graphics expose the envelope → centering/wall-clearance → downstream-alignment causal chain.
@@ -46,7 +48,7 @@ This is visualization/state topology only. It reuses the existing target, window
 
 ## Next highest-value gap
 
-Rotate to **Agility MLC / sculpted diaphragms cause-effect** next. Geometry/readability and regression coverage are strong, but the scorecard still shows 4/5 for educational interaction. Audit whether existing field X/Y controls make the distinct MLC-bank versus orthogonal sculpted-diaphragm roles immediately visible and testable without adding a new control or inventing OEM motion limits. If that is already sufficiently clear, rotate to electron gun/RF cause-effect or beam-physics/patient-plane graphics rather than polishing DONE geometry.
+Rotate to **electron gun / RF / waveguide cause-effect** next. Geometry/readability and regression coverage are strong, but educational interaction remains 4/5. Audit whether the existing magnetron power/tune, RF phase and gun controls visibly distinguish source/capture effects from downstream acceleration response without inventing RF frequency, phase calibration, service thresholds or proprietary waveguide dimensions. If already sufficiently clear, rotate to beam-physics/patient-plane graphics rather than polishing DONE geometry.
 
 ## Definition of done
 
@@ -54,4 +56,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-For mode-switching hardware, audit the route as a mutually exclusive state graph as well as a component-order checklist: each active route must name its shared downstream handoff, and inactive alternatives must not look simultaneously active. This prevents a correct set of individual components from teaching an ambiguous machine topology.
+For controls that already drive correct physics, audit whether the responsible hardware axis is immediately identifiable in the machine view before adding another control or response model. Prefer a state-derived cause-effect overlay that disappears when that hardware route is inactive; this keeps educational UI coupled to existing machine state and avoids duplicating physics.
