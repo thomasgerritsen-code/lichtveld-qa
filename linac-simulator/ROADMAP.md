@@ -7,7 +7,7 @@ The working animation/physics layers are protected while the machine drawing is 
 
 | Subsystem | Geometry / topology | Physics / behavior | Component visual fidelity | Graphics / readability | Cause-effect interaction | Regression coverage | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Treatment head / beam path | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
+| Treatment head / beam path | 5 | 4 | 4 | 5 | 5 | 5 | Visual rebuild |
 | Agility MLC / diaphragms | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
 | Electron gun / RF / waveguide | 5 | 4 | 4 | 5 | 4 | 5 | Visual rebuild |
 | Focus / steering | 4 | 4 | 4 | 5 | 5 | 5 | Visual rebuild |
@@ -18,13 +18,6 @@ The working animation/physics layers are protected while the machine drawing is 
 ## Golden path
 Electron gun → RF feed / coupler → capture & bunching cells → travelling-wave acceleration → Focus 1 → 1R/1T → Focus 2 → 2R/2T → slalom bending / flight tube → photon target or electron window → photon filtering or electron scattering → monitor chamber → backscatter plate → optical field system → Agility MLC / sculpted diaphragms or electron applicator → patient plane.
 
-## Visual rebuild order
-1. Continuous accelerator vacuum/beamline body from electron gun through accelerating structure, focusing/steering and bend entrance.
-2. Slalom/flight-tube mechanical silhouette around shared beam geometry.
-3. Treatment-head stack as a coherent assembly around existing mode-aware state.
-4. Agility leaf-bank/guide/diaphragm appearance from public imagery.
-5. Only then re-evaluate additional overlays.
-
 ## Causality map
 - Magnetron → RF feed → RF coupler → travelling-wave structure → normalized accelerator response.
 - Focus 1 → envelope → 1R/1T centering/wall clearance → Focus 2 → 2R/2T downstream alignment.
@@ -33,17 +26,17 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 - Electron → exit window → scattering foils → monitor → applicator → patient plane.
 
 ## Current evidence-backed improvement
-Public Elekta material establishes the Versa HD/Agility treatment platform and a compact gantry/head architecture; public accelerator literature supports a vacuum beam pipe passing through a multi-stage bending-magnet assembly before the treatment head. The existing simulator already had a shared normalized three-stage slalom trajectory, but its broad legacy polygons and isolated pole shoes read as floating diagram symbols rather than one mechanical beamline.
+IAEA public teaching material places the x-ray target, primary collimator, flattening-filter system, ion chamber and downstream collimation within the treatment-head chain. Elekta public Versa HD material confirms the Versa HD/Agility platform and FF/FFF high-dose-rate operation. The simulator already models those internals and mode routes, but they visually floated without a coherent head enclosure.
 
-The slalom renderer now wraps the existing shared `buildMechanicalGeometry()` trajectory in a continuous normalized vacuum-tube silhouette. M1/M2/M3 are presented as integrated yoke/pole assemblies around that same tube, and the downstream end gains a flanged flight-tube housing. No bend angles, fields, currents, apertures, dimensions or service settings are claimed; the shapes remain normalized educational geometry. Existing beam trajectory, bending animation and physics state are unchanged.
+A new independent `treatmentHeadHousing` visualization layer now supplies a normalized flight-tube neck plus upper and lower cutaway head-body silhouette behind the existing target/window, filtering/scattering, monitor, optical and collimation DOM. It does not own physics or mode state and is shifted by the same treatment-head transform as the existing stack. No shielding thicknesses, service dimensions, proprietary clearances or clinical settings are represented.
 
-Slalom bending / flight tube component visual fidelity moves **3 → 4/5** because the bend now reads as connected hardware around the established trajectory rather than detached SVG blocks. It remains below DONE pending the treatment-head body handoff and whole-stage proportion review.
+Treatment head / beam path component visual fidelity moves **3 → 4/5** because the internal beamline now reads as one enclosed treatment-head assembly rather than floating components. It remains below DONE pending direct visual review of proportions and the Agility outer mechanical appearance.
 
 ## Next visual-fidelity gap
-Rebuild the **treatment-head outer body and internal stack silhouette** around the existing target/window, FF/FFF or scattering, monitor, optical and Agility state. First establish a coherent housing and mechanical handoff from the flight tube; do not add controls or new physics.
+Audit and rebuild the **Agility leaf-bank/guide/sculpted-diaphragm mechanical appearance** against public Elekta imagery while preserving the existing 160-leaf topology, field-size causal behavior and Photon/Electron mode roles.
 
 ## Definition of done
 Hardware is visually DONE only when source-backed topology, credible normalized silhouette/proportions, continuous mechanical/vacuum handoffs and regression-protected physics/animation are all present.
 
 ## Process note
-For visual rebuilds, reuse the same geometry object that drives the beam/trajectory whenever possible. A housing drawn from separate coordinates can look correct initially but silently drift away from the animated beam path later.
+When adding an enclosure around already-tested internals, implement it as a separate background visualization layer and reuse the existing assembly transform. This avoids rewriting mode-aware component initialization merely to improve silhouette fidelity.
