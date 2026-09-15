@@ -13,12 +13,12 @@ Visual fidelity means: recognizable component silhouette; credible normalized re
 | Treatment head / beam path | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
 | Agility MLC / diaphragms | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
 | Electron gun / RF / waveguide | 5 | 4 | 3 | 5 | 4 | 5 | Visual rebuild |
-| Focus / steering | 4 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
+| Focus / steering | 4 | 4 | 4 | 5 | 5 | 5 | Visual rebuild |
 | Slalom bending / flight tube | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
 | Beam physics / patient-plane feedback | 4 | 4 | n/a | 4 | 5 | 5 | Protected |
 | UI / educational readability | 4 | 4 | n/a | 5 | 5 | 5 | Protected |
 
-The new visual-fidelity scores deliberately reset previous graphics confidence: the animations/readability may be strong while the component silhouettes and mechanical integration are not yet convincing. A component cannot be visually DONE solely because its topology, labels or animation are correct.
+The visual-fidelity scores deliberately distinguish readability from realism: animation may be strong while component silhouettes and mechanical integration still need rebuilding.
 
 ## Golden path
 
@@ -45,11 +45,15 @@ Each visual PR must compare the before-state against at least one manufacturer/p
 - Photon Field X → Agility MLC bank opening; Photon Field Y → orthogonal sculpted diaphragm pair.
 - Steering/transport loss → beam-axis displacement and/or lower useful primary and patient-output proxy.
 
-## Current evidence-backed direction
+## Current evidence-backed improvement
 
-Public Elekta image-bank material provides external Versa HD views and direct Agility leaf-bank imagery. IAEA Radiation Oncology Physics describes the accelerator/transport chain as electron gun, accelerating waveguide, evacuated drift tubes, focusing/steering coils, bending magnets and a treatment head containing target/window, filters/foils, monitor chambers and collimation. These references support a visually continuous mechanical/vacuum assembly rather than isolated symbolic blocks, while not supplying or requiring proprietary service dimensions.
+Peer-reviewed work on Elekta travelling-wave linacs places two focus-coil sets **around the accelerating waveguide**, with Focus 1 upstream of 1R/1T and Focus 2 between primary and secondary steering. IAEA accelerator descriptions likewise show focusing coils as beamline assemblies around an accelerating/vacuum structure. The previous simulator used large detached diamond-like winding shapes that visually overwhelmed the tube.
 
-Existing animation and normalized physics are therefore frozen by default during the visual rebuild. Geometry code may be reorganized only to let visual hardware share the same anchors/path already used by beam transport.
+Focus 1 and Focus 2 are now drawn as compact solenoidal sleeve/coil packs wrapped around the existing waveguide. The old shapes are visually retired but their DOM/component hooks remain, so existing focus physics, interaction, envelope animation and steering causality are unchanged. Coil-pack dimensions, turn spacing and colours are normalized educational illustration choices only; no coil current, magnetic field, winding dimensions or service values are represented.
+
+## Next visual-fidelity gap
+
+Continue stage 1 of the visual rebuild: audit the **electron gun → waveguide entrance / RF coupler → accelerating body** as one continuous vacuum/mechanical assembly. Prefer improving silhouette, flanges and physical handoffs over adding labels or controls. Preserve the current RF/beam animation and normalized physics.
 
 ## Definition of done
 
