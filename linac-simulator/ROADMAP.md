@@ -4,7 +4,7 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 
 | Subsystem | Geometry / topology | Physics / behavior | Graphics / readability | Cause-effect interaction | Regression coverage | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Treatment head / beam path | 5 | 4 | 5 | 4 | 5 | In progress |
+| Treatment head / beam path | 5 | 4 | 5 | 5 | 5 | In progress |
 | Agility MLC / diaphragms | 5 | 4 | 5 | 4 | 5 | In progress |
 | Electron gun / RF / waveguide | 5 | 4 | 5 | 4 | 5 | In progress |
 | Focus / steering | 4 | 4 | 5 | 5 | 5 | In progress |
@@ -22,18 +22,19 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 - RF level → normalized accelerator response → useful beam response.
 - Focus 1 → upstream envelope conditioning → 1R/1T primary injection centering / wall clearance → Focus 2 downstream envelope conditioning → 2R/2T downstream axis / target-angle alignment. Deliberate normalized mis-steering can produce wall interception / beam loss.
 - 2R/2T → bend entry → M1 dispersive bend → M2 counter-bend → M3 final redirection → flight tube / treatment-head entrance. The continuity overlay reuses the renderer's mechanical geometry; displayed station sizes, gaps and path are normalized educational geometry.
-- Photon mode → target → bremsstrahlung → FF/FFF section → monitor → backscatter plate → optical field system → Agility collimation → diverging field projection → patient-plane field/profile feedback.
+- Photon mode → target → bremsstrahlung → FF inserted or FFF open filter position → monitor → backscatter plate → optical field system → Agility collimation → diverging field projection → patient-plane field/profile feedback.
 - Electron mode → exit window → primary + shaped secondary scattering foil → monitor → electron field definition / applicator → diverging field projection → patient plane, with separate normalized electron-scatter and photon-contamination teaching components.
 - Field X/Y → MLC/diaphragm or electron-field aperture → projected field opening → visible patient-plane field width/height; steering/transport loss → beam-axis displacement and/or lower useful primary and patient-output proxy.
 
 ## Current evidence-backed improvement
 
-The slalom / flight-tube section now closes the visual transport gap from secondary steering into the bending assembly and treatment-head entrance. Public medical-LINAC descriptions support an achromatic multi-magnet bending system between the accelerating structure and treatment head. The simulator already contained normalized M1/M2/M3 geometry and bend-state physics; this change adds an explicit **2R/2T → bend entry → M1 → M2 → M3 → flight tube / head entrance** continuity overlay sourced from the same `buildMechanicalGeometry()` path used by the renderer.
+The treatment-head entrance now exposes a single mode-aware route overlay sourced from machine mode/filter state. Photon FF shows **head entrance → target / bremsstrahlung → flattening filter in → monitor**; Photon FFF keeps the target route but explicitly shows the flattening-filter position as out/open; Electron shows **head entrance → electron window → primary + shaped secondary scattering foils → monitor**. The inactive alternative is not presented as part of the active causal route.
 
-The overlay is visualization-only. It introduces no bend currents, magnetic fields, bend angles, energy-selection thresholds, dimensions or service calibration values.
+This is visualization/state topology only. It reuses the existing target, window, filter, foil and monitor hardware and does not introduce new dose physics, target dimensions, foil thicknesses, filter dimensions, carousel positions, thresholds or service/calibration values.
 
 ## Recent evidence-backed improvements
 
+- Slalom / flight-tube continuity exposes 2R/2T → bend entry → M1 → M2 → M3 → flight tube / head entrance from shared renderer geometry.
 - Electron mode depicts a dual scattering-foil topology upstream of the monitor chamber using normalized educational geometry only.
 - Focus / steering graphics expose the envelope → centering/wall-clearance → downstream-alignment causal chain.
 - Patient-plane feedback makes FF/FFF shape, electron secondary components, field size, steering displacement and useful-output loss visible in one causal view sourced from existing physics state.
@@ -45,7 +46,7 @@ The overlay is visualization-only. It introduces no bend currents, magnetic fiel
 
 ## Next highest-value gap
 
-Rotate to **Photon/Electron beam-path mode switching** next. Audit the visible continuity from bend/head entrance through **target or electron window → FF/FFF or scattering foils → monitor stack**, and prefer a mode-dependent topology/cause-effect gap over cosmetic detail. In particular, public evidence supports FF versus FFF filtration differences and dual scattering-foil electron transport; the simulator should make those mutually exclusive active routes immediately legible without inventing OEM dimensions or service settings. If no meaningful public-evidence-backed improvement exists, leave main unchanged and rotate again.
+Rotate to **Agility MLC / sculpted diaphragms cause-effect** next. Geometry/readability and regression coverage are strong, but the scorecard still shows 4/5 for educational interaction. Audit whether existing field X/Y controls make the distinct MLC-bank versus orthogonal sculpted-diaphragm roles immediately visible and testable without adding a new control or inventing OEM motion limits. If that is already sufficiently clear, rotate to electron gun/RF cause-effect or beam-physics/patient-plane graphics rather than polishing DONE geometry.
 
 ## Definition of done
 
@@ -53,4 +54,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-When two individually credible subsystems meet, explicitly audit the **handoff boundary** using the same geometry/state source as both renderers. A missing visual handoff can break the educational golden path even when neither subsystem is locally wrong; fix that shared boundary before adding a new control or duplicate response model.
+For mode-switching hardware, audit the route as a mutually exclusive state graph as well as a component-order checklist: each active route must name its shared downstream handoff, and inactive alternatives must not look simultaneously active. This prevents a correct set of individual components from teaching an ambiguous machine topology.
