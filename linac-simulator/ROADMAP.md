@@ -7,8 +7,8 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 | Treatment head / beam path | 5 | 4 | 5 | 4 | 5 | In progress |
 | Agility MLC / diaphragms | 5 | 4 | 5 | 4 | 5 | In progress |
 | Electron gun / RF / waveguide | 5 | 4 | 5 | 4 | 5 | In progress |
-| Focus / steering | 4 | 4 | 4 | 4 | 5 | Priority |
-| Slalom bending / flight tube | 4 | 4 | 4 | 4 | 5 | In progress |
+| Focus / steering | 4 | 4 | 5 | 5 | 5 | In progress |
+| Slalom bending / flight tube | 4 | 4 | 4 | 4 | 5 | Priority |
 | Beam physics / patient-plane feedback | 4 | 4 | 4 | 5 | 5 | In progress |
 | UI / educational readability | 4 | 4 | 5 | 5 | 5 | In progress |
 
@@ -20,8 +20,7 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 
 - Magnetron → RF feed waveguide → RF coupler → travelling-wave structure; entrance cells capture/bunch injected electrons before the main acceleration region. Coupler and region dimensions are normalized educational graphics.
 - RF level → normalized accelerator response → useful beam response.
-- Focus 1 → upstream envelope compression → Focus 2 → downstream envelope compression.
-- 1R/1T → primary injection centering; 2R/2T → downstream trajectory / target-angle alignment. Deliberate normalized mis-steering can produce wall interception / beam loss.
+- Focus 1 → upstream envelope conditioning → 1R/1T primary injection centering / wall clearance → Focus 2 downstream envelope conditioning → 2R/2T downstream axis / target-angle alignment. Deliberate normalized mis-steering can produce wall interception / beam loss.
 - Slalom M1 → initial energy-dispersive deflection → M2 counter-bend → M3 final achromatic redirection toward the treatment head. The displayed station sizes and gaps are normalized educational geometry.
 - Photon mode → target → bremsstrahlung → FF/FFF section → monitor → backscatter plate → optical field system → Agility collimation → diverging field projection → patient-plane field/profile feedback.
 - Electron mode → exit window → primary + shaped secondary scattering foil → monitor → electron field definition / applicator → diverging field projection → patient plane, with separate normalized electron-scatter and photon-contamination teaching components.
@@ -29,15 +28,15 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 
 ## Current evidence-backed improvement
 
-The Agility head now exposes the **dynamic leaf guides** around both 80-leaf banks rather than depicting the 160 leaves as mechanically unsupported strips. Public Agility descriptions identify 160 interdigitating leaves, integrated dynamic leaf guides, and a single orthogonal pair of sculpted diaphragms rather than backup jaws. The existing renderer already depicts 80 leaves per bank, eccentric rounded leaf ends and sculpted diaphragms; this run closes the remaining visible topology gap by making the bank-guide relationship explicit and marking the orthogonal diaphragm assembly as having no backup-jaw role.
+The Focus / steering section now makes the source-supported functional chain visible directly above the waveguide: **Focus 1 envelope conditioning → 1R/1T injection centering and wall clearance → Focus 2 downstream envelope conditioning → 2R/2T downstream axis / target alignment**. Public Elekta SL25 literature explicitly distinguishes the two focus-coil sets, primary steering that centers the injected beam, and secondary steering that aligns the electron beam to the target at the correct angle. The existing beam renderer already visualizes centroid displacement, envelope and wall interception; this run connects those existing effects to the hardware stages instead of introducing another physics model.
 
-The guide outlines frame the existing normalized leaf-bank envelope and move with the same bank group as the leaves. Their coordinates are schematic only: no OEM guide travel, clearances, dimensions, leaf speeds, positioning tolerances or service values are modeled. Existing MLC/field physics remains the single behavior model.
+The arrows, labels and effect metadata are normalized educational annotations only. No coil currents, magnetic fields, servo gains, LUT values, thresholds, dimensions or service geometry are added.
 
 ## Recent evidence-backed improvements
 
 - Electron mode depicts a dual scattering-foil topology: thin primary foil followed by a shaped secondary foil upstream of the monitor chamber, using normalized educational geometry only.
 - Slalom graphics align three explicit normalized magnet stations with the same mechanical path used by the beam renderer, reducing geometry/renderer drift.
-- Focus / steering graphics distinguish focusing hardware from two-axis steering hardware and make the different 1R/1T versus 2R/2T roles visible without changing beam physics.
+- Focus / steering graphics distinguish focusing hardware from two-axis steering hardware and now expose the envelope → centering/wall-clearance → downstream-alignment causal chain.
 - Patient-plane feedback makes FF/FFF shape, electron secondary components, field size, steering displacement and useful-output loss visible in one causal view sourced from the existing physics state.
 - Head-to-isocentre projection closes the visible spatial gap between treatment-head field definition and the patient plane without implying OEM distances.
 - Golden-path navigation links the full machine chain into one selectable, mode-aware educational sequence on desktop and mobile.
@@ -47,7 +46,7 @@ The guide outlines frame the existing normalized leaf-bank envelope and move wit
 
 ## Next highest-value gap
 
-Agility now meets the current source-supported 5/5 threshold for topology, graphics and regression coverage. Physics and interaction remain 4/5 because no machine-specific leaf dynamics or calibration values are appropriate. Rotate to **Focus / steering** next: audit whether the current normalized Focus 1/2 and 1R/1T/2R/2T representation can more clearly connect the two steering planes to trajectory, wall interception and downstream target alignment without inventing service values. If public evidence does not support a meaningful improvement, leave main unchanged and rotate again.
+Focus / steering now has strong graphics, cause-effect readability and regression coverage while its geometry and physics remain intentionally normalized. Rotate to **slalom bending / flight tube** next: audit the continuity from secondary steering into bend entry, M1/M2/M3 and the flight-tube/head entrance, prioritizing a source-supported connection or educational cause-effect gap over cosmetic detail. If no meaningful public-evidence-backed improvement exists, leave main unchanged and rotate again.
 
 ## Definition of done
 
@@ -55,4 +54,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-When a source-supported subsystem is already numerically represented, audit whether its **supporting mechanical topology** is also visible before adding new controls. A missing structural relationship (for example leaf banks moving inside dynamic guides) is a higher-value educational correction than adding another slider or machine-specific response curve. Keep such geometry tied to the same DOM/state group as the component it supports so visualization cannot drift from interaction.
+When a subsystem already has the correct normalized behavior, prefer **linking existing rendered consequences back to the responsible hardware stage** over adding a new control or duplicate response model. A causal annotation should name only source-supported roles and reuse the same geometry anchors/state used by the beam renderer; service currents, thresholds and calibration behavior remain out of scope.
