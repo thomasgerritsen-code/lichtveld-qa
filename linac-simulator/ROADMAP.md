@@ -5,9 +5,9 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 | Subsystem | Geometry / topology | Physics / behavior | Graphics / readability | Cause-effect interaction | Regression coverage | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Treatment head / beam path | 5 | 4 | 5 | 4 | 5 | In progress |
-| Agility MLC / diaphragms | 4 | 4 | 4 | 4 | 5 | Priority |
+| Agility MLC / diaphragms | 5 | 4 | 5 | 4 | 5 | In progress |
 | Electron gun / RF / waveguide | 5 | 4 | 5 | 4 | 5 | In progress |
-| Focus / steering | 4 | 4 | 4 | 4 | 5 | In progress |
+| Focus / steering | 4 | 4 | 4 | 4 | 5 | Priority |
 | Slalom bending / flight tube | 4 | 4 | 4 | 4 | 5 | In progress |
 | Beam physics / patient-plane feedback | 4 | 4 | 4 | 5 | 5 | In progress |
 | UI / educational readability | 4 | 4 | 5 | 5 | 5 | In progress |
@@ -29,9 +29,9 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 
 ## Current evidence-backed improvement
 
-The source/RF section now explicitly shows the previously implicit **RF coupler** where the existing magnetron feed meets the accelerating structure, and distinguishes the entrance **capture / bunching region** from the downstream **main acceleration region**. Public Elekta-oriented diagrams identify the magnetron, RF coupler, demountable electron gun and S-band travelling-wave accelerating structure as separate functional elements. General accelerator references describe the early travelling-wave cells as the region where injected electrons are captured into RF bunches and brought rapidly toward relativistic velocity before the downstream cells mainly continue energy gain.
+The Agility head now exposes the **dynamic leaf guides** around both 80-leaf banks rather than depicting the 160 leaves as mechanically unsupported strips. Public Agility descriptions identify 160 interdigitating leaves, integrated dynamic leaf guides, and a single orthogonal pair of sculpted diaphragms rather than backup jaws. The existing renderer already depicts 80 leaves per bank, eccentric rounded leaf ends and sculpted diaphragms; this run closes the remaining visible topology gap by making the bank-guide relationship explicit and marking the orthogonal diaphragm assembly as having no backup-jaw role.
 
-The change is deliberately topological and educational: it annotates the existing RF feed and cell progression rather than adding frequencies, powers, phases, cell lengths, iris dimensions or OEM service values. Existing normalized RF/capture physics remains the single behavior model.
+The guide outlines frame the existing normalized leaf-bank envelope and move with the same bank group as the leaves. Their coordinates are schematic only: no OEM guide travel, clearances, dimensions, leaf speeds, positioning tolerances or service values are modeled. Existing MLC/field physics remains the single behavior model.
 
 ## Recent evidence-backed improvements
 
@@ -42,11 +42,12 @@ The change is deliberately topological and educational: it annotates the existin
 - Head-to-isocentre projection closes the visible spatial gap between treatment-head field definition and the patient plane without implying OEM distances.
 - Golden-path navigation links the full machine chain into one selectable, mode-aware educational sequence on desktop and mobile.
 - Photon-head topology explicitly includes the source-supported monitor backscatter plate between the chamber and field-light mirror.
-- Source/RF graphics now expose RF feed → coupler → capture/bunching → main travelling-wave acceleration as distinct educational stages.
+- Source/RF graphics expose RF feed → coupler → capture/bunching → main travelling-wave acceleration as distinct educational stages.
+- Agility graphics expose 80 leaves per bank, eccentric rounded tips, integrated dynamic leaf guides and the orthogonal sculpted diaphragm pair as separate source-supported roles.
 
 ## Next highest-value gap
 
-Electron gun / RF / waveguide now meets the current source-supported 5/5 threshold for topology, graphics and regression coverage; physics and interaction remain 4/5 because the existing normalized RF response is intentionally not replaced with machine-specific values. Rotate to **Agility MLC / sculpted diaphragms** next and audit whether public evidence supports a concrete topology, leaf-bank/rounded-end, diaphragm-role or mode-dependent readability improvement. If not, leave main unchanged rather than adding cosmetic detail.
+Agility now meets the current source-supported 5/5 threshold for topology, graphics and regression coverage. Physics and interaction remain 4/5 because no machine-specific leaf dynamics or calibration values are appropriate. Rotate to **Focus / steering** next: audit whether the current normalized Focus 1/2 and 1R/1T/2R/2T representation can more clearly connect the two steering planes to trajectory, wall interception and downstream target alignment without inventing service values. If public evidence does not support a meaningful improvement, leave main unchanged and rotate again.
 
 ## Definition of done
 
@@ -54,4 +55,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-When a subsystem already contains a causal model but its hardware path is visually implicit, prefer exposing source-supported intermediate topology (for example a coupler or capture region) by annotating the existing geometry/state. Do not create a second physics model merely to justify a visual improvement, and do not infer OEM dimensions or service parameters from schematic drawings.
+When a source-supported subsystem is already numerically represented, audit whether its **supporting mechanical topology** is also visible before adding new controls. A missing structural relationship (for example leaf banks moving inside dynamic guides) is a higher-value educational correction than adding another slider or machine-specific response curve. Keep such geometry tied to the same DOM/state group as the component it supports so visualization cannot drift from interaction.
