@@ -11,7 +11,7 @@ The working animation/physics layers are protected while the machine drawing is 
 | Agility MLC / diaphragms | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
 | Electron gun / RF / waveguide | 5 | 4 | 4 | 5 | 4 | 5 | Visual rebuild |
 | Focus / steering | 4 | 4 | 4 | 5 | 5 | 5 | Visual rebuild |
-| Slalom bending / flight tube | 5 | 4 | 3 | 5 | 5 | 5 | Visual rebuild |
+| Slalom bending / flight tube | 5 | 4 | 4 | 5 | 5 | 5 | Visual rebuild |
 | Beam physics / patient-plane feedback | 4 | 4 | n/a | 4 | 5 | 5 | Protected |
 | UI / educational readability | 4 | 4 | n/a | 5 | 5 | 5 | Protected |
 
@@ -33,17 +33,17 @@ Electron gun → RF feed / coupler → capture & bunching cells → travelling-w
 - Electron → exit window → scattering foils → monitor → applicator → patient plane.
 
 ## Current evidence-backed improvement
-IAEA teaching material shows electron gun, input coupler, accelerating cells and focusing solenoid as one connected accelerator guide; IAEA radiotherapy physics describes the accelerating guide as a vacuum system, while public Elekta literature confirms travelling-wave acceleration and gun/target-end vacuum infrastructure. The previous drawing exposed internal electrodes and cells but left their outer mechanical/vacuum continuity visually weak.
+Public Elekta material establishes the Versa HD/Agility treatment platform and a compact gantry/head architecture; public accelerator literature supports a vacuum beam pipe passing through a multi-stage bending-magnet assembly before the treatment head. The existing simulator already had a shared normalized three-stage slalom trajectory, but its broad legacy polygons and isolated pole shoes read as floating diagram symbols rather than one mechanical beamline.
 
-The gun now has a normalized vacuum housing/neck and anode-side flange silhouette, and the accelerating structure has a continuous outer vacuum envelope with entrance/end flanges. Existing cathode/control/anode graphics, RF input, cells, focus/steering, RF animation and beam physics are retained. These shapes are normalized educational geometry, not OEM dimensions.
+The slalom renderer now wraps the existing shared `buildMechanicalGeometry()` trajectory in a continuous normalized vacuum-tube silhouette. M1/M2/M3 are presented as integrated yoke/pole assemblies around that same tube, and the downstream end gains a flanged flight-tube housing. No bend angles, fields, currents, apertures, dimensions or service settings are claimed; the shapes remain normalized educational geometry. Existing beam trajectory, bending animation and physics state are unchanged.
 
-Electron gun / RF / waveguide component visual fidelity moves **3 → 4/5** because the assembly now reads as connected hardware rather than isolated internal symbols. It remains below DONE pending a later whole-stage proportion audit against manufacturer imagery.
+Slalom bending / flight tube component visual fidelity moves **3 → 4/5** because the bend now reads as connected hardware around the established trajectory rather than detached SVG blocks. It remains below DONE pending the treatment-head body handoff and whole-stage proportion review.
 
 ## Next visual-fidelity gap
-Continue the rebuild with **slalom bend + flight tube mechanical silhouette and its handoff into the treatment-head body**. Preserve the shared beam geometry and bending animation; improve housings, pole/yoke coherence and vacuum-tube continuity rather than adding labels.
+Rebuild the **treatment-head outer body and internal stack silhouette** around the existing target/window, FF/FFF or scattering, monitor, optical and Agility state. First establish a coherent housing and mechanical handoff from the flight tube; do not add controls or new physics.
 
 ## Definition of done
 Hardware is visually DONE only when source-backed topology, credible normalized silhouette/proportions, continuous mechanical/vacuum handoffs and regression-protected physics/animation are all present.
 
 ## Process note
-When redrawing internals, first establish the enclosing mechanical/vacuum silhouette and only then add internal detail. This prevents technically correct electrodes/cells from reading as disconnected floating symbols.
+For visual rebuilds, reuse the same geometry object that drives the beam/trajectory whenever possible. A housing drawn from separate coordinates can look correct initially but silently drift away from the animated beam path later.
