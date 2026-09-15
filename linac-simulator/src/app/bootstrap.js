@@ -6,6 +6,7 @@ import {initBackscatterPlateGraphics} from '../ui/machine/backscatter-plate.js';
 import {initRfWaveguideTopologyGraphics} from '../ui/machine/rf-waveguide-topology.js';
 import {initAgilityLeafGuides} from '../ui/machine/agility-guides.js';
 import {initPatientPlane} from '../ui/patient-plane.js';
+import {initSlalomContinuity} from '../../js/slalom-continuity.js';
 
 for(const href of ['./mobile.css?v=1','./focus-steering.css?v=1','./golden-path.css?v=1']){
   const link=document.createElement('link');
@@ -21,6 +22,7 @@ initFocusSteeringGraphics();
 initBackscatterPlateGraphics();
 initRfWaveguideTopologyGraphics();
 initAgilityLeafGuides();
+initSlalomContinuity();
 initPatientPlane(controller);
 initGoldenPath(controller);
 
