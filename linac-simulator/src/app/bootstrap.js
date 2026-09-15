@@ -3,6 +3,7 @@ import {initMobileUx} from './mobile-ux.js';
 import {initGoldenPath} from './golden-path.js';
 import {initFocusSteeringGraphics} from '../ui/machine/focus-steering-graphics.js';
 import {initBackscatterPlateGraphics} from '../ui/machine/backscatter-plate.js';
+import {initRfWaveguideTopologyGraphics} from '../ui/machine/rf-waveguide-topology.js';
 import {initPatientPlane} from '../ui/patient-plane.js';
 
 for(const href of ['./mobile.css?v=1','./focus-steering.css?v=1','./golden-path.css?v=1']){
@@ -17,6 +18,7 @@ controller.start();
 initMobileUx();
 initFocusSteeringGraphics();
 initBackscatterPlateGraphics();
+initRfWaveguideTopologyGraphics();
 initPatientPlane(controller);
 initGoldenPath(controller);
 

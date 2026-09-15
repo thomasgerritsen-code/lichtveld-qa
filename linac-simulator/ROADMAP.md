@@ -5,8 +5,8 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 | Subsystem | Geometry / topology | Physics / behavior | Graphics / readability | Cause-effect interaction | Regression coverage | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Treatment head / beam path | 5 | 4 | 5 | 4 | 5 | In progress |
-| Agility MLC / diaphragms | 4 | 4 | 4 | 4 | 5 | In progress |
-| Electron gun / RF / waveguide | 4 | 4 | 4 | 4 | 4 | Priority |
+| Agility MLC / diaphragms | 4 | 4 | 4 | 4 | 5 | Priority |
+| Electron gun / RF / waveguide | 5 | 4 | 5 | 4 | 5 | In progress |
 | Focus / steering | 4 | 4 | 4 | 4 | 5 | In progress |
 | Slalom bending / flight tube | 4 | 4 | 4 | 4 | 5 | In progress |
 | Beam physics / patient-plane feedback | 4 | 4 | 4 | 5 | 5 | In progress |
@@ -14,10 +14,11 @@ This scorecard is an educational engineering audit, not an OEM specification. Sc
 
 ## Golden path
 
-Electron gun → RF / travelling-wave acceleration → Focus 1 → 1R/1T → Focus 2 → 2R/2T → slalom bending / flight tube → photon target or electron window → photon filtering or electron scattering → monitor chamber → backscatter plate (photon head) → optical field system → Agility MLC / sculpted diaphragms or electron applicator → diverging field projection → isocentre / patient plane.
+Electron gun → RF feed / coupler → capture & bunching cells → travelling-wave acceleration → Focus 1 → 1R/1T → Focus 2 → 2R/2T → slalom bending / flight tube → photon target or electron window → photon filtering or electron scattering → monitor chamber → backscatter plate (photon head) → optical field system → Agility MLC / sculpted diaphragms or electron applicator → diverging field projection → isocentre / patient plane.
 
 ## Causality map
 
+- Magnetron → RF feed waveguide → RF coupler → travelling-wave structure; entrance cells capture/bunch injected electrons before the main acceleration region. Coupler and region dimensions are normalized educational graphics.
 - RF level → normalized accelerator response → useful beam response.
 - Focus 1 → upstream envelope compression → Focus 2 → downstream envelope compression.
 - 1R/1T → primary injection centering; 2R/2T → downstream trajectory / target-angle alignment. Deliberate normalized mis-steering can produce wall interception / beam loss.
@@ -28,9 +29,9 @@ Electron gun → RF / travelling-wave acceleration → Focus 1 → 1R/1T → Foc
 
 ## Current evidence-backed improvement
 
-The photon treatment-head drawing now includes an explicit **monitor backscatter plate** between the monitor chamber and optical mirror. Peer-reviewed Elekta/Agility and Versa HD Monte Carlo literature repeatedly models this as a distinct head component in the order target → primary collimator → flattening filter → ionization chamber → backscatter plate → mirror → MLC / diaphragms. Independent Elekta backscatter work describes its purpose as reducing radiation scattered from downstream collimation back into the monitor chamber.
+The source/RF section now explicitly shows the previously implicit **RF coupler** where the existing magnetron feed meets the accelerating structure, and distinguishes the entrance **capture / bunching region** from the downstream **main acceleration region**. Public Elekta-oriented diagrams identify the magnetron, RF coupler, demountable electron gun and S-band travelling-wave accelerating structure as separate functional elements. General accelerator references describe the early travelling-wave cells as the region where injected electrons are captured into RF bunches and brought rapidly toward relativistic velocity before the downstream cells mainly continue energy gain.
 
-The simulator represents only that public topology and qualitative function. Plate position, width, thickness, material appearance and spacing are normalized educational graphics; no manufacturer dimensions, compositions, service tolerances or quantitative backscatter corrections are encoded. The existing monitor/delivery physics is deliberately unchanged rather than inventing a second unsupported correction model.
+The change is deliberately topological and educational: it annotates the existing RF feed and cell progression rather than adding frequencies, powers, phases, cell lengths, iris dimensions or OEM service values. Existing normalized RF/capture physics remains the single behavior model.
 
 ## Recent evidence-backed improvements
 
@@ -40,11 +41,12 @@ The simulator represents only that public topology and qualitative function. Pla
 - Patient-plane feedback makes FF/FFF shape, electron secondary components, field size, steering displacement and useful-output loss visible in one causal view sourced from the existing physics state.
 - Head-to-isocentre projection closes the visible spatial gap between treatment-head field definition and the patient plane without implying OEM distances.
 - Golden-path navigation links the full machine chain into one selectable, mode-aware educational sequence on desktop and mobile.
-- Photon-head topology now explicitly includes the source-supported monitor backscatter plate between the chamber and field-light mirror.
+- Photon-head topology explicitly includes the source-supported monitor backscatter plate between the chamber and field-light mirror.
+- Source/RF graphics now expose RF feed → coupler → capture/bunching → main travelling-wave acceleration as distinct educational stages.
 
 ## Next highest-value gap
 
-Treatment-head topology/graphics/regression coverage now meet the current source-supported 5/5 audit threshold, while physics and interaction remain intentionally 4/5 because no new quantitative backscatter model was justified. Rotate to **electron gun / RF / waveguide** next: audit whether the public travelling-wave input/coupler, cell progression and electron-injection presentation have a concrete source-supported topology or causal gap. If that audit finds no meaningful gap, leave main unchanged rather than polishing completed treatment-head graphics.
+Electron gun / RF / waveguide now meets the current source-supported 5/5 threshold for topology, graphics and regression coverage; physics and interaction remain 4/5 because the existing normalized RF response is intentionally not replaced with machine-specific values. Rotate to **Agility MLC / sculpted diaphragms** next and audit whether public evidence supports a concrete topology, leaf-bank/rounded-end, diaphragm-role or mode-dependent readability improvement. If not, leave main unchanged rather than adding cosmetic detail.
 
 ## Definition of done
 
@@ -52,4 +54,4 @@ A subsystem can be marked DONE when public sources support its topology, normali
 
 ## Process note
 
-For machine-head audits, compare the simulator against an explicit public-source component-order list, not only against overall visual similarity. A missing but independently documented component is a stronger reason for change than cosmetic refinement. Keep qualitative protective/monitoring functions visible in topology without adding quantitative response models unless public evidence supports a safe normalized causal model.
+When a subsystem already contains a causal model but its hardware path is visually implicit, prefer exposing source-supported intermediate topology (for example a coupler or capture region) by annotating the existing geometry/state. Do not create a second physics model merely to justify a visual improvement, and do not infer OEM dimensions or service parameters from schematic drawings.
