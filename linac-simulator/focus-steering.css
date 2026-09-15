@@ -7,8 +7,12 @@
 .steeringChannelLabel{fill:#fff1a8;font-size:13px;font-weight:900;paint-order:stroke;stroke:#06101a;stroke-width:3px;stroke-linejoin:round}
 .focusTopologyGraphic,.steeringTopologyGraphic{pointer-events:none}
 #focusSteeringTopologyOverlay{filter:drop-shadow(0 1px 1px rgba(0,0,0,.28))}
+.steeringCausalityLink{stroke:#8fd9ff;stroke-width:2;stroke-dasharray:7 5;opacity:.72;marker-end:url(#arrow)}
+.steeringCausalityLabel{fill:#ccefff;font-size:11px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:#06101a;stroke-width:3px;stroke-linejoin:round;opacity:.92}
 @media(max-width:700px){
   .focusSolenoidTurn{stroke-width:3}
   .steeringRadialCoil,.steeringTransverseCoil{stroke-width:2.8}
   .steeringChannelLabel{font-size:16px}
+  .steeringCausalityLink{stroke-width:2.6}
+  .steeringCausalityLabel{font-size:14px}
 }
