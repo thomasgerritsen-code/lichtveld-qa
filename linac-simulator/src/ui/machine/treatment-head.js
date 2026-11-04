@@ -55,7 +55,7 @@ export function initAgilityBankHousing(){
 export function photonFilterVisualState(view={mode:'photon',filter:'ff'}){
   const filter=view.filter==='fff'?'fff':'ff';const visible=view.mode==='photon';
   if(filter==='fff')return {visible,role:'fff-filter-plate',path:'M1417 869 H1483 V876 H1417 Z'};
-  return {visible,role:'flattening-filter',path:'M1415 852 L1485 852 L1469 893 L1431 893 Z'};
+  return {visible,role:'flattening-filter',path:'M1450 852 L1485 893 H1415 Z'};
 }
 
 export function treatmentHeadApertureState(params,view={mode:'photon'}){

@@ -15,7 +15,10 @@ export function applySelectorMotion(mode){
 
   const tube=document.querySelector('#flightTubeCarriage');
   const carriage=document.querySelector('#selectorCarriage');
-  if(tube)tube.style.transform=`translate(${dx}px,${dy}px)`;
+  // The tube is the fixed reference cutaway used by the beam renderer.
+  // Only animate the port selector; moving the entire reference tube makes
+  // its bore disconnect from the displayed beam and selected exit window.
+  if(tube)tube.style.transform='none';
   if(carriage)carriage.style.transform=`translate(${dx}px,${dy}px)`;
 
   const window=document.querySelector('#electronWindow');
@@ -23,8 +26,7 @@ export function applySelectorMotion(mode){
 
   const lines=[...document.querySelectorAll('#bellowsLines line')];
   lines.forEach((line,index)=>{
-    const fraction=(index+1)/(lines.length+1);
-    line.style.transform=`translate(${(dx*fraction).toFixed(2)}px,${(dy*fraction).toFixed(2)}px)`;
+    line.style.transform='none';
   });
 
   document.querySelector('#selectorGuide')?.classList.toggle('electronSelected',electron);
@@ -47,3 +49,4 @@ export function enableSelectorTransitions(){
     line.style.transformOrigin='center';
   });
 }
+

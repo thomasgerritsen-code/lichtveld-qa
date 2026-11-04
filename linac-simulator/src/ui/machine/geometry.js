@@ -47,16 +47,20 @@ export function buildMechanicalGeometry(){
   let x=x0,y=y0,a=-22.5*DEG;
   const points=[{x,y}];
   const marks={bendEntry:0};
+  const sectors={};
 
   let s=straight(points,x,y,a,48*scale,7);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,102*scale,45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m1=points.length-1;
+  sectors.m1={start:points.length-1};
+  s=arc(points,x,y,a,102*scale,45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m1=points.length-1;sectors.m1.end=marks.m1;
   s=straight(points,x,y,a,118*scale,9);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,97*scale,-45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m2=points.length-1;
+  sectors.m2={start:points.length-1};
+  s=arc(points,x,y,a,97*scale,-45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m2=points.length-1;sectors.m2.end=marks.m2;
   s=straight(points,x,y,a,115*scale,9);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,126*scale,112.5*DEG,34);x=s.x;y=s.y;a=s.a;marks.m3=points.length-1;
+  sectors.m3={start:points.length-1};
+  s=arc(points,x,y,a,126*scale,112.5*DEG,34);x=s.x;y=s.y;a=s.a;marks.m3=points.length-1;sectors.m3.end=marks.m3;
   s=straight(points,x,y,a,62*scale,7);marks.target=points.length-1;
 
-  return {points,marks};
+  return {points,marks,sectors,pathD:pathD(points)};
 }
 
 export function buildMechanicalPath(){
@@ -78,3 +82,9 @@ export function blendStage(a,b,t){
   for(const key of keys)out[key]=lerp(a?.[key]||0,b?.[key]||0,t);
   return out;
 }
+
+
+// Head internals use their own local coordinates. Derive their translation from
+// the transport axis so a layout change cannot disconnect target and flight tube.
+export function headAxisX(){return buildMechanicalGeometry().points.at(-1).x;}
+export function headTranslationX(){return headAxisX()-1450;}

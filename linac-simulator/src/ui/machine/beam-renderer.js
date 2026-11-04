@@ -286,8 +286,8 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null,view
     outputFraction:delivery?.outputFraction??0
   });
 
-  document.querySelector('#flightOuter')?.setAttribute('d',pathD(geometry.points));
-  document.querySelector('#flightInner')?.setAttribute('d',pathD(geometry.points));
+  document.querySelector('#flightOuter')?.setAttribute('d',pathD([...geometry.points,{x:geometry.points.at(-1).x,y:760}]));
+  document.querySelector('#flightInner')?.setAttribute('d',pathD([...geometry.points,{x:geometry.points.at(-1).x,y:760}]));
 
   const beamActive=Boolean(delivery?.beamActive&&delivery?.sourceActive);
   const particles=document.querySelector('#particles');
@@ -355,3 +355,4 @@ export function renderBeam(params,sim,overlays,radiation=null,delivery=null,view
 
   return [...visibleNominal,...patientTransport];
 }
+

@@ -1,3 +1,4 @@
+import {initSvgVisibility} from '../ui/svg-visibility.js';
 import {createController} from './controller.js';
 import {initMobileUx} from './mobile-ux.js';
 import {initGoldenPath} from './golden-path.js';
@@ -18,6 +19,7 @@ for(const href of ['./mobile.css?v=1','./focus-steering.css?v=1','./golden-path.
   document.head.appendChild(link);
 }
 
+initSvgVisibility();
 const controller=createController();
 controller.start();
 initMobileUx();
