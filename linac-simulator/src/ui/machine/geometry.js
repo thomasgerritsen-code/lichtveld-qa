@@ -6,16 +6,13 @@ export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const lerp=(a,b,t)=>a+(b-a)*t;
 export const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
 
+// Schematic station positions along one common accelerator axis. In the SL25
+// reference the secondary steering station is approximately halfway along it.
+const onGuide=(stage,x)=>({stage,x,y:765+(x-165)*Math.tan(-22.5*DEG)});
 export const WAVE_ANCHORS=[
-  {stage:'gun',x:135,y:778},
-  {stage:'focus1',x:270,y:722},
-  {stage:'steer1',x:390,y:673},
-  {stage:'wgAfter1',x:430,y:656},
-  {stage:'focus2',x:500,y:627},
-  {stage:'wgAfter2',x:555,y:604},
-  {stage:'steer2',x:610,y:581},
-  {stage:'wgExit',x:745,y:524},
-  {stage:'bendEntry',x:805,y:499}
+  onGuide('gun',135),onGuide('focus1',235),onGuide('steer1',310),
+  onGuide('wgAfter1',345),onGuide('focus2',390),onGuide('wgAfter2',435),
+  onGuide('steer2',475),onGuide('wgExit',775),{stage:'bendEntry',x:805,y:499}
 ];
 
 function straight(pts,x,y,a,L,n=10){

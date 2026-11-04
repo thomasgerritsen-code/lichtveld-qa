@@ -16,3 +16,14 @@
   .steeringCausalityLink{stroke-width:2.6}
   .steeringCausalityLabel{font-size:14px}
 }
+
+
+/* Circuit colours in the orthogonal steering cross-section. */
+.steeringTransverseCoil{fill:#153347;stroke:#8ecfff;stroke-width:2.2}
+path.steeringTransverseCoil{fill:none}
+.focusCoilFidelity .focusSolenoidBody{fill:#563c2b;stroke:#af8a66;opacity:1}
+.component.controlActiveHardware .focusSolenoidBody,
+.component.controlActiveHardware .steeringRadialCoil,
+.component.controlActiveHardware .steeringTransverseCoil{filter:drop-shadow(0 0 5px #81e7d6);stroke-width:3}
+#machineSvg .steeringRadialCoil{stroke:#f0c64b!important}
+#machineSvg .steeringTransverseCoil{stroke:#8ecfff!important}
