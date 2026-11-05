@@ -134,8 +134,8 @@ export function createController(){
 
     $('#photonHead').hidden=mode!=='photon';
     $('#electronHead').hidden=mode!=='electron';
-    $('#mlcGroup').hidden=mode!=='photon';
-    $('#jawsGroup').hidden=mode!=='photon';
+    $('#mlcGroup').hidden=false;
+    $('#jawsGroup').hidden=false;
     $('#electronApplicator').hidden=mode!=='electron';
     $('#flatteningFilter').hidden=mode!=='photon'||filter!=='ff';
     $('#treatmentCone').setAttribute('fill',mode==='photon'?'url(#photonCone)':'url(#electronCone)');

@@ -92,7 +92,7 @@ export const SOURCES = Object.freeze([
   {
     id:'waldron-2002',
     title:'Waldron – AAPM computer-controlled medical linac refresher course',
-    url:'https://ccah.vetmed.ucdavis.edu/sites/g/files/dgvnsk4586/files/local_resources/pdfs/rad-onc-matney-x-ray-generators.pdf',
+    url:'https://www.aapm.org/meetings/02Am/pdf/8280-44071.pdf',
     type:'AAPM-education',
     scope:'Conceptual Elekta-style slalom layout',
     confidence:'medium',
@@ -204,3 +204,4 @@ export const CLAIMS = Object.freeze({
 });
 
 export function sourceById(id){ return SOURCES.find(s=>s.id===id); }
+

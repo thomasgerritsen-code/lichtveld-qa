@@ -1,3 +1,4 @@
+import {initAnatomyView} from '../ui/machine/anatomy-view.js';
 import {initOverviewLayout} from './overview-layout.js';
 import {initSvgVisibility} from '../ui/svg-visibility.js';
 import {createController} from './controller.js';
@@ -13,7 +14,7 @@ import {initHeadModeRoute} from '../ui/machine/head-mode-route.js';
 import {initPatientPlane} from '../ui/patient-plane.js';
 import {initSlalomContinuity} from '../../js/slalom-continuity.js';
 
-for(const href of ['./mobile.css?v=1','./focus-steering.css?v=2','./golden-path.css?v=1','./overview.css?v=1']){
+for(const href of ['./mobile.css?v=1','./focus-steering.css?v=2','./golden-path.css?v=1','./overview.css?v=2']){
   const link=document.createElement('link');
   link.rel='stylesheet';
   link.href=href;
@@ -36,4 +37,5 @@ initPatientPlane(controller);
 initGoldenPath(controller);
 
 initOverviewLayout();
+initAnatomyView(controller);
 window.linacApp=controller;

@@ -40,7 +40,7 @@ test('monitor graphics expose two dose layers plus six collection plates and a d
   assert.equal(visual.qualityPlane.electrodeCount,visual.qualityPlane.collectionPlateCount+1);
   assert.ok(visual.dosePlanes[0].y<visual.dosePlanes[1].y);
   assert.ok(visual.dosePlanes[1].y<visual.qualityPlane.y);
-  assert.ok(visual.qualityPlane.y<visual.qualityPlane.seventhElectrode.y);
+  assert.equal(visual.qualityPlane.y,visual.qualityPlane.seventhElectrode.y);
   assert.ok(visual.qualityPlane.seventhElectrode.y<visual.housing.y+visual.housing.height);
 });
 
@@ -92,3 +92,4 @@ test('control context exposes redundant and six-sector monitor signals without c
   assert.ok(Math.abs(context.servo.r2)>0);
   assert.equal(context.servo.t2,0);
 });
+

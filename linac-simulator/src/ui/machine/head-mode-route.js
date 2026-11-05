@@ -22,12 +22,12 @@ export function headModeRouteState({mode='photon',filter='ff'}={}){
     filter:fff?'fff':'ff',
     accent:'#ffd66b',
     topology:fff
-      ?'head-entrance-to-photon-target-to-fff-open-filter-position-to-monitor'
+      ?'head-entrance-to-photon-target-to-fff-thin-filter-plate-to-monitor'
       :'head-entrance-to-photon-target-to-flattening-filter-to-monitor',
     stages:[
       {id:'head-entrance',label:'Head entrance'},
       {id:'photon-target',label:'Photon target → bremsstrahlung'},
-      {id:'photon-filter',label:fff?'FFF · flattening filter out':'FF · flattening filter in'},
+      {id:'photon-filter',label:fff?'FFF · dunne filterplaat':'FF · conische filter'},
       {id:'monitor',label:'Monitor chamber'}
     ],
     inactive:['electron-window','electron-scatter']
@@ -106,3 +106,4 @@ export function initHeadModeRoute(controller){
   update();
   return controller?.store?.subscribe?.(update)||(()=>{});
 }
+
