@@ -57,7 +57,7 @@ test('sampling resolves coil and drift interiors and projected bore/envelope sha
  for(const p of transportProjection(s))assert.ok(p.width<=APERTURES.tube*DISPLAY_SCALE);
 });
 test('every exposed slider has explanatory feedback and finite min/mid/max projections',()=>{
- const bounds={f1:[0,.5,1],f2:[0,.5,1],r1:[-1,0,1],t1:[-1,0,1],r2:[-1,0,1],t2:[-1,0,1],momentum:[.8,1,1.2],emission:[0,.5,1],fieldX:[1,20,40],fieldY:[1,20,40]};
+ const bounds={f1:[0,.5,1],f2:[0,.5,1],r1:[-1,0,1],t1:[-1,0,1],r2:[-1,0,1],t2:[-1,0,1],momentum:[.8,1,1.2],bendStrength:[.8,1,1.2],momentumSpread:[0,1.5,3],emission:[0,.5,1],fieldX:[1,20,40],fieldY:[1,20,40]};
  assert.deepEqual(Object.keys(CONTROL_EFFECTS).sort(),Object.keys(bounds).sort());
  for(const mode of ['photon','electron'])for(const[key,values]of Object.entries(bounds))for(const value of values){
   const state={...DEFAULTS,mode,beam:true,[key]:value},sim=simulate(state);

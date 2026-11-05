@@ -3,9 +3,9 @@
 export const SOLENOID_LENGTH=.42;
 export const UNIT_PX=150;
 export const APERTURES=Object.freeze({tube:.065,target:.04});
-export const DEFAULTS=Object.freeze({power:true,beam:false,mode:'photon',filter:'ff',f1:.6,f2:.62,r1:0,t1:0,r2:0,t2:0,momentum:1,fieldX:10,fieldY:10,emission:1});
+export const DEFAULTS=Object.freeze({power:true,beam:false,mode:'photon',filter:'ff',f1:.6,f2:.62,r1:0,t1:0,r2:0,t2:0,momentum:1,bendStrength:1,momentumSpread:0,fieldX:10,fieldY:10,emission:1});
 export const COMPONENTS=Object.freeze([
- {id:'gun',label:'Elektronenbron',kind:'source',x:95,y:535,description:'De verhitte kathode levert elektronen; het rooster regelt de injectie. De bron ligt op de as van de vacuümbuis.'},
+ {id:'gun',label:'Elektronenbron',kind:'source',x:95,y:535,description:'De verhitte kathode levert elektronen aan een geperforeerde anode. De SL25-referentie gebruikt een diode-injector zonder rooster; injectiepulsen worden met de RF-pulsen gesynchroniseerd.'},
  {id:'focus1',label:'Focus 1',kind:'solenoid',x:245,description:'Een solenoïde focust de bundel en koppelt de twee dwarse richtingen door Larmorrotatie.'},
  {id:'steer1',label:'1R / 1T',kind:'steering',x:325,description:'De primaire, loodrechte stuurspoelparen centreren de geïnjecteerde elektronenbundel.'},
  {id:'focus2',label:'Focus 2',kind:'solenoid',x:410,description:'Tweede solenoïde vóór de secundaire stuurset. Ook hier veranderen positie, hoek en bundelcovariantie samen.'},
@@ -24,6 +24,10 @@ export const COMPONENTS=Object.freeze([
 ]);
 export const HEAD=Object.freeze({target:480,window:485,primaryFoil:503,primaryTop:516,primaryBottom:560,filter:583,secondaryFoil:615,monitor:[647,661,675],backscatter:687,mirror:711,mlc:752,jaws:802,applicator:845,patient:940});
 export const SOURCES=[
+ ['CERN / Latina · solenoïden en bundeldynamica','https://indico.cern.ch/event/779575/contributions/3244658/attachments/1778064/2898322/Lectures.pdf'],
+ ['Anderson · energie, beam loading en buigveld','https://aapm.onlinelibrary.wiley.com/doi/full/10.1120/jacmp.v16i3.5139'],
+ ['Pitcher · elektronenfolies en applicator','https://pmc.ncbi.nlm.nih.gov/articles/PMC5874087/'],
+ ['Georg · FF/FFF-bundelvorming','https://aapm.onlinelibrary.wiley.com/doi/10.1118/1.3554643'],
  ['IAEA · basisarchitectuur','https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1196_web.pdf'],
  ['AAPM · SL25-buigsectie en modusselectie','https://www.aapm.org/meetings/02Am/pdf/8280-44071.pdf'],
  ['Van Appeldoorn · focus en steering','https://aapm.onlinelibrary.wiley.com/doi/full/10.1002/acm2.13047'],
@@ -94,32 +98,42 @@ export function setMachine(state,key,value){
 }
 export function simulate(state){
  const g=machineGeometry();let mean=[0,0,0,0];let covariance=[[.000016,0,0,0],[0,.000001,0,0],[0,0,.000016,0],[0,0,0,.000001]];
- const rows=[];let strike=null;
- const apply=M=>{mean=vector(M,mean);covariance=mul(mul(M,covariance),transpose(M));};
+ const rows=[];let strike=null;let dispersion=[0,0,0,0];
+ const spread=(state.momentumSpread??0)/100,bendStrength=state.bendStrength??1;
+ const apply=M=>{mean=vector(M,mean);covariance=mul(mul(M,covariance),transpose(M));dispersion=vector(M,dispersion);};
  for(let i=0;i<g.points.length;i++){
   const point=g.points[i],last=g.points[i-1];
   if(i){
    const bend=g.bends.find(b=>i>b.start&&i<=b.end);
    if(bend){
-    const theta=radians(bend.angle)/(bend.end-bend.start),h=Math.sign(theta)/bend.radius,delta=1/state.momentum-1;
+    const theta=radians(bend.angle)/(bend.end-bend.start),h=Math.sign(theta)/bend.radius,delta=bendStrength/state.momentum-1;
     apply(sector(theta,bend.radius));
     mean[0]+=(1-Math.cos(theta))/h*delta;
     mean[1]+=Math.sin(theta)*delta;
+    dispersion[0]-=(1-Math.cos(theta))/h*bendStrength/state.momentum;
+    dispersion[1]-=Math.sin(theta)*bendStrength/state.momentum;
    }else{
     const mid=(last.s+point.s)/2,coil=g.stations.find(c=>c.kind==='solenoid'&&mid>c.s-SOLENOID_LENGTH&&mid<c.s);
     const L=point.s-last.s;
-    apply(coil?solenoid(state[coil.id==='focus1'?'f1':'f2']*1.6/state.momentum,L):drift(L));
+    if(coil){
+     const k=state[coil.id==='focus1'?'f1':'f2']*1.6/state.momentum,initial=[...mean],eps=1e-5;
+     const plus=vector(solenoid(k/(1+eps),L),initial),minus=vector(solenoid(k/(1-eps),L),initial);
+     apply(solenoid(k,L));
+     dispersion=dispersion.map((v,j)=>v+(plus[j]-minus[j])/(2*eps));
+    }else apply(drift(L));
    }
   }
   if(point.kind==='steering'){
-   const n=point.id==='steer1'?'1':'2';mean[1]+=state['r'+n]*.018/state.momentum;mean[3]+=state['t'+n]*.018/state.momentum;
+   const n=point.id==='steer1'?'1':'2';const kr=state['r'+n]*.018/state.momentum,kt=state['t'+n]*.018/state.momentum;
+   mean[1]+=kr;mean[3]+=kt;dispersion[1]-=kr;dispersion[3]-=kt;
   }
-  const sigmaR=Math.sqrt(Math.max(0,covariance[0][0])),sigmaT=Math.sqrt(Math.max(0,covariance[2][2]));
+  const totalCovariance=covariance.map((row,i)=>row.map((v,j)=>v+dispersion[i]*dispersion[j]*spread*spread));
+  const sigmaR=Math.sqrt(Math.max(0,totalCovariance[0][0])),sigmaT=Math.sqrt(Math.max(0,totalCovariance[2][2]));
   const aperture=point.id==='target'?APERTURES.target:APERTURES.tube;
   const hitR=Math.abs(mean[0])+2*sigmaR>aperture,hitT=Math.abs(mean[2])+2*sigmaT>aperture;
   const hit=hitR||hitT;
   if(hit&&!strike)strike={index:i,id:point.id??'flight-tube',x:point.x,y:point.y,plane:hitR?'r':'t'};
-  rows.push({...point,r:mean[0],rp:mean[1],t:mean[2],tp:mean[3],sigmaR,sigmaT,covariance:covariance.map(r=>[...r])});
+  rows.push({...point,r:mean[0],rp:mean[1],t:mean[2],tp:mean[3],sigmaR,sigmaT,dispersion:[...dispersion],sigmaDelta:spread,covariance:totalCovariance});
  }
  const active=Boolean(state.power&&state.beam&&state.emission>0),target=rows.at(-1);
  return {geometry:g,rows,target,strike,sourceActive:active,radiationActive:active&&!strike,relativeOutput:active&&!strike?state.emission:0,route:headRoute(state.mode,state.filter)};
