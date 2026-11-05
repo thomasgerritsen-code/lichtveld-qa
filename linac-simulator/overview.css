@@ -132,3 +132,17 @@
  .overviewPage .machineViewport.mobileFit svg{height:auto}
  .overviewPage .machineViewport:not(.mobileFit) svg{height:auto}
 }
+.anatomyViewNav{display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px;background:#0c1b28;border-bottom:1px solid #2c4354}
+.anatomyViewNav button{border-color:#365367;background:#142b3c;color:#afc5d6;font-size:.68rem;min-height:34px;padding:6px 10px}
+.anatomyViewNav button[aria-pressed=true]{background:#244c69;color:#fff;border-color:#85badb}
+.anatomyReference{padding:6px 12px;background:#0c1b28;color:#99b4c7;font-size:.65rem}
+.anatomyNotes{padding:2px 18px 18px;font-size:.82rem;line-height:1.6;color:#486174}
+.anatomyNotes a{color:#1961ab}
+.overviewPage .machineViewport svg{height:clamp(320px,calc(100dvh - 465px),700px)}
+@media(max-width:800px){
+ .anatomyViewNav{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+ .anatomyViewNav button{min-height:44px;padding:6px;font-size:.65rem}
+ .anatomyReference{font-size:.6rem;line-height:1.4}
+ .overviewPage .machineViewport.mobileFit svg{height:auto}
+ .overviewPage .machineViewport:not(.mobileFit) svg{height:auto}
+}

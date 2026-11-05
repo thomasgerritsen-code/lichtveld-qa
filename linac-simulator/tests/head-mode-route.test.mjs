@@ -5,15 +5,15 @@ import {headModeRouteState} from '../src/ui/machine/head-mode-route.js';
 test('photon FF route exposes target then flattening filter then shared monitor',()=>{
   const route=headModeRouteState({mode:'photon',filter:'ff'});
   assert.deepEqual(route.stages.map(stage=>stage.id),['head-entrance','photon-target','photon-filter','monitor']);
-  assert.match(route.stages[2].label,/filter in/i);
+  assert.match(route.stages[2].label,/conische filter/i);
   assert.deepEqual(route.inactive,['electron-window','electron-scatter']);
 });
 
 test('photon FFF route keeps photon target but makes filter-out state explicit',()=>{
   const route=headModeRouteState({mode:'photon',filter:'fff'});
   assert.deepEqual(route.stages.map(stage=>stage.id),['head-entrance','photon-target','photon-filter','monitor']);
-  assert.match(route.stages[2].label,/FFF.*filter out/i);
-  assert.match(route.topology,/fff-open-filter-position/);
+  assert.match(route.stages[2].label,/FFF.*filterplaat/i);
+  assert.match(route.topology,/fff-thin-filter-plate/);
 });
 
 test('electron route bypasses photon target and filter and uses dual scattering topology',()=>{
@@ -31,3 +31,4 @@ test('route model contains no OEM service values or calibration thresholds',()=>
   ]);
   assert.doesNotMatch(text,/current|ampere|tesla|thickness|threshold|calibration|service/i);
 });
+
