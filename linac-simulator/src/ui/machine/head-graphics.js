@@ -24,9 +24,10 @@ export function initTreatmentHeadHousingGraphics(){
   group.setAttribute('data-role',visual.role);
   group.setAttribute('data-topology',visual.topology);
   group.setAttribute('data-geometry','normalized-educational');
-  group.setAttribute('pointer-events','none');
+  group.setAttribute('pointer-events','auto');
 
   const upper=document.createElementNS(SVG_NS,'path');
+  upper.setAttribute('class','hit');
   upper.setAttribute('d',visual.upperBodyPath);
   upper.setAttribute('fill','#1d2c36');
   upper.setAttribute('fill-opacity','.46');
@@ -55,7 +56,7 @@ export function initTreatmentHeadHousingGraphics(){
 
   // Put the enclosure behind the existing target/window/head internals so this
   // visual layer cannot replace their DOM hooks, mode switching or physics state.
-  anchor.parentNode?.insertBefore(group,anchor);
+  anchor.replaceChildren(group);
 }
 
 export function primaryCollimatorVisualState(){
@@ -73,3 +74,4 @@ export function initElectronWindowGraphics(){const group=document.querySelector(
 export function initOpticalFieldGraphics(){const group=document.querySelector('[data-part="mirror"]');if(!group)return;const visual=opticalFieldVisualState(),mirror=replaceWithPath(group.querySelector('.mirror'));if(mirror){mirror.setAttribute('d',visual.mirrorPath);mirror.setAttribute('data-role',visual.mirrorRole);mirror.setAttribute('fill','#bfe8ef');mirror.setAttribute('fill-opacity','.34');mirror.setAttribute('stroke','#d7f3f6');mirror.setAttribute('stroke-width','1.6');}let lamp=group.querySelector('[data-role="field-light-lamp"]');if(!lamp){lamp=document.createElementNS(SVG_NS,'circle');lamp.setAttribute('class','fieldLightLamp');group.appendChild(lamp);}for(const [k,v] of Object.entries({cx:visual.lamp.cx,cy:visual.lamp.cy,r:visual.lamp.r,'data-role':visual.lampRole,fill:'#f3d47a','fill-opacity':.82,stroke:'#ffe6a2','stroke-width':1.6}))lamp.setAttribute(k,String(v));group.setAttribute('data-role',visual.role);group.setAttribute('data-topology',visual.topology);}
 export function initTargetAssemblyGraphics(){const group=document.querySelector('#photonTarget'),face=group?.querySelector('.target');if(!group||!face)return;const visual=targetAssemblyVisualState();for(const [k,v] of Object.entries({x:visual.faceX,y:visual.faceY,width:visual.faceWidth,height:visual.faceHeight,rx:1.5,'data-role':'x-ray-target-face'}))face.setAttribute(k,String(v));let backing=group.querySelector('.targetBacking');if(!backing){backing=document.createElementNS(SVG_NS,'rect');backing.setAttribute('class','targetBacking');group.insertBefore(backing,face.nextSibling);}for(const [k,v] of Object.entries({x:visual.backingX,y:visual.backingY,width:visual.backingWidth,height:visual.backingHeight,rx:2,fill:'#52677b',stroke:'#9fb0c0','stroke-width':1.5,'data-role':'target-backing'}))backing.setAttribute(k,String(v));group.setAttribute('data-role',visual.role);group.setAttribute('data-topology',visual.topology);}
 export function initPrimaryCollimatorGraphics(){const pieces=[...document.querySelectorAll('#photonHead .primaryColl')];if(pieces.length<2)return;const visual=primaryCollimatorVisualState();pieces[0].setAttribute('d',visual.leftPath);pieces[1].setAttribute('d',visual.rightPath);pieces.forEach((piece,index)=>{piece.setAttribute('data-role',visual.role);piece.setAttribute('data-aperture-topology',visual.apertureTopology);piece.setAttribute('data-side',index===0?'left':'right');});const group=document.querySelector('#photonHead');group?.setAttribute('data-primary-collimator',visual.apertureTopology);}
+

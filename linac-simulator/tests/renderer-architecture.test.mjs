@@ -31,9 +31,12 @@ test('slalom visual exposes three ordered normalized magnet stations around the 
   ]);
   assert.ok(stations[0].pathIndex<stations[1].pathIndex);
   assert.ok(stations[1].pathIndex<stations[2].pathIndex);
-  assert.equal(stations[0].pathIndex,geometry.marks.m1);
-  assert.equal(stations[1].pathIndex,geometry.marks.m2);
-  assert.equal(stations[2].pathIndex,geometry.marks.m3);
+  assert.ok(stations[0].pathIndex>geometry.sectors.m1.start);
+  assert.ok(stations[0].pathIndex<geometry.sectors.m1.end);
+  assert.ok(stations[1].pathIndex>geometry.sectors.m2.start);
+  assert.ok(stations[1].pathIndex<geometry.sectors.m2.end);
+  assert.ok(stations[2].pathIndex>geometry.sectors.m3.start);
+  assert.ok(stations[2].pathIndex<geometry.sectors.m3.end);
   assert.ok(stations.every(station=>Number.isFinite(station.x)&&Number.isFinite(station.y)));
   assert.ok(stations.every(station=>station.halfGap>0&&station.poleDepth>0));
   assert.ok(stations[2].halfLength>stations[0].halfLength);
@@ -116,3 +119,4 @@ test('electron applicator scatter visual disappears when no modeled scatter is p
     electronPhotonContaminationFraction:0
   },'electron'),null);
 });
+

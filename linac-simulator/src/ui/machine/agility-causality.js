@@ -1,3 +1,4 @@
+import {headTranslationX} from './geometry.js';
 import {NS} from './geometry.js';
 
 export function agilityFieldCausalityState(state){
@@ -50,10 +51,11 @@ export function initAgilityCausality(controller){
 
   const overlay=document.createElementNS(NS,'g');
   overlay.setAttribute('id','agilityFieldCausality');
+  overlay.setAttribute('transform',`translate(${headTranslationX()} 0)`);
   overlay.setAttribute('data-topology','mlc-x-orthogonal-diaphragm-y');
   overlay.setAttribute('data-geometry','normalized-educational');
-  const xLabel=makeLabel(overlay,{id:'agilityXAxis',x:1450,y:955,text:'Field X → MLC banks',axis:'x'});
-  const yLabel=makeLabel(overlay,{id:'agilityYAxis',x:1615,y:1023,text:'Field Y → sculpted diaphragms',axis:'y'});
+  const xLabel=makeLabel(overlay,{id:'agilityXAxis',x:1260,y:994,text:'Field X → MLC banks',axis:'x'});
+  const yLabel=makeLabel(overlay,{id:'agilityYAxis',x:1260,y:1049,text:'Field Y → sculpted diaphragms',axis:'y'});
   host.appendChild(overlay);
 
   function update(){
@@ -72,3 +74,4 @@ export function initAgilityCausality(controller){
   controller.store.subscribe(update);
   update();
 }
+

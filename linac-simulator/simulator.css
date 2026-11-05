@@ -503,3 +503,9 @@ button{font:inherit;border:1px solid #b9c9db;background:#fff;color:#1b3653;borde
   from{transform:scale(.72)}
   to{transform:scale(1.15)}
 }
+
+
+/* Mode-specific SVG groups must obey the same visibility contract as HTML. */
+#machineSvg [hidden]{display:none!important}
+/* The tube bore is 30px wide: highlighting must preserve the outer wall. */
+#machineSvg #flightOuter{stroke-width:46!important}

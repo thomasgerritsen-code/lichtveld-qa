@@ -154,7 +154,7 @@
         <label class="check"><input id="scatterToggle" type="checkbox" checked> Scatter / beam loss</label>
       </div></details>
 
-      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Bij Photon ↔ Electron beweegt de flight tube + target/window horizontaal via de bellows door de vaste bending-magnet assembly. De magneten blijven tijdens deze modewissel op hun plaats. De werking/animatie volgt de publieke Elekta-sequentie RF → travelling waveguide → bending → target/window → monitor → MLC. Focus 1/2 zijn op verzoek bewust als pure opeenvolgende envelope-compressie weergegeven; echte Elekta focuscoils veroorzaken ook trajectrotatie. RF-, gun-, aperture- en dose-responsen blijven genormaliseerde onderwijsmodellen, geen OEM service- of calibratiewaarden.</p></div>
+      <div class="modelNote"><strong>Modelgrens</strong><p>Functionele volgorde en beam-optics zijn brongebaseerd. Buis, buigmagneten en bundelpad staan in een vaste referentiedoorsnede. Bij Photon ↔ Electron toont de bewegende portselector de actieve target/window; dit is geen reconstructie van de werkelijke mechanische flight-tube-beweging. De werking/animatie volgt de publieke Elekta-sequentie RF → travelling waveguide → bending → target/window → monitor → MLC. Focus 1/2 zijn op verzoek bewust als pure opeenvolgende envelope-compressie weergegeven; echte Elekta focuscoils veroorzaken ook trajectrotatie. RF-, gun-, aperture- en dose-responsen blijven genormaliseerde onderwijsmodellen, geen OEM service- of calibratiewaarden.</p></div>
     </aside>
 
     <section>
@@ -270,7 +270,7 @@
               <g id="selectorGuide" class="selectorGuide">
                 <line x1="1090" y1="716" x2="1168" y2="716"/>
                 <circle cx="1090" cy="716" r="4"/><circle cx="1168" cy="716" r="4"/>
-                <text x="1060" y="698">horizontal target shift</text>
+                <text x="1060" y="698">target/window selector (schematic)</text>
               </g>
 
               <g id="photonHead">
@@ -335,6 +335,7 @@
 </main>
 
 <footer class="footer">UMC Utrecht · RT-VTech · LINAC bundeltransport</footer>
-<script type="module" src="./src/app/bootstrap.js?v=25"></script>
+<script type="module" src="./src/app/bootstrap.js?v=27"></script>
 </body>
 </html>
+

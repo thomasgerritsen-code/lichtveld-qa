@@ -91,7 +91,7 @@ test('photon filter visual distinguishes conventional FF from the FFF filter pla
   assert.equal(ff.role,'flattening-filter');
   assert.equal(fff.role,'fff-filter-plate');
   assert.notEqual(ff.path,fff.path);
-  assert.match(ff.path,/L1485 852/);
+  assert.equal(ff.path,'M1450 852 L1485 893 H1415 Z');
   assert.match(fff.path,/V876/);
 });
 
@@ -108,3 +108,4 @@ test('photon filter visual defaults safely to the conventional FF representation
   assert.equal(photonFilterVisualState({mode:'photon'}).role,'flattening-filter');
   assert.equal(photonFilterVisualState({mode:'electron',filter:'unknown'}).role,'flattening-filter');
 });
+

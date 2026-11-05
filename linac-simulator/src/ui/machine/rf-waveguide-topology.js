@@ -1,3 +1,5 @@
+import {inputModeTransformerSpec} from './hardware.js';
+
 const SVG_NS='http://www.w3.org/2000/svg';
 
 export function rfWaveguideVisualState(){
@@ -9,7 +11,7 @@ export function rfWaveguideVisualState(){
   // normalized educational geometry, not OEM dimensions or service geometry.
   return {
     topology:['magnetron','rf-feed-waveguide','rf-coupler','capture-bunching-cells','main-accelerating-cells'],
-    coupler:{x:220,y:0,width:28,height:62},
+    coupler:{x:inputModeTransformerSpec().localX+inputModeTransformerSpec().localWidth/2,y:27,width:inputModeTransformerSpec().localWidth,height:inputModeTransformerSpec().localHeight},
     buncher:{x1:18,x2:160,y:39},
     accelerator:{x1:170,x2:646,y:39},
     geometry:'normalized-educational'
@@ -33,16 +35,9 @@ export function initRfWaveguideTopologyGraphics(){
     'pointer-events':'none'
   });
 
-  const c=visual.coupler;
-  layer.appendChild(svg('rect',{
-    x:c.x-c.width/2,y:c.y-c.height/2,width:c.width,height:c.height,rx:6,
-    fill:'#172c41',stroke:'#e2b75c','stroke-width':2.2,
-    'data-role':'rf-coupler'
-  }));
-  layer.appendChild(svg('path',{
-    d:`M ${c.x-8} -18 L ${c.x+8} -18 L ${c.x+8} 18 L ${c.x-8} 18 Z`,
-    fill:'none',stroke:'#ffd66b','stroke-width':1.5,'stroke-dasharray':'4 3'
-  }));
+  // The base hardware owns the physical input coupler; annotate that same
+  // element rather than drawing a second RF feed inside the accelerator.
+  waveguide.querySelector('#inputModeTransformer')?.setAttribute('data-role','rf-coupler');
 
   const makeBracket=(region,label)=>{
     const g=svg('g',{'data-role':label==='capture / bunching'?'bunching-region':'acceleration-region'});
@@ -63,3 +58,4 @@ export function initRfWaveguideTopologyGraphics(){
   layer.appendChild(makeBracket(visual.accelerator,'main acceleration'));
   waveguide.appendChild(layer);
 }
+

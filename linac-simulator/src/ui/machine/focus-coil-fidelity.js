@@ -4,7 +4,7 @@ export function focusCoilVisualSpec(){
   return {
     geometry:'normalized-educational',
     topology:'solenoidal-coil-pack-around-accelerating-waveguide',
-    halfLength:58,
+    halfLength:42,
     innerHalfHeight:48,
     outerHalfHeight:67,
     turnCount:9
@@ -27,30 +27,16 @@ function buildCoilPack(){
 
   // A focus assembly is shown as a compact solenoidal sleeve around the beam pipe.
   // Dimensions are illustration-only; no Elekta coil dimensions or currents are implied.
-  const housing=svg('rect',{
-    x:-spec.halfLength,
-    y:-spec.outerHalfHeight,
-    width:spec.halfLength*2,
-    height:spec.outerHalfHeight*2,
-    rx:13,
-    fill:'#172a38',
-    stroke:'#7f9aaa',
-    'stroke-width':2.2,
-    opacity:.96
-  });
-  group.appendChild(housing);
-
-  const bore=svg('rect',{
-    x:-spec.halfLength-2,
-    y:-spec.innerHalfHeight,
-    width:spec.halfLength*2+4,
-    height:spec.innerHalfHeight*2,
-    rx:7,
-    fill:'#09141c',
-    stroke:'#afc1cb',
-    'stroke-width':1.4
-  });
-  group.appendChild(bore);
+  for(const sign of [-1,1]){
+    group.appendChild(svg('rect',{
+      x:-spec.halfLength,y:sign<0?-spec.outerHalfHeight:spec.innerHalfHeight,
+      width:spec.halfLength*2,height:spec.outerHalfHeight-spec.innerHalfHeight,
+      rx:5,fill:'#563c2b',stroke:'#af8a66','stroke-width':2,
+      class:'hit focusSolenoidBody'
+    }));
+  }
+  group.setAttribute('data-view','longitudinal-cutaway');
+  group.setAttribute('data-bore','open');
 
   for(let i=0;i<spec.turnCount;i++){
     const x=-spec.halfLength+10+i*((spec.halfLength*2-20)/(spec.turnCount-1));
@@ -88,7 +74,7 @@ export function initFocusCoilFidelity(){
     const transformGroup=document.querySelector(`[data-part="${part}"] > g`);
     if(!transformGroup||transformGroup.querySelector('.focusCoilFidelity'))continue;
 
-    // Preserve interaction/state hooks but retire the oversized diamond-like legacy artwork.
+    // Preserve interaction/state hooks; only the single coil-pack drawing remains.
     for(const legacy of transformGroup.querySelectorAll('.focusWinding')){
       legacy.setAttribute('opacity','0');
       legacy.setAttribute('data-legacy-visual','1');
@@ -96,3 +82,4 @@ export function initFocusCoilFidelity(){
     transformGroup.insertBefore(buildCoilPack(),transformGroup.firstChild);
   }
 }
+

@@ -6,16 +6,13 @@ export const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export const lerp=(a,b,t)=>a+(b-a)*t;
 export const pathD=pts=>pts.map((p,i)=>(i?'L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
 
+// Schematic station positions along one common accelerator axis. In the SL25
+// reference the secondary steering station is approximately halfway along it.
+const onGuide=(stage,x)=>({stage,x,y:765+(x-165)*Math.tan(-22.5*DEG)});
 export const WAVE_ANCHORS=[
-  {stage:'gun',x:135,y:778},
-  {stage:'focus1',x:270,y:722},
-  {stage:'steer1',x:390,y:673},
-  {stage:'wgAfter1',x:430,y:656},
-  {stage:'focus2',x:500,y:627},
-  {stage:'wgAfter2',x:555,y:604},
-  {stage:'steer2',x:610,y:581},
-  {stage:'wgExit',x:745,y:524},
-  {stage:'bendEntry',x:805,y:499}
+  onGuide('gun',135),onGuide('focus1',235),onGuide('steer1',310),
+  onGuide('wgAfter1',345),onGuide('focus2',390),onGuide('wgAfter2',435),
+  onGuide('steer2',475),onGuide('wgExit',775),{stage:'bendEntry',x:805,y:499}
 ];
 
 function straight(pts,x,y,a,L,n=10){
@@ -47,16 +44,20 @@ export function buildMechanicalGeometry(){
   let x=x0,y=y0,a=-22.5*DEG;
   const points=[{x,y}];
   const marks={bendEntry:0};
+  const sectors={};
 
   let s=straight(points,x,y,a,48*scale,7);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,102*scale,45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m1=points.length-1;
+  sectors.m1={start:points.length-1};
+  s=arc(points,x,y,a,102*scale,45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m1=points.length-1;sectors.m1.end=marks.m1;
   s=straight(points,x,y,a,118*scale,9);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,97*scale,-45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m2=points.length-1;
+  sectors.m2={start:points.length-1};
+  s=arc(points,x,y,a,97*scale,-45*DEG,20);x=s.x;y=s.y;a=s.a;marks.m2=points.length-1;sectors.m2.end=marks.m2;
   s=straight(points,x,y,a,115*scale,9);x=s.x;y=s.y;a=s.a;
-  s=arc(points,x,y,a,126*scale,112.5*DEG,34);x=s.x;y=s.y;a=s.a;marks.m3=points.length-1;
+  sectors.m3={start:points.length-1};
+  s=arc(points,x,y,a,126*scale,112.5*DEG,34);x=s.x;y=s.y;a=s.a;marks.m3=points.length-1;sectors.m3.end=marks.m3;
   s=straight(points,x,y,a,62*scale,7);marks.target=points.length-1;
 
-  return {points,marks};
+  return {points,marks,sectors,pathD:pathD(points)};
 }
 
 export function buildMechanicalPath(){
@@ -78,3 +79,9 @@ export function blendStage(a,b,t){
   for(const key of keys)out[key]=lerp(a?.[key]||0,b?.[key]||0,t);
   return out;
 }
+
+
+// Head internals use their own local coordinates. Derive their translation from
+// the transport axis so a layout change cannot disconnect target and flight tube.
+export function headAxisX(){return buildMechanicalGeometry().points.at(-1).x;}
+export function headTranslationX(){return headAxisX()-1450;}

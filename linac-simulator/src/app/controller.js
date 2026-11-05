@@ -125,8 +125,8 @@ export function createController(){
     $('#ffWrap').style.opacity=mode==='photon'?'1':'.4';
     $('#ffWrap').style.pointerEvents=mode==='photon'?'auto':'none';
 
-    $('#photonTarget').hidden=false;
-    $('#electronWindow').hidden=false;
+    $('#photonTarget').hidden=mode!=='photon';
+    $('#electronWindow').hidden=mode!=='electron';
     $('#photonTarget').classList.toggle('modePortActive',mode==='photon');
     $('#photonTarget').classList.toggle('modePortInactive',mode!=='photon');
     $('#electronWindow').classList.toggle('modePortActive',mode==='electron');
@@ -434,3 +434,4 @@ export function createController(){
 
   return {store,start,render:()=>renderState(store.getState())};
 }
+

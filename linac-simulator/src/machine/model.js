@@ -74,13 +74,13 @@ export const PART_INFO = Object.freeze({
   gun:['Electron gun','Start van de elektronenbundel. Emission en timing zijn in v14 alleen genormaliseerde onderwijsparameters.'],
   magnetron:['Magnetron / RF source','Microwave/RF-bron die de travelling-wave accelerating structure voedt. Vermogen, tune/AFC-offset en RF phase zijn genormaliseerde simulatorparameters; geen OEM servicewaarden.'],
   waveguide:['Accelerating waveguide','Travelling-wave versnellingsstructuur.'],
-  focus1:['Focus 1','Eerste focuselement vóór primary steering. In v14/v15 verandert deze bediening alleen de R/T-beamenvelop en niet de centroidpositie of -hoek.'],
-  steer1:['1R / 1T','Primary steering van de elektronenbundel.'],
-  focus2:['Focus 2','Tweede focuselement tussen primary en secondary steering. Het comprimeert de al door Focus 1 verkleinde envelope verder zonder centroid-kick.'],
-  steer2:['2R / 2T','Secondary steering vóór de bending assembly. Set, LUT en servo kunnen hier als afzonderlijke bijdragen worden weergegeven.'],
-  bellows:['Centre joint / bellows','Vacuumovergang die de horizontale target-shift van de flight tube mogelijk maakt terwijl de waveguide en bending magnets op hun plaats blijven.'],
+  focus1:['Focus 1','Solenoïdale focusspoelen rond de waveguide, vóór 1R/1T. Het axiale magneetveld focust en roteert de werkelijke elektronenbanen. In v14/v15 verandert deze bediening alleen de R/T-beamenvelop en niet de centroidpositie of -hoek.'],
+  steer1:['1R / 1T','Twee loodrechte dipool-stuurspoelparen voor primaire bundelcentrering. R stuurt in het buigvlak; T loodrecht daarop. Beide omgeven de waveguide.'],
+  focus2:['Focus 2','Solenoïdale focusspoelen tussen 1R/1T en 2R/2T. Het comprimeert de al door Focus 1 verkleinde envelope verder zonder centroid-kick.'],
+  steer2:['2R / 2T','Twee loodrechte dipool-stuurspoelparen ongeveer halverwege de waveguide voor uitlijning richting target. Set, LUT en servo kunnen hier als afzonderlijke bijdragen worden weergegeven.'],
+  bellows:['Centre joint / bellows','Vacuumovergang naar de flight tube. De referentiedoorsnede blijft hier vast; de portselector toont alleen de moduskeuze schematisch.'],
   slalom:['Slalom bending assembly','M1, M2 en M3 vormen samen de achromatische bendingsectie.'],
-  flightTube:['Flight tube','Geëvacueerde flight tube die bij Photon ↔ Electron horizontaal door de vaste M1/M2/M3-poolgaps verschuift. De beam trajectory blijft in dit onderwijsmodel vast.'],
+  flightTube:['Flight tube','Geëvacueerde flight tube door de vaste M1/M2/M3-magneten. Buis en bundelpad staan in een vaste referentiedoorsnede; de werkelijke mechanische modusbeweging wordt niet gereconstrueerd.'],
   head:['Treatment head','Behandelkop met target/window, monitoring en collimatie.'],
   target:['Target','Photon mode: elektronen produceren bremsstrahlung in de target.'],
   window:['Electron window','Electron mode: de target wordt omzeild.'],
@@ -92,3 +92,4 @@ export const PART_INFO = Object.freeze({
   applicator:['Electron applicator','Collimatie voor electronbehandeling.'],
   patient:['Patiëntvlak','Eind van het weergegeven bundeltraject.']
 });
+
