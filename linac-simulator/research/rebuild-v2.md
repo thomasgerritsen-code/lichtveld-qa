@@ -24,3 +24,7 @@ De matrixvormen komen uit klassieke paraxiale elektromagnetische bundeloptiek. H
 Randvelden, volledige achromatische slalomafstemming, RF-fasevangst en bunching, vermogensafhankelijke longitudinale versnelling, space charge, multiple scattering, head transmission, exacte flight-tube/carouselbeweging en Monte-Carlo-dosisberekening ontbreken. De geometrische koproute verklaart welke onderdelen aanwezig zijn; zij is geen materiaalsimulatie. De relatieve uitvoer is een bron-/transmissie-indicator en wordt nadrukkelijk niet als MU/min of dosis getoond. Het tweesigma-apertuurcriterium is geen klinische interlock of volledig particle-loss-model.
 
 Zie [het anatomieonderzoek](linac-anatomy.md) voor de primaire bronnen die de componentopbouw onderbouwen. De controles van v2 toetsen afzonderlijk de wiskundige invarianten en de gebruikersstromen. De oude 172 tests gelden voor de bewaarde eerdere modules; de nieuwe tests zijn herkenbaar aan `rebuild-model.test.mjs`.
+
+## Vervolg: audit schuifregelaars
+
+Zie [de afzonderlijke schuifregelaar-audit](slider-audit.md). De optische stations zijn verder bemonsterd, de solenoïdevelden worden over hun getekende lengte getransporteerd en de momentumafwijking bouwt geleidelijk binnen iedere sector op. Eén presentatiemodule verbindt berekende centroid/envelop, doorsnede, intensiteit en veldprojectie. De dwarse tekenvergroting blijft genormaliseerd en is geen OEM-maatvoering.
