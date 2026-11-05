@@ -1,5 +1,8 @@
 // Rebuilt educational model. All lengths/strengths below are normalized,
 // not OEM dimensions, service settings, calibrated apertures or dose values.
+export const SOLENOID_LENGTH=.42;
+export const UNIT_PX=150;
+export const APERTURES=Object.freeze({tube:.065,target:.04});
 export const DEFAULTS=Object.freeze({power:true,beam:false,mode:'photon',filter:'ff',f1:.6,f2:.62,r1:0,t1:0,r2:0,t2:0,momentum:1,fieldX:10,fieldY:10,emission:1});
 export const COMPONENTS=Object.freeze([
  {id:'gun',label:'Elektronenbron',kind:'source',x:95,y:535,description:'De verhitte kathode levert elektronen; het rooster regelt de injectie. De bron ligt op de as van de vacuümbuis.'},
@@ -52,7 +55,16 @@ export function machineGeometry(){
  // Join the waveguide exactly to its mechanical entry, using the same line.
  const entry=stations.at(-1);entry.y=guideY(entry.x);
  let p={x:entry.x,y:entry.y,a:radians(-22.5)},s=0;
- const points=stations.map((c,i)=>{if(i)s+=Math.hypot(c.x-stations[i-1].x,c.y-stations[i-1].y)/150;return {...c,s};});
+ const source=stations[0];
+ const guideLength=Math.hypot(entry.x-source.x,entry.y-source.y)/150;
+ for(const c of stations)c.s=Math.hypot(c.x-source.x,c.y-source.y)/150;
+ const samplePositions=[0,guideLength,...stations.map(c=>c.s),...stations.filter(c=>c.kind==='solenoid').map(c=>c.s-SOLENOID_LENGTH)];
+ for(let q=.035;q<guideLength;q+=.035)samplePositions.push(q);
+ const points=[...new Set(samplePositions.map(q=>q.toFixed(10)))].map(Number).sort((a,b)=>a-b).map(q=>{
+  const station=stations.find(c=>Math.abs(c.s-q)<1e-8);
+  return {...(station??{}),x:source.x+(entry.x-source.x)*q/guideLength,y:source.y+(entry.y-source.y)*q/guideLength,s:q};
+ });
+ s=guideLength;const guideEndIndex=points.length-1;
  const bends=[];
  const push=(x,y)=>{const last=points.at(-1);s+=Math.hypot(x-last.x,y-last.y)/150;points.push({x,y,s});};
  const straight=L=>{const {x,y,a}=p;for(let i=1;i<=8;i++)push(x+Math.cos(a)*L*i/8,y+Math.sin(a)*L*i/8);p={x:x+Math.cos(a)*L,y:y+Math.sin(a)*L,a};};
@@ -68,7 +80,7 @@ export function machineGeometry(){
   p={...points[end],a:a+theta};straight([68,67,38][i]);
  }
  push(p.x,HEAD.target);points.at(-1).id='target';
- return {points,stations,bends,headX:p.x,totalLength:s};
+ return {points,stations,bends,guideEndIndex,headX:p.x,totalLength:s};
 }
 export function headRoute(mode,filter){
  return mode==='electron'?['electron-window','primary-foil','primary-collimator','secondary-foil','monitor','backscatter','mirror','parked-mlc','diaphragms','applicator','patient']:
@@ -88,18 +100,25 @@ export function simulate(state){
   const point=g.points[i],last=g.points[i-1];
   if(i){
    const bend=g.bends.find(b=>i>b.start&&i<=b.end);
-   if(bend)apply(sector(radians(bend.angle)/(bend.end-bend.start),bend.radius));
-   else apply(drift(point.s-last.s-(point.kind==='solenoid'?.42:0)));
+   if(bend){
+    const theta=radians(bend.angle)/(bend.end-bend.start),h=Math.sign(theta)/bend.radius,delta=1/state.momentum-1;
+    apply(sector(theta,bend.radius));
+    mean[0]+=(1-Math.cos(theta))/h*delta;
+    mean[1]+=Math.sin(theta)*delta;
+   }else{
+    const mid=(last.s+point.s)/2,coil=g.stations.find(c=>c.kind==='solenoid'&&mid>c.s-SOLENOID_LENGTH&&mid<c.s);
+    const L=point.s-last.s;
+    apply(coil?solenoid(state[coil.id==='focus1'?'f1':'f2']*1.6/state.momentum,L):drift(L));
+   }
   }
-  if(point.kind==='solenoid')apply(solenoid(state[point.id==='focus1'?'f1':'f2']*1.6/state.momentum,.42));
   if(point.kind==='steering'){
    const n=point.id==='steer1'?'1':'2';mean[1]+=state['r'+n]*.018/state.momentum;mean[3]+=state['t'+n]*.018/state.momentum;
   }
-  if(point.kind==='bend'){const bend=g.bends.find(b=>b.id===point.id);mean[1]+=(1/state.momentum-1)*radians(bend.angle)*.07;}
   const sigmaR=Math.sqrt(Math.max(0,covariance[0][0])),sigmaT=Math.sqrt(Math.max(0,covariance[2][2]));
-  const aperture=point.id==='target'?.04:.065;
-  const hit=Math.abs(mean[0])+2*sigmaR>aperture||Math.abs(mean[2])+2*sigmaT>aperture;
-  if(hit&&!strike)strike={index:i,id:point.id??'flight-tube',x:point.x,y:point.y};
+  const aperture=point.id==='target'?APERTURES.target:APERTURES.tube;
+  const hitR=Math.abs(mean[0])+2*sigmaR>aperture,hitT=Math.abs(mean[2])+2*sigmaT>aperture;
+  const hit=hitR||hitT;
+  if(hit&&!strike)strike={index:i,id:point.id??'flight-tube',x:point.x,y:point.y,plane:hitR?'r':'t'};
   rows.push({...point,r:mean[0],rp:mean[1],t:mean[2],tp:mean[3],sigmaR,sigmaT,covariance:covariance.map(r=>[...r])});
  }
  const active=Boolean(state.power&&state.beam&&state.emission>0),target=rows.at(-1);
