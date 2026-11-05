@@ -1,0 +1,134 @@
+.overviewPage{background:#edf2f6}
+.overviewPage .brandHeader{padding:0}
+.overviewPage .brandInner{min-height:64px;padding:8px 20px;max-width:1600px;margin:auto}
+.overviewPage .brandLogo{max-height:38px;width:auto}
+.overviewPage .brandText h1{font-size:1.15rem;margin:0}
+.overviewPage .brandText p{font-size:.75rem;margin:3px 0 0}
+.overviewPage .simShell{max-width:1600px;padding:12px 20px 28px}
+.overviewPage .simToolbar{margin:0 0 10px}
+.overviewPage .hero{background:transparent;border:0;padding:0 0 12px;margin:0}
+.overviewPage .hero h2{font-size:1.25rem;margin:0;color:#243b50}
+.overviewPage .hero p{font-size:.82rem;margin-top:4px}
+.overviewPage .hero .eyebrow,.overviewPage .heroBadges{display:none}
+.overviewPage .layout{grid-template-columns:280px minmax(0,1fr);gap:16px}
+.overviewPage .layout>section{min-width:0}
+.overviewPage .controls{position:sticky;top:12px;max-height:calc(100dvh - 24px);gap:8px;padding-right:4px;scrollbar-width:thin}
+.settingsHeading{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:#64778a;margin:0 0 2px;padding:0 4px}
+.overviewPage .integrityConsole{margin:0;border:1px solid #d7e0e8;border-radius:12px;box-shadow:none;background:#fff}
+.overviewPage .consoleTop{display:none}
+.overviewPage .consoleGrid{display:flex;flex-direction:column;padding:10px;gap:12px;background:#fff}
+.overviewPage .consoleFieldBlock,.overviewPage .consoleDoseBlock{padding:0;border:0;background:transparent}
+.overviewPage .consoleSectionTitle span{color:#64778a;letter-spacing:.03em;font-size:.65rem}
+.overviewPage .consoleSectionTitle b,.overviewPage .fieldReadout b,.overviewPage .consoleDoseSlider output{color:#24465f}
+.overviewPage .fieldReadout{color:#64778a;margin-top:8px;font-size:.65rem}
+.overviewPage .fieldPresets{gap:4px}
+.overviewPage .fieldPresets button{padding:8px 2px;color:#35536a;background:#f3f7fa;border-color:#d7e1e9;font-size:.72rem}
+.overviewPage .consoleDoseSlider{color:#64778a;font-size:.7rem}
+.overviewPage .doseConsoleReadouts{display:none}
+.overviewPage .controls summary{font-size:.8rem;background:#fff;color:#294960}
+.overviewPage .controls .modelNote{border:0}
+.overviewPage .machineOverview{box-shadow:0 4px 20px #203b5010;border-color:#cbd8e3}
+.overviewPage .viewerHead{padding:10px 14px}
+.overviewPage .viewerHead strong{font-size:.92rem;color:#203d52}
+.overviewPage .viewerHead span{font-size:.72rem}
+.overviewPage .viewerHead button{font-size:.72rem;padding:7px 10px}
+.overviewActions{display:flex;align-items:center;gap:16px;padding:10px 14px;background:#f8fafc;border-bottom:1px solid #e0e8ef;flex-wrap:wrap}
+.overviewPage .consolePowerBlock{display:flex;gap:6px;padding:0;border:0;background:transparent;flex:1 1 260px}
+.overviewPage .machinePowerBtn{width:auto;min-width:88px;min-height:40px;flex:0 0 auto;padding:6px 9px;gap:5px}
+.overviewPage .machinePowerBtn span{font-size:.55rem}
+.overviewPage .machinePowerBtn b{font-size:.65rem}
+.overviewPage .beamButtons{margin:0;display:flex;gap:6px;flex:1}
+.overviewPage .beamOnBtn,.overviewPage .beamOffBtn{min-height:40px;flex:1;padding:7px 10px;font-size:.7rem}
+.overviewMode{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.overviewMode>span{font-size:.65rem;color:#64778a}
+.overviewMode .segmented{display:flex;gap:3px}
+.overviewMode button{font-size:.72rem;padding:8px 10px;min-height:36px}
+.overviewReadouts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:white;padding:10px 14px;gap:12px}
+.overviewReadouts .stat{border:0;border-radius:0;background:none;padding:0 10px 0 0;border-right:1px solid #e3eaf0}
+.overviewReadouts .stat:last-child{border:0}
+.overviewReadouts .stat small{font-size:.59rem;letter-spacing:.05em;color:#7c8a98}
+.overviewReadouts .stat strong{font-size:.92rem;color:#24465f;margin-top:4px}
+.overviewPage .machineViewport svg{width:100%;height:clamp(390px,calc(100dvh - 310px),740px)}
+.overviewPage .effectBanner{font-size:.68rem;padding:6px 14px}
+.overviewPage .effectBanner>span{max-width:75ch}
+.overviewPage .info{padding:10px 14px;border-top:1px solid #e2eaf0;display:grid;grid-template-columns:180px 1fr;gap:6px;align-items:baseline}
+.overviewPage .info h3{font-size:.8rem;margin:0}
+.overviewPage .info p{font-size:.72rem;margin:0}
+.overviewPage .info .pill{display:none}
+.overviewDetail{background:white;border:1px solid #dce4ec;border-radius:12px;margin-top:10px;overflow:hidden}
+.overviewDetail>summary{padding:14px 16px;color:#35536a;font-size:.82rem;font-weight:750;cursor:pointer}
+.overviewDetail[open]>summary{background:#f3f7fa;border-bottom:1px solid #e1e8ee}
+.overviewDetail>.panelCard{border:0;border-radius:0;margin:0!important}
+.overviewDetail .goldenPathPanel{margin:0;border:0;border-radius:0}
+.overviewPage .mobileViewerHint{display:none!important}
+@media(max-width:1100px){
+ .overviewPage .layout{grid-template-columns:245px minmax(0,1fr)}
+ .overviewMode>span{display:none}
+ .overviewActions{gap:8px}
+}
+@media(max-width:800px){
+ .overviewPage .layout{display:flex;flex-direction:column}
+ .overviewPage .layout>section{width:100%;order:0}
+ .overviewPage .controls{width:100%;order:1;position:static;max-height:none;display:grid;grid-template-columns:1fr;padding:0}
+ .overviewPage .simShell{padding:8px 10px 20px}
+ .overviewPage .hero{padding-bottom:8px}
+ .overviewPage .hero h2{font-size:1rem}
+ .overviewPage .hero p{font-size:.72rem}
+ .overviewPage .brandInner{padding:8px 10px;min-height:54px}
+ .overviewPage .brandLogo{max-width:125px;max-height:30px}
+ .overviewPage .brandText h1{font-size:.92rem}
+ .overviewPage .brandText p{display:none}
+ .overviewPage .toolbarActions{display:flex;flex-wrap:wrap;width:auto;gap:4px}
+ .overviewPage .toolbarActions button{font-size:.65rem;min-height:34px;padding:6px 8px}
+ .overviewPage .simToolbar{flex-direction:row;align-items:center;gap:6px}
+ .overviewPage .backLink{font-size:.72rem;min-height:34px}
+ .overviewPage .mobileQuickNav{margin-bottom:8px}
+ .overviewPage .mobileQuickNav button{min-height:34px;font-size:.7rem;padding:6px}
+ .overviewPage .overviewActions{padding:8px 10px;gap:8px}
+ .overviewPage .consolePowerBlock{flex:1 1 100%}
+ .overviewPage .machinePowerBtn,.overviewPage .beamOnBtn,.overviewPage .beamOffBtn{min-height:44px}
+ .overviewMode{width:100%;justify-content:space-between;gap:6px}
+ .overviewMode button{min-height:44px}
+ .overviewReadouts{gap:6px;padding:9px 10px}
+ .overviewReadouts .stat{padding-right:4px}
+ .overviewReadouts .stat small{font-size:.52rem}
+ .overviewReadouts .stat strong{font-size:.7rem;overflow-wrap:anywhere}
+ .overviewPage .machineViewport.mobileFit svg,.overviewPage .machineViewport svg{width:100%;min-width:0;max-width:100%;height:auto;min-height:0}
+ .overviewPage .machineViewport:not(.mobileFit) svg{width:1050px;max-width:none;height:auto}
+ .overviewPage .info{display:block;padding:9px 10px}
+ .overviewPage .info p{margin-top:4px}
+ .overviewPage .effectBanner{padding:5px 10px}
+ .overviewPage .effectBanner span{display:none}
+ .overviewPage .consoleGrid{padding:12px}
+ .overviewPage .fieldPresets{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .overviewPage .fieldPresets button{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.overviewPage *{scroll-behavior:auto!important}}
+.overviewPage .brandInner{display:flex;align-items:center;gap:16px}
+.overviewPage .machineViewport svg{height:clamp(320px,calc(100dvh - 440px),650px)}
+.overviewPage .fieldReadout span{background:#f2f6f9;border-color:#dce5ec;color:#64778a}
+@media(max-width:800px){
+ .overviewPage .machineViewport.mobileFit svg{height:auto}
+ .overviewPage .machineViewport:not(.mobileFit) svg{height:auto}
+ .overviewPage .controls{order:1}
+ .overviewPage .layout>section{display:contents}
+ .overviewPage .machineOverview{order:0;width:100%}
+ .overviewPage .overviewDetail{order:2;width:100%}
+}
+.overviewPage .hero{display:none}
+.overviewPage .viewerHead>div:first-child{flex:1}
+.overviewPage .overviewBeamState{display:flex;align-items:center;gap:6px;min-height:30px;padding:5px 8px;background:#f2f6f9;border:1px solid #dce5ec;color:#425a6c;border-radius:20px}
+.overviewPage .overviewBeamState span{color:#64778a;font-size:.62rem}
+.overviewPage .overviewBeamState b{color:#24465f;font-size:.65rem}
+.overviewPage .overviewBeamState i{width:8px;height:8px}
+.overviewPage .effectBanner{display:flex;gap:12px;align-items:center;white-space:nowrap;overflow:hidden;min-height:29px}
+.overviewPage .effectBanner span{overflow:hidden;text-overflow:ellipsis}
+.overviewPage .machineViewport svg{height:clamp(320px,calc(100dvh - 385px),700px)}
+@media(max-width:800px){
+ .overviewPage .viewerHead{flex-wrap:nowrap;gap:8px}
+ .overviewPage .viewerHead>div:first-child{flex:1 1 auto}
+ .overviewPage .overviewBeamState{flex:0 0 auto}
+ .overviewPage .overviewBeamState span{display:none}
+ .overviewPage .machineViewport.mobileFit svg{height:auto}
+ .overviewPage .machineViewport:not(.mobileFit) svg{height:auto}
+}

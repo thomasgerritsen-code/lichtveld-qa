@@ -36,7 +36,7 @@ export function initMobileUx(){
     nav.hidden=!query.matches;
     hint.hidden=!query.matches;
     if(query.matches){
-      setViewerMode(false);
+      setViewerMode(true);
       fitBtn.hidden=false;
     }else{
       viewport.classList.remove('mobileFit');
@@ -66,3 +66,4 @@ export function initMobileUx(){
 
   applyResponsiveState();
 }
+
