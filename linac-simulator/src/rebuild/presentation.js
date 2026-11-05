@@ -34,8 +34,36 @@ export const CONTROL_EFFECTS={
  t1:'1T: transverse sturing vanaf de primaire stuurset. Volg T in de targetdoorsnede en de bundeloptiek; de machinezijaanblik blijft R.',
  r2:'2R: radiale sturing vanaf de secundaire stuurset. Alles vóór die spoel blijft gelijk.',
  t2:'2T: transverse sturing vanaf de secundaire stuurset. Volg dit effect in de R/T-targetdoorsnede en in Bundeloptiek.',
+ bendStrength:'Buigveld: verandert de gemeenschappelijke veldsterkte van M1–M3. De referentiebaan wordt hersteld wanneer de relatieve verhouding B/p weer één is.',
+ momentumSpread:'Momentumspeiding: de centrale baan blijft gelijk, maar de energiecomponenten lopen uiteen in de buigmagneten. De ±2σ-band bevat die extra spreiding.',
  momentum:'Momentum: verandert de magnetische rigiditeit. Afwijkingen ontstaan geleidelijk binnen de buigmagneten; ook de focuswerking hangt van momentum af.',
- emission:'Bronsterkte: verandert alleen de intensiteit en relatieve uitvoer, niet de baan of de bundelbreedte. Bij nul is de bron uit.',
+ emission:'Bronsterkte bij vast momentum: verandert intensiteit en relatieve uitvoer. Echte RF-beam-loading is hier niet mee gesimuleerd. Bij nul is de bron uit.',
  fieldX:'Veld X: verandert uitsluitend de X-veldbreedte. Bij fotonen bewegen de MLC-bladeren; bij elektronen de schematische applicatoropening.',
  fieldY:'Veld Y: verandert uitsluitend de Y-veldhoogte in het bundelaanzicht. Bij fotonen bewegen de diafragma’s; bij elektronen de applicatoropening.'
 };
+
+export function dispersionProjections(sim){
+ const visible=sim.strike?sim.rows.slice(0,sim.strike.index+1):sim.rows;
+ const first=visible.findIndex(p=>Math.abs(p.dispersion?.[0]??0)>1e-10);
+ if(first<0||!visible[0]?.sigmaDelta)return [];
+ return [-1,1].map(sign=>transportProjection({...sim,strike:null,rows:visible.map(p=>({...p,r:p.r+sign*p.dispersion[0]*p.sigmaDelta}))}).slice(Math.max(0,first-1)).map(p=>p.center));
+}
+export function headOutline(state,sim){
+ const field=fieldProjection(state),x=sim.geometry.headX,apex=x-sim.target.r*DISPLAY_SCALE;
+ if(state.mode==='photon')return [{x:apex,y:HEAD.target+7},{x:x-field.halfX,y:HEAD.patient},{x:x+field.halfX,y:HEAD.patient}];
+ const pencil=Math.max(1,sim.target.sigmaR*DISPLAY_SCALE*2);
+ // Qualitative widening after the first foil, shaped at the second foil.
+ // Width here is an illustration linked to the field, not a scattering fit.
+ const broad=Math.max(pencil,field.halfX*.4);
+ const side=sign=>[{x:apex+sign*pencil,y:HEAD.window},{x:apex+sign*pencil,y:HEAD.primaryFoil},{x:x+sign*broad,y:HEAD.secondaryFoil},{x:x+sign*field.applicatorTopX,y:828},{x:x+sign*field.applicatorBottomX,y:907},{x:x+sign*field.halfX,y:HEAD.patient}];
+ return [...side(-1),...side(1).reverse()];
+}
+
+export function profileIllustration(state){
+ // Canonical explanatory shapes, not fitted transport or dose calculations.
+ return Array.from({length:121},(_,i)=>{
+  const u=-1.25+i*2.5/120,edge=Math.abs(u)<=1?1:0;
+  const shape=state.mode==='photon'&&state.filter==='fff'?Math.exp(-u*u):1;
+  return {u,y:edge*shape};
+ });
+}

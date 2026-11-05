@@ -1,10 +1,10 @@
-import {transportProjection,fieldProjection,beamEyeProjection,spotProjection,intensity,DISPLAY_SCALE,CONTROL_EFFECTS} from './presentation.js';
+import {transportProjection,fieldProjection,beamEyeProjection,spotProjection,intensity,DISPLAY_SCALE,CONTROL_EFFECTS,dispersionProjections,headOutline,profileIllustration} from './presentation.js';
 import {DEFAULTS,COMPONENTS,HEAD,SOURCES,SOLENOID_LENGTH,UNIT_PX,APERTURES,simulate,setMachine} from './model.js';
 
 export function mountRebuiltSimulator(){
 let state={...DEFAULTS},selected='focus1',view='complete',activeControl='f1';
 const $=s=>document.querySelector(s),NS='http://www.w3.org/2000/svg';
-const controls=[['f1','Focus 1',0,1,.01],['r1','1R',-1,1,.01],['t1','1T',-1,1,.01],['f2','Focus 2',0,1,.01],['r2','2R',-1,1,.01],['t2','2T',-1,1,.01],['momentum','Momentum (relatief)',.8,1.2,.005],['emission','Bronsterkte (relatief)',0,1,.01],['fieldX','Veld X op isocentrum (cm)',1,40,.5],['fieldY','Veld Y op isocentrum (cm)',1,40,.5]];
+const controls=[['f1','Focus 1',0,1,.01],['r1','1R',-1,1,.01],['t1','1T',-1,1,.01],['f2','Focus 2',0,1,.01],['r2','2R',-1,1,.01],['t2','2T',-1,1,.01],['momentum','Momentum (relatief)',.8,1.2,.005],['bendStrength','Buigveld B (relatief)',.8,1.2,.005],['momentumSpread','Momentumspeiding σp/p (%)',0,3,.05],['emission','Bronsterkte bij vast momentum',0,1,.01],['fieldX','Veld X op isocentrum (cm)',1,40,.5],['fieldY','Veld Y op isocentrum (cm)',1,40,.5]];
 const views={complete:'0 0 1420 1010',transport:'40 170 920 470',head:'940 440 460 545',mlc:'75 15 635 220'};
 function svg(tag,attrs={},parent){const el=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))el.setAttribute(k,String(v));parent?.append(el);return el;}
 function label(parent,x,y,text,size=14,fill='#b8cddd'){const t=svg('text',{x,y,'font-size':size,fill},parent);t.textContent=text;return t;}
@@ -12,7 +12,7 @@ const path=pts=>pts.map((p,i)=>`${i?'L':'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`
 function part(parent,id){const g=svg('g',{'data-part':id,tabindex:0,role:'button','aria-label':COMPONENTS.find(c=>c.id===id)?.label??id},parent);g.addEventListener('click',()=>select(id));g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(id);}});return g;}
 function select(id){selected=id;render();}
 $('#settings').innerHTML=controls.map(([id,title,min,max,step])=>`<label for="${id}"><span>${title}</span><output id="${id}Value"></output><input id="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${state[id]}"></label>`).join('');
-for(const[id]of controls)$('#'+id).addEventListener('input',e=>{state=setMachine(state,id,Number(e.target.value));activeControl=id;selected=({f1:'focus1',f2:'focus2',r1:'steer1',t1:'steer1',r2:'steer2',t2:'steer2',fieldX:state.mode==='electron'?'patient':'mlc',fieldY:state.mode==='electron'?'patient':'jaws',emission:'gun',momentum:'m1'})[id]??selected;render();});
+for(const[id]of controls)$('#'+id).addEventListener('input',e=>{state=setMachine(state,id,Number(e.target.value));activeControl=id;selected=({f1:'focus1',f2:'focus2',r1:'steer1',t1:'steer1',r2:'steer2',t2:'steer2',fieldX:state.mode==='electron'?'patient':'mlc',fieldY:state.mode==='electron'?'patient':'jaws',emission:'gun',momentum:'m1',bendStrength:'m1',momentumSpread:'m1'})[id]??selected;render();});
 $('#componentList').innerHTML=COMPONENTS.map((c,i)=>`<button data-select="${c.id}"><small>${String(i+1).padStart(2,'0')}</small>${c.label}</button>`).join('');
 $('#componentList').addEventListener('click',e=>{const b=e.target.closest('[data-select]');if(b)select(b.dataset.select);});
 $('#sources').innerHTML=SOURCES.map(([title,url])=>`<li><a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a></li>`).join('');
@@ -86,9 +86,9 @@ function drawMachine(sim){
   svg('path',{d:path(projection.map(p=>p.center)),class:'electronBeam',opacity:intensity(sim,state),'data-intensity':intensity(sim,state)},canvas);
   if(sim.strike){const last=projection.at(-1),row=sim.rows[sim.strike.index],p=sim.strike.plane==='r'?(row.r>=0?last.upper:last.lower):last.center;svg('circle',{cx:p.x,cy:p.y,r:8,class:'strike'},canvas);label(canvas,p.x+12,p.y-10,sim.strike.plane==='t'?'T-opvang (dwars)':'R-opvang',12,'#f6a077');}
  }
+ if(sim.sourceActive)for(const [i,pts]of dispersionProjections(sim).entries())svg('path',{d:path(pts),class:i?'dispersionHigh':'dispersionLow',opacity:intensity(sim,state)},canvas);
  if(sim.radiationActive){
-  const apexX=x-sim.target.r*DISPLAY_SCALE,half=field.halfX;
-  svg('path',{d:`M${apexX} ${field.sourceY+7} L${x-half} ${HEAD.patient} H${x+half} Z`,class:state.mode==='photon'?'photonBeam':'therapyElectron',opacity:intensity(sim,state),'data-half-x':half,'data-half-y':field.halfY},canvas);
+  svg('path',{d:path(headOutline(state,sim))+' Z',class:state.mode==='photon'?'photonBeam':'therapyElectron',opacity:intensity(sim,state),'data-half-x':field.halfX,'data-half-y':field.halfY},canvas);
  }
  drawBeamEye(canvas,sim);drawTargetSpot(canvas,sim);
  label(canvas,65,985,sim.sourceActive?'Radiaal zijaanzicht · blauwe band = ±2σ':'Optische voorspelling · bundel uit',12);
@@ -140,13 +140,17 @@ function render(){
  for(const b of document.querySelectorAll('[data-view]'))b.setAttribute('aria-pressed',String(b.dataset.view===view));
  for(const b of document.querySelectorAll('[data-mode]'))b.setAttribute('aria-pressed',String(b.dataset.mode===state.mode));
  for(const b of document.querySelectorAll('[data-filter]')){b.setAttribute('aria-pressed',String(b.dataset.filter===state.filter));b.disabled=state.mode==='electron';}
- for(const[id]of controls)$('#'+id+'Value').textContent=state[id].toFixed(id.startsWith('field')?1:id==='momentum'?3:2);
+ for(const[id]of controls)$('#'+id+'Value').textContent=state[id].toFixed(id.startsWith('field')?1:['momentum','bendStrength'].includes(id)?3:2);
  $('#power').textContent=state.power?'Machine aan':'Machine uit';$('#power').setAttribute('aria-pressed',String(state.power));$('#beamOn').disabled=!state.power;$('#beamOff').disabled=!state.beam;
  $('#beamStatus').textContent=!state.power?'UIT':sim.strike&&sim.sourceActive?'BUNDELOPVANG':sim.radiationActive?'BUNDEL AAN':'GEREED · BUNDEL UIT';$('#beamStatus').dataset.active=String(sim.radiationActive);
  $('#modeReadout').textContent=state.mode==='electron'?'Elektronen':'Fotonen '+state.filter.toUpperCase();$('#fieldReadout').textContent=`${state.fieldX} × ${state.fieldY} cm`;
  $('#outputReadout').textContent=sim.relativeOutput.toFixed(2)+' rel.';$('#targetReadout').textContent=sim.strike?'Bundel onderschept':'Binnen modelopening';
  $('#route').textContent=sim.route.map(id=>({'thin-plate':'FFF-plaat','primary-foil':'primaire folie','secondary-foil':'secundaire folie','parked-mlc':'MLC geparkeerd','primary-collimator':'primaire collimator','electron-window':'venster'}[id]??id)).join(' → ');
  $('#sliderFeedback').textContent=CONTROL_EFFECTS[activeControl]??'';
+ const profile=$('#headProfile');profile.replaceChildren();
+ svg('path',{d:'M30 95 H440',class:'plotAxis'},profile);
+ svg('path',{d:path(profileIllustration(state).map(p=>({x:30+(p.u+1.25)/2.5*410,y:95-p.y*65}))),fill:'none',stroke:state.mode==='electron'?'#7bd6c7':'#efd375','stroke-width':2.5},profile);
+ label(profile,30,18,state.mode==='electron'?'Folies: verbreden en vlak maken':state.filter==='fff'?'FFF: centrale piek zonder conische filter':'FF: centrale verzwakking maakt het profiel vlak',12);
  $('#opticsReadout').textContent=sim.strike?'Bundel onderschept: het target wordt niet bereikt. De grafieken stoppen bij de modelopening.':`Target R: ${sim.target.r.toFixed(4)} · T: ${sim.target.t.toFixed(4)} · σR: ${sim.target.sigmaR.toFixed(4)} · σT: ${sim.target.sigmaT.toFixed(4)} — genormaliseerde eenheden`;
  window.linacV2={state:{...state},result:sim};
 }

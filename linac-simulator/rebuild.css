@@ -4,3 +4,5 @@
 .transportEnvelope{fill:#79d9f0;stroke:#79d9f0;stroke-width:.6;pointer-events:none}.targetSpot{fill:#b6ebf8;stroke:#e3f7ff;stroke-width:1.2}.fieldFootprint{fill:#efd37533;stroke:#efd375;stroke-width:1;pointer-events:none}.sideJaw{fill-opacity:.14;stroke-dasharray:4 3}
 .sliderFeedback{font-size:.7rem;line-height:1.5;color:#5c778b;background:#f2f7fb;margin:0;padding:8px 14px;border-top:1px solid #e3ebf1;min-height:44px}
 @media(min-width:901px){.diagram svg{height:clamp(340px,calc(100dvh - 500px),650px)}}
+.dispersionLow,.dispersionHigh{fill:none;stroke-width:1.7;stroke-dasharray:5 4;pointer-events:none}.dispersionLow{stroke:#f1ad72}.dispersionHigh{stroke:#c2a1ef}
+#headProfile{display:block;max-width:600px;width:calc(100% - 28px);background:#0b1b28;border-radius:8px;margin:0 14px 12px}
