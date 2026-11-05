@@ -1,3 +1,11 @@
+# Actieve versie: herbouw v2
+
+De simulator start via `index.html` → `src/rebuild/app.js`. Het nieuwe, zelfstandige machine- en optiekmodel staat in `src/rebuild/model.js`; de vormgeving in `rebuild.css`. Zie [de architectuur- en verificatienotitie](research/rebuild-v2.md) en [het anatomieonderzoek](research/linac-anatomy.md).
+
+De documentatie hieronder beschrijft de bewaarde vorige implementatie. Die modules worden niet meer door de live-ingang geladen.
+
+---
+
 # LINAC bundeltransport simulator
 
 Onderdeel van het RT-VTech / Linac Techniek Dashboard.
@@ -364,3 +372,4 @@ Gevonden en herstelde inconsistenties:
 - oude focus-rotation configuratie is verwijderd.
 
 De QA-sweep test continue ranges via grenswaarden, pairwise extremes en geselecteerde grids; dit is nadrukkelijk niet hetzelfde als letterlijk ieder reëel getal tussen twee sliderposities testen.
+

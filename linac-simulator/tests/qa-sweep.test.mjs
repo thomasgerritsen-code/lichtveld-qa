@@ -329,37 +329,16 @@ test('photon electron profile and EPID outputs remain finite at extreme fields',
   }
 });
 
-test('UI wiring has unique IDs and every controller selector/control exists',()=>{
+test('rebuilt UI has unique IDs and every static application hook exists',()=>{
   const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
-  const controller=fs.readFileSync(path.join(ROOT,'src/app/controller.js'),'utf8');
-
+  const app=fs.readFileSync(path.join(ROOT,'src/rebuild/app.js'),'utf8');
   const htmlIds=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
-  const duplicates=htmlIds.filter((id,index)=>htmlIds.indexOf(id)!==index);
-  assert.deepEqual([...new Set(duplicates)],[],'duplicate HTML ids');
-
-  const selectorIds=[...controller.matchAll(/\$\('#([^']+)'\)/g)].map(m=>m[1]);
-  for(const id of new Set(selectorIds)){
-    if(id==='particles')continue;
-    assert.ok(htmlIds.includes(id),'controller references missing #'+id);
-  }
-
-  const controlsMatch=controller.match(/const CONTROL_IDS=\[([^\]]+)\]/);
-  assert.ok(controlsMatch,'CONTROL_IDS missing');
-  const controlIds=[...controlsMatch[1].matchAll(/'([^']+)'/g)].map(m=>m[1]);
-  for(const id of controlIds){
-    assert.ok(html.includes(`id="${id}"`),'missing input '+id);
-    assert.ok(html.includes(`id="${id}v"`),'missing output '+id+'v');
-
-    const tagMatch=html.match(new RegExp('<input[^>]*id="'+id+'"[^>]*>'));
-    assert.ok(tagMatch,'missing input tag '+id);
-    const tag=tagMatch[0];
-    const value=Number((tag.match(/value="([^"]+)"/)||[])[1]);
-    const min=Number((tag.match(/min="([^"]+)"/)||[])[1]);
-    const max=Number((tag.match(/max="([^"]+)"/)||[])[1]);
-    assert.equal(value,UI_DEFAULTS[id],'HTML default differs from model default for '+id);
-    if(Number.isFinite(min))assert.ok(value>=min,id+' default below min');
-    if(Number.isFinite(max))assert.ok(value<=max,id+' default above max');
-  }
+  assert.equal(new Set(htmlIds).size,htmlIds.length,'duplicate HTML ids');
+  const hooks=[...app.matchAll(/\$\('#([A-Za-z][A-Za-z0-9]+)'\)/g)].map(m=>m[1]);
+  assert.ok(hooks.length>10);
+  for(const id of new Set(hooks))assert.ok(htmlIds.includes(id),'missing application hook '+id);
+  assert.match(html,/src\/rebuild\/app.js/);
+  assert.doesNotMatch(html,/src\/app\/bootstrap.js/);
 });
 
 test('all source modules except bootstrap import successfully and no hand-versioned imports remain',async()=>{
@@ -418,3 +397,4 @@ test('nominal beam remains transmitted through the full gantry rotation',()=>{
     }
   }
 });
+

@@ -1,3 +1,11 @@
+# Actieve versie: herbouw v2
+
+De simulator start via `index.html` → `src/rebuild/app.js`. Het nieuwe, zelfstandige machine- en optiekmodel staat in `src/rebuild/model.js`; de vormgeving in `rebuild.css`. Zie [de architectuur- en verificatienotitie](research/rebuild-v2.md) en [het anatomieonderzoek](research/linac-anatomy.md).
+
+De documentatie hieronder beschrijft de bewaarde vorige implementatie. Die modules worden niet meer door de live-ingang geladen.
+
+---
+
 # LINAC simulator architecture v10
 
 ## Doel
@@ -254,3 +262,4 @@ Voor iedere berekende toestand gelden vaste invarianten:
 - alle ES modules moeten zelfstandig importeerbaar blijven.
 
 Nieuwe physics/UI-wijzigingen horen naast een concrete regressietest ook deze sweep te blijven passeren.
+
